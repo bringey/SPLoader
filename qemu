@@ -1,0 +1,2 @@
+#!/bin/bash
+exec qemu-system-i386 -drive file=build/bin/arch/i386-pc/bios/bootstrap.bin,format=raw -d guest_errors,unimp -monitor stdio $@

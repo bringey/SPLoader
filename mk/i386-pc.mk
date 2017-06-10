@@ -1,0 +1,13 @@
+# mk/i386-pc.mk
+# Makefile for the i386-pc loader project
+
+SUBDIR := i386-pc
+I386PC_BINDIR := $(BINDIR)
+I386PC_OBJDIR := $(OBJDIR)
+
+
+I386PC_CFLAGS   := $(CFLAGS)
+I386PC_CPPFLAGS := $(CPPFLAGS)
+I386PC_ASFLAGS  := $(ASFLAGS)
+I386PC_LDFLAGS  := $(LDFLAGS)
+
