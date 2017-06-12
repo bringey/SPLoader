@@ -43,12 +43,13 @@ begtext:
 	movw    $0x4000, %ax        // and the stack starts 0x4000 beyond that
 	movw    %ax, %sp
 
+	movb    %dl, drive          // save the drive number that we booted from
+
 /*
 ** Next, verify that the disk is there and working.
 */
 	movb    $0x01, %ah           // test the disk status and make sure
-	movb    drive, %dl           // it's safe to proceed
-	int     $0x13
+	int     $0x13                // it's safe to proceed
 	jnc     diskok
 
 	movw    $err_diskstatus, %si // Something went wrong; print a message
@@ -70,16 +71,35 @@ diskok:
 	movw    $err_nolba, %si      // BIOS does not support 0x13 extensions
 	call    dispMsg              // print error message and die.
 	jmp     die
+/* 
+** Ideally, we would use CHS addressing at this point, but CHS is gross.
+** Pretty much every PC since the 90s support these extensions, so support
+** for machines before then will be a TODO
+**
+** For now, it is an error if these extensions are not supported
+*/
 
 lbasupport:
+
+/*
+** Now we need to get the parameters of the boot device
+*/
+
+	movw    $drive_parameters, %si
+	movb    drive, %dl
+	movw    $0x4800, %ax
+	int     $0x13
+	jnc     diskready
+
+	jmp     die                    // failed to get drive parameters, die
+
+diskready:
 
 /*
 ** Disk is OK, now time the load the loader binary, typically located right
 ** after the MBR.
 */
-	//movw    $msg_go, %si
-	//call    dispMsg
-	//jmp die
+
 	call    loadimage
 	jmp die
 	// image is loaded, time to setup
@@ -206,16 +226,41 @@ dap:
 	.long 0
 	.long 0
 
+/*
+** Boot drive parameters
+**
+** Offset     Size    Description
+** ============================================================================
+**      0        2    size of buffer (Must be set to 0x1E)
+**      2        2    information flags
+**      4        4    physical cylinder count
+**      8        4    physical head count
+**     12        4    physical sectors per track
+**     16        8    absolute number of sectors
+**     24        2    bytes per sector
+**     26        4    (optional) pointer to Enhanced Disk Drive parameters
+*/
 
+dp_information       = drive_parameters+2
+dp_cylinders         = drive_parameters+4
+dp_heads             = drive_parameters+8
+dp_sectors_per_track = drive_parameters+12
+dp_sectors           = drive_parameters+16
+dp_bytes_per_sector  = drive_parameters+24
+dp_edd               = drive_parameters+26
 
-sec:
-	.word 2  // cylinder=0, sector=1
-head:
-	.word 0  // head=0
-max_sec:
-	.byte 19 // up to 18 sectors per floppy track
-max_head:
-	.byte 2  // only two r/w heads per floppy drive
+	.align 4
+
+drive_parameters:
+	.word 0x1E
+	.word 0
+	.long 0
+	.long 0
+	.long 0
+	.quad 0
+	.word 0
+	.long 0
+
 
 /*
 ** Status and error messages.
@@ -253,12 +298,14 @@ err_nolba:
 */
 
 loader_lba:                      // logical block address of the image
-	.long   0
+	.long   0                    // lower 32 bits
+	.long   0                    // upper 32 bits
+
 loader_sectors:                  // number of sectors to load
 	.word   0
 
-drive:
-	.word   0x80
+drive:                           // the drive number we booted from
+	.byte   0
 
 // ===========================================================================
 //                      END OF MBR BOOTSTRAP CODE
