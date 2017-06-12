@@ -12,6 +12,7 @@
 */
 
 #include <SPLoader/arch/i386-pc/bios/bootstrap.h>
+#include <SPLoader/MBR/MBR.h>
 
 BOOT_SEGMENT    = 0x07C0     /* default BIOS addr to load boot sector */
 BOOT_ADDRESS    = 0x00007C00
@@ -20,12 +21,6 @@ START_OFFSET    = 0x00007E00
 SECTOR_SIZE     = 0x200      /* typical sector size for floppy & HD */
 BOOTSTRAP_SIZE  = 446        /* maximum size of the bootstrap code */ 
 OFFSET_LIMIT	= 65536 - SECTOR_SIZE
-
-PARTITION1_LOCATION     = 0x1BE
-PARTITION2_LOCATION     = 0x1CE
-PARTITION3_LOCATION     = 0x1DE
-PARTITION4_LOCATION     = 0x1EE
-BOOT_SIGNATURE_LOCATION = 0x1FE
 
 	.arch i686
 	.code16
@@ -277,16 +272,16 @@ drive:
 */
 
 
-	.org PARTITION1_LOCATION
+	.org MBR_PARTITION1
 partition1:
 
-	.org PARTITION2_LOCATION
+	.org MBR_PARTITION2
 partition2:
 
-	.org PARTITION3_LOCATION
+	.org MBR_PARTITION3
 partition3:
 
-	.org PARTITION4_LOCATION
+	.org MBR_PARTITION4
 partition4:
 
 
@@ -296,7 +291,7 @@ partition4:
 ** of this sector must be AA55 in order for the disk to be recognized
 ** by the BIOS as bootable.
 */
-	.org BOOT_SIGNATURE_LOCATION
+	.org MBR_BOOTSIG_LOCATION
 
 boot_sig:
-	.word 0xAA55
+	.word MBR_BOOTSIG
