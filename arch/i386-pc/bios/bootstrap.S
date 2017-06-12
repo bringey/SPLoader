@@ -11,7 +11,7 @@
 **     bootstrap.bin -> loader.bin -> kern.bin
 */
 
-#include <arch/i386-pc/bios/bootstrap.h>
+#include <SPLoader/arch/i386-pc/bios/bootstrap.h>
 
 BOOT_SEGMENT    = 0x07C0     /* default BIOS addr to load boot sector */
 BOOT_ADDRESS    = 0x00007C00
@@ -27,13 +27,14 @@ PARTITION3_LOCATION     = 0x1DE
 PARTITION4_LOCATION     = 0x1EE
 BOOT_SIGNATURE_LOCATION = 0x1FE
 
-// ===========================================================================
-//                      START OF MBR BOOTSTRAP CODE
-// ===========================================================================
-
 	.arch i686
 	.code16
 	.text
+
+
+// ===========================================================================
+//                      START OF MBR BOOTSTRAP CODE
+// ===========================================================================
 
 	.global begtext
 
@@ -267,8 +268,6 @@ drive:
 // ===========================================================================
 //                      END OF MBR BOOTSTRAP CODE
 // ===========================================================================
-
-
 
 /*
 ** Partition table entries
