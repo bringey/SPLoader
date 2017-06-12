@@ -13,11 +13,15 @@
 #ifndef	_BOOTSTRAP_H
 #define	_BOOTSTRAP_H
 
+#define LOADER_SEGMENT 0x0100  // 0100:0000
+#define LOADER_ADDRESS 0x1000  // and up
+#define LOADER_STACK   0x1000  // and down
+
 /*
 ** The target program itself
 */
 #define TARGET_SEGMENT	0x00001000	/* 0001:0000 */
-#define TARGET_ADDRESS	0x00010000	/* and upward */
+#define TARGET_ADDRESS	0x00010000 /* and upward */
 #define	TARGET_STACK	0x00010000	/* and downward */
 
 /*

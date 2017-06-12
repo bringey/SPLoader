@@ -81,13 +81,63 @@ lbasupport:
 ** Disk is OK, now time the load the loader binary, typically located right
 ** after the MBR.
 */
-	movw    $msg_go, %si
-	call    dispMsg
+	//movw    $msg_go, %si
+	//call    dispMsg
+	//jmp die
+	call    loadimage
 	jmp die
-	//call    loadimage
 	// image is loaded, time to setup
 
 
+/*
+** Loads the loader image located at the LBA stored in loader_lba
+*/
+loadimage:
+
+	movw    $1, %ax
+	movw    $1, %cx
+	movb    drive, %dl
+	xorw    %bx, %bx
+	movw    %bx, %es
+	movw    $0x3000, %bx
+	call    readsectors
+
+	ret
+
+
+
+/*
+** Reads a specified number of sectors from an LBA of a drive
+**
+** ax    = number of sectors to read
+** cx    = starting LBA
+** dl    = drive to read from
+** es:bx = address of the read buffer
+*/
+readsectors:
+	// clear the DAP
+	movl    $0, dap
+	movl    $0, dap+4
+	movl    $0, dap+8
+	movl    $0, dap+12
+
+	// setup the DAP
+	movw    $16, dap
+	movw    %ax, dap_sectors
+	movw    %es, dap_buffer_segment
+	movw    %bx, dap_buffer_offset
+	movw    %cx, dap_lowlba
+
+	// perform INT 0x13
+	movw    $BOOT_SEGMENT, %ax
+	movw    %ax, %ds
+	movw    $dap, %si
+	movb    $0x42, %ah
+	int     $0x13
+
+	jmp die
+
+	ret
 
 
 /*
@@ -147,6 +197,8 @@ dap_buffer_segment = dap+6
 dap_buffer_offset  = dap_buffer
 dap_lowlba         = dap+8
 dap_highlba        = dap+12
+
+	.align 4
 
 dap:
 	.byte 16
