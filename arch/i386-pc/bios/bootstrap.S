@@ -191,28 +191,6 @@ die_loop:
 	hlt
 	jmp     die_loop
 
-/*
-** Support routine - display a message byte by byte to the monitor.
-*/
-dispMsg:
-	pushw   %ax
-	pushw   %bx
-repeat:
-	lodsb                        // grab next character
-
-	movb    $0x0e, %ah           // write and advance cursor
-	movw    $0x07, %bx           // page 0, white on blank, no blink
-	orb     %al, %al             // AL is character to write
-	jz      getOut               // if we've reached the NUL, get out
-
-	int     $0x10                // otherwise, print and repeat
-	jmp     repeat
-
-getOut:                          // we're done, so return
-	popw    %bx
-	popw    %ax
-	ret
-
 
 /*
 ** DATA AREAS.
@@ -288,36 +266,6 @@ drive_parameters:
 
 
 /*
-** Status and error messages.
-*/
-msg_loading:
-	.asciz "Loading"
-msg_dot:
-	.asciz "."
-msg_go:
-	.asciz "done."
-msg_bar:
-	.asciz "|"
-
-/*
-** Error messages.
-*/
-err_diskstatus:
-	.asciz "Disk not ready.\n\r"
-err_diskread:
-	.asciz "Read failed\n\r"
-err_toobig:
-	.asciz "Too big\n\r"
-err_diskfail:
-	.asciz "Can't proceed\n\r"
-err_nolba:
-	.asciz "BIOS does not support INT 0x13 extensions\n\r"
-
-/*
-** Data areas.
-*/
-
-/*
 ** Location and size of the loader image (loader.bin)
 ** These are set when installing the loader to the boot medium
 */
@@ -346,15 +294,19 @@ drive:                           // the drive number we booted from
 
 	.org MBR_PARTITION1
 partition1:
+	.fill 16, 1, 0
 
 	.org MBR_PARTITION2
 partition2:
+	.fill 16, 1, 0
 
 	.org MBR_PARTITION3
 partition3:
+	.fill 16, 1, 0
 
 	.org MBR_PARTITION4
 partition4:
+	.fill 16, 1, 0
 
 
 
