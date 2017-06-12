@@ -22,6 +22,22 @@ SECTOR_SIZE     = 0x200      /* typical sector size for floppy & HD */
 BOOTSTRAP_SIZE  = 446        /* maximum size of the bootstrap code */ 
 OFFSET_LIMIT	= 65536 - SECTOR_SIZE
 
+
+SPLOADER_BOOTSTRAP_EDISK  = '0'
+SPLOADER_BOOTSTRAP_ENOLBA = '1'
+
+SPLOADER_BOOTSTRAP_EDEBUG1 = 'A'
+SPLOADER_BOOTSTRAP_EDEBUG2 = 'B'
+SPLOADER_BOOTSTRAP_EDEBUG3 = 'C'
+
+//
+// Macro for stopping execution with a debug code (1 - 3)
+//
+#define debug_breakpoint(num) \
+	movb $SPLOADER_BOOTSTRAP_EDEBUG##num, %al; \
+	jmp die
+
+
 	.arch i686
 	.code16
 	.text
@@ -52,8 +68,7 @@ begtext:
 	int     $0x13                // it's safe to proceed
 	jnc     diskok
 
-	movw    $err_diskstatus, %si // Something went wrong; print a message
-	call    dispMsg              // and die.
+	movb    $SPLOADER_BOOTSTRAP_EDISK, %al // Something went wrong; die
 	jmp     die
 
 diskok:
@@ -68,8 +83,8 @@ diskok:
 	int     $0x13
 	jnc     lbasupport
 
-	movw    $err_nolba, %si      // BIOS does not support 0x13 extensions
-	call    dispMsg              // print error message and die.
+	// BIOS does not support 0x13 extensions, die
+	movb    $SPLOADER_BOOTSTRAP_ENOLBA, %al
 	jmp     die
 /* 
 ** Ideally, we would use CHS addressing at this point, but CHS is gross.
@@ -91,6 +106,7 @@ lbasupport:
 	int     $0x13
 	jnc     diskready
 
+	movb    $SPLOADER_BOOTSTRAP_EDISK, %al
 	jmp     die                    // failed to get drive parameters, die
 
 diskready:
@@ -101,7 +117,10 @@ diskready:
 */
 
 	call    loadimage
-	jmp die
+	
+	debug_breakpoint(2)
+	//movb $SPLOADER_BOOTSTRAP_EDEBUG1, %al
+	//jmp die
 	// image is loaded, time to setup
 
 
@@ -159,12 +178,18 @@ readsectors:
 
 
 /*
-** Psuedo-breakpoint, jump here to stop execution
-** completely. Useful for debugging.
+** Stops execution. Displays the error code stored in %al
+**
+** al = the error code, as a character, to display
 */
 die:
+	movb    $0x0e, %ah
+	movw    $0x07, %bx
+	int     $0x10
+
+die_loop:
 	hlt
-	jmp     die
+	jmp     die_loop
 
 /*
 ** Support routine - display a message byte by byte to the monitor.
