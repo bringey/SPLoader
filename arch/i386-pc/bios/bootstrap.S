@@ -95,7 +95,7 @@ lbasupport:
 loadimage:
 
 	movw    $1, %ax
-	movw    $1, %cx
+	movw    $0, %cx
 	movb    drive, %dl
 	xorw    %bx, %bx
 	movw    %bx, %es
@@ -115,6 +115,9 @@ loadimage:
 ** es:bx = address of the read buffer
 */
 readsectors:
+
+	pushw   %si
+
 	// clear the DAP
 	movl    $0, dap
 	movl    $0, dap+4
@@ -129,13 +132,12 @@ readsectors:
 	movw    %cx, dap_lowlba
 
 	// perform INT 0x13
-	movw    $BOOT_SEGMENT, %ax
-	movw    %ax, %ds
 	movw    $dap, %si
+	xorw    %ax, %ax
 	movb    $0x42, %ah
 	int     $0x13
 
-	jmp die
+	popw    %si
 
 	ret
 
