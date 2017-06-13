@@ -132,6 +132,7 @@ nextstage:
 ** handle loading the kernel from the boot partition
 */
 
+	debug_breakpoint(3)
 
 /*
 ** Loads the loader image located at the LBA stored in loader_lba
@@ -150,15 +151,17 @@ loadimage:
 
 loadimage_sectors:
 
-	debug_breakpoint(1)
 
-	movw    $1, %ax
-	movw    $0, %cx
-	movb    drive, %dl
-	xorw    %bx, %bx
-	movw    %bx, %es
-	movw    $0x3000, %bx
+	// test code for readsectors
+	// this just reads the first sector (MBR) and stores it at 0x3000
+	pushw   $0x3000                     // buffer location: 0:3000
+	pushw   $0
+	pushl   $0x0                        // LBA upper 32 bits
+	pushl   $0x0                        // LBA lower 32 bits
+	pushw   drive                       // drive to read from
+	pushw   $1                          // read 1 sector
 	call    readsectors
+	add     $16, %sp
 
 	xorw    %ax, %ax                    // success, AX=0
 	ret
@@ -166,38 +169,72 @@ loadimage_sectors:
 
 
 /*
-** Reads a specified number of sectors from an LBA of a drive
+** __cdecl void readsectors(
+**          word sectors,
+**          word drive,
+**          quadword lba,
+**          word buffer_segment,
+**          word buffer_offset
+** );
 **
-** ax    = number of sectors to read
-** cx    = starting LBA
-** dl    = drive to read from
-** es:bx = address of the read buffer
+** Reads a specified number of sectors from a starting LBA of a drive
+** If an error occurred, the Carry Flag will be set.
+**
+** Arguments
+**    word sectors
+**        The number of sectors to load, note that some BIOS limit this to 127
+**    word drive
+**        The drive to read from (0x80 for the first drive, 0x0 for floppy)
+**    quad lba
+**        The 48-bit starting LBA to read from, stored as a quadword.
+**    word buffer_segment
+**    word buffer_offset
+**        Segment:Offset pair for the location in memory to store the sectors
+**
+** Returns
+**    AX = 0 on success, nonzero otherwise
+**
 */
 readsectors:
 
-	pushw   %si
+	pushw   %bp
+	movw    %sp, %bp
 
-	// clear the DAP
-	movl    $0, dap
-	movl    $0, dap+4
-	movl    $0, dap+8
-	movl    $0, dap+12
+	pushw   %cx
+	pushw   %dx
+	pushw   %si
+	pushw   %di
 
 	// setup the DAP
 	movw    $16, dap
+
+	movw    4(%bp), %ax
 	movw    %ax, dap_sectors
-	movw    %es, dap_buffer_segment
-	movw    %bx, dap_buffer_offset
-	movw    %cx, dap_lowlba
+
+	movw    16(%bp), %ax
+	movw    %ax, dap_buffer_segment
+
+	movw    18(%bp), %ax
+	movw    %ax, dap_buffer_offset
+
+	movl    8(%bp), %eax
+	movl    %eax, dap_lowlba
+	movl    12(%bp), %eax
+	movl    %eax, dap_highlba
 
 	// perform INT 0x13
 	movw    $dap, %si
 	xorw    %ax, %ax
+	movw    6(%bp), %dx
 	movb    $0x42, %ah
 	int     $0x13
 
+	popw    %di
 	popw    %si
+	popw    %dx
+	popw    %cx
 
+	popw    %bp
 	ret
 
 
