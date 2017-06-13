@@ -23,20 +23,26 @@ BOOTSTRAP_SIZE  = 446        /* maximum size of the bootstrap code */
 OFFSET_LIMIT	= 65536 - SECTOR_SIZE
 
 
-SPLOADER_BOOTSTRAP_EDISK  = '0'
-SPLOADER_BOOTSTRAP_ENOLBA = '1'
+E_BOOTSTRAP_DEFAULT = '0'
+E_BOOTSTRAP_DISK    = '1'
+E_BOOTSTRAP_NOLBA   = '2'
 
-SPLOADER_BOOTSTRAP_EDEBUG1 = 'A'
-SPLOADER_BOOTSTRAP_EDEBUG2 = 'B'
-SPLOADER_BOOTSTRAP_EDEBUG3 = 'C'
+E_BOOTSTRAP_DEBUG1 = 'A'
+E_BOOTSTRAP_DEBUG2 = 'B'
+E_BOOTSTRAP_DEBUG3 = 'C'
+
+
+//
+// Macro for stopping execution with a code as an immediate/register/address
+//
+#define exit(code) \
+	movw code, die_code; \
+	jmp die
 
 //
 // Macro for stopping execution with a debug code (1 - 3)
 //
-#define debug_breakpoint(num) \
-	movb $SPLOADER_BOOTSTRAP_EDEBUG##num, %al; \
-	jmp die
-
+#define debug_breakpoint(num) exit($E_BOOTSTRAP_DEBUG##num)
 
 	.arch i686
 	.code16
@@ -68,8 +74,7 @@ begtext:
 	int     $0x13                // it's safe to proceed
 	jnc     diskok
 
-	movb    $SPLOADER_BOOTSTRAP_EDISK, %al // Something went wrong; die
-	jmp     die
+	exit($E_BOOTSTRAP_DISK)      // something went wrong; display code and stop
 
 diskok:
 	movw    $0, %ax              // Reset the disk
@@ -84,8 +89,7 @@ diskok:
 	jnc     lbasupport
 
 	// BIOS does not support 0x13 extensions, die
-	movb    $SPLOADER_BOOTSTRAP_ENOLBA, %al
-	jmp     die
+	exit($E_BOOTSTRAP_NOLBA)
 /* 
 ** Ideally, we would use CHS addressing at this point, but CHS is gross.
 ** Pretty much every PC since the 90s support these extensions, so support
@@ -106,8 +110,7 @@ lbasupport:
 	int     $0x13
 	jnc     diskready
 
-	movb    $SPLOADER_BOOTSTRAP_EDISK, %al
-	jmp     die                    // failed to get drive parameters, die
+	exit($E_BOOTSTRAP_DISK)      // failed to get drive parameters, die
 
 diskready:
 
@@ -117,17 +120,37 @@ diskready:
 */
 
 	call    loadimage
-	
-	debug_breakpoint(2)
-	//movb $SPLOADER_BOOTSTRAP_EDEBUG1, %al
-	//jmp die
-	// image is loaded, time to setup
+	orw     %ax, %ax
+	jz      nextstage
+
+	exit(%ax)                    // error occured during load, die
+
+nextstage:
+
+/* 
+** image is loaded, now we transfer control to the loader, which will
+** handle loading the kernel from the boot partition
+*/
 
 
 /*
 ** Loads the loader image located at the LBA stored in loader_lba
+**
+** On success, AX is zero. On failure, AX contains an exit code
 */
 loadimage:
+
+	// determine the number of sectors we need to load
+	xorw    %dx, %dx
+	movw    loader_size, %ax
+	divw    dp_bytes_per_sector         // ax = loader_size / bytes_per_sector
+	orw     %dx, %dx
+	jz      loadimage_sectors           // test if the remainder is zero
+	incw    %ax                         // remainder not zero, round up
+
+loadimage_sectors:
+
+	debug_breakpoint(1)
 
 	movw    $1, %ax
 	movw    $0, %cx
@@ -137,6 +160,7 @@ loadimage:
 	movw    $0x3000, %bx
 	call    readsectors
 
+	xorw    %ax, %ax                    // success, AX=0
 	ret
 
 
@@ -178,18 +202,35 @@ readsectors:
 
 
 /*
-** Stops execution. Displays the error code stored in %al
-**
-** al = the error code, as a character, to display
+** Stops execution. Displays the error code stored in label die_code
 */
 die:
-	movb    $0x0e, %ah
-	movw    $0x07, %bx
+	pusha                      // save register state
+	pushw   %ds                // only needed for debugging
+	pushw   %es
+	pushw   %fs
+	pushw   %gs
+	pushf
+
+
+	movb    $0x0e, %ah         // write and advance cursor
+	movb    die_code, %al      // char to print = die_code
+	movw    $0x07, %bx         // page 0, white on black, no blink
 	int     $0x10
+	
+	popf                       // restore registers, so we can inspect them
+	popw    %gs                // with qemu/gdb once halted
+	popw    %fs
+	popw    %es
+	popw    %ds
+	popa
 
 die_loop:
 	hlt
 	jmp     die_loop
+
+die_code:
+	.word E_BOOTSTRAP_DEFAULT
 
 
 /*
@@ -274,8 +315,8 @@ loader_lba:                      // logical block address of the image
 	.long   0                    // lower 32 bits
 	.long   0                    // upper 32 bits
 
-loader_sectors:                  // number of sectors to load
-	.word   0
+loader_size:                     // size (in bytes) of the loader image
+	.word   30000
 
 drive:                           // the drive number we booted from
 	.byte   0
