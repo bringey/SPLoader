@@ -26,6 +26,7 @@ OFFSET_LIMIT	= 65536 - SECTOR_SIZE
 E_BOOTSTRAP_DEFAULT = '0'
 E_BOOTSTRAP_DISK    = '1'
 E_BOOTSTRAP_NOLBA   = '2'
+E_BOOTSTRAP_TOOBIG  = '3'
 
 E_BOOTSTRAP_DEBUG1 = 'A'
 E_BOOTSTRAP_DEBUG2 = 'B'
@@ -133,6 +134,7 @@ nextstage:
 */
 
 	debug_breakpoint(3)
+	jmp     $0, $LOADER_ADDRESS
 
 /*
 ** Loads the loader image located at the LBA stored in loader_lba
@@ -141,29 +143,51 @@ nextstage:
 */
 loadimage:
 
+	pushw   %bp
+	movw    %sp, %bp
+
+	pushw   %dx
+
+
+	MAX_SECTORS_PER_TRANSFER = 127
+
 	// determine the number of sectors we need to load
 	xorw    %dx, %dx
 	movw    loader_size, %ax
-	divw    dp_bytes_per_sector         // ax = loader_size / bytes_per_sector
+	divw    dp_bytes_per_sector            // ax = sectors to load
 	orw     %dx, %dx
-	jz      loadimage_sectors           // test if the remainder is zero
-	incw    %ax                         // remainder not zero, round up
+	jz      loadimage_sectors              // test if the remainder is zero
+	incw    %ax                            // remainder not zero, round up
 
 loadimage_sectors:
 
+	cmpw    $MAX_SECTORS_PER_TRANSFER, %ax
+	jg      loadimage_toobig               // test if the image is too big
 
-	// test code for readsectors
-	// this just reads the first sector (MBR) and stores it at 0x3000
-	pushw   $0x3000                     // buffer location: 0:3000
-	pushw   $0
-	pushl   $0x0                        // LBA upper 32 bits
-	pushl   $0x0                        // LBA lower 32 bits
-	pushw   drive                       // drive to read from
-	pushw   $1                          // read 1 sector
+	pushw   $0                             // buffer: LOADER_SEGMENT:0
+	pushw   $LOADER_SEGMENT
+	pushl   loader_lba+4                   // LBA of the loader image
+	pushl   loader_lba
+	pushw   drive                          // drive: drive we booted from
+	pushw   %ax                            // sectors: AX
 	call    readsectors
 	add     $16, %sp
+	orw     %ax, %ax
+	jz      loadimage_success              // was the read successful?
 
-	xorw    %ax, %ax                    // success, AX=0
+	movw    $E_BOOTSTRAP_DISK, %ax         // read error occurred
+	jmp     loadimage_exit                 // error, AX=E_BOOTSTRAP_DISK
+
+loadimage_toobig:
+	movw    $E_BOOTSTRAP_TOOBIG, %ax       // image is too big ( > 127 sectors)
+	jmp loadimage_exit                     // error, AX=E_BOOTSTRAP_TOOBIG
+
+loadimage_success:
+	xorw    %ax, %ax                       // success, AX=0
+
+loadimage_exit:
+	popw    %dx
+	popw    %bp
 	ret
 
 
@@ -221,6 +245,7 @@ readsectors:
 	movl    %eax, dap_lowlba
 	movl    12(%bp), %eax
 	movl    %eax, dap_highlba
+	xorl    %eax, %eax                  // clear %eax
 
 	// perform INT 0x13
 	movw    $dap, %si
@@ -349,11 +374,11 @@ drive_parameters:
 */
 
 loader_lba:                      // logical block address of the image
-	.long   0                    // lower 32 bits
+	.long   1                    // lower 32 bits
 	.long   0                    // upper 32 bits
 
 loader_size:                     // size (in bytes) of the loader image
-	.word   30000
+	.word   2000
 
 drive:                           // the drive number we booted from
 	.byte   0
@@ -397,3 +422,15 @@ partition4:
 
 boot_sig:
 	.word MBR_BOOTSIG
+
+/*
+** The extra data at the end here is for testing the loadimage function
+** We can pretend that this data is the loader image, loader.bin
+*/
+
+//.fill 130 * 512, 1, 0xF0
+
+.fill 0x200, 1, 0xFF
+.fill 0x200, 1, 0xF0
+.fill 0x400, 1, 0xF
+
