@@ -23,10 +23,11 @@ BOOTSTRAP_SIZE  = 446        /* maximum size of the bootstrap code */
 OFFSET_LIMIT	= 65536 - SECTOR_SIZE
 
 
-E_BOOTSTRAP_DEFAULT = '0'
-E_BOOTSTRAP_DISK    = '1'
-E_BOOTSTRAP_NOLBA   = '2'
-E_BOOTSTRAP_TOOBIG  = '3'
+E_BOOTSTRAP_DEFAULT  = '0'
+E_BOOTSTRAP_DISK     = '1'
+E_BOOTSTRAP_NOLBA    = '2'
+E_BOOTSTRAP_TOOBIG   = '3'
+E_BOOTSTRAP_TOOSMALL = '4'
 
 E_BOOTSTRAP_DEBUG1 = 'A'
 E_BOOTSTRAP_DEBUG2 = 'B'
@@ -133,7 +134,7 @@ nextstage:
 ** handle loading the kernel from the boot partition
 */
 
-	debug_breakpoint(3)
+	//debug_breakpoint(3)
 	jmp     $0, $LOADER_ADDRESS
 
 /*
@@ -154,6 +155,8 @@ loadimage:
 	// determine the number of sectors we need to load
 	xorw    %dx, %dx
 	movw    loader_size, %ax
+	orw     %ax, %ax                       // check if the loader_size is zero
+	jz      loadimage_toosmall             // if so exit
 	divw    dp_bytes_per_sector            // ax = sectors to load
 	orw     %dx, %dx
 	jz      loadimage_sectors              // test if the remainder is zero
@@ -178,9 +181,13 @@ loadimage_sectors:
 	movw    $E_BOOTSTRAP_DISK, %ax         // read error occurred
 	jmp     loadimage_exit                 // error, AX=E_BOOTSTRAP_DISK
 
+loadimage_toosmall:
+	movw    $E_BOOTSTRAP_TOOSMALL, %ax     // image size is zero
+	jmp     loadimage_exit                 // error, AX=E_BOOTSTRAP_TOOSMALL
+
 loadimage_toobig:
 	movw    $E_BOOTSTRAP_TOOBIG, %ax       // image is too big ( > 127 sectors)
-	jmp loadimage_exit                     // error, AX=E_BOOTSTRAP_TOOBIG
+	jmp     loadimage_exit                 // error, AX=E_BOOTSTRAP_TOOBIG
 
 loadimage_success:
 	xorw    %ax, %ax                       // success, AX=0
@@ -202,7 +209,7 @@ loadimage_exit:
 ** );
 **
 ** Reads a specified number of sectors from a starting LBA of a drive
-** If an error occurred, the Carry Flag will be set.
+** If an error occurred, AX will be nonzero and CF will be set.
 **
 ** Arguments
 **    word sectors
@@ -374,11 +381,11 @@ drive_parameters:
 */
 
 loader_lba:                      // logical block address of the image
-	.long   1                    // lower 32 bits
+	.long   0                    // lower 32 bits
 	.long   0                    // upper 32 bits
 
 loader_size:                     // size (in bytes) of the loader image
-	.word   2000
+	.word   0
 
 drive:                           // the drive number we booted from
 	.byte   0
@@ -430,7 +437,7 @@ boot_sig:
 
 //.fill 130 * 512, 1, 0xF0
 
-.fill 0x200, 1, 0xFF
-.fill 0x200, 1, 0xF0
-.fill 0x400, 1, 0xF
+//.fill 0x200, 1, 0xFF
+//.fill 0x200, 1, 0xF0
+//.fill 0x400, 1, 0xF
 
