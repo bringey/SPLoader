@@ -14,13 +14,11 @@
 #include <SPLoader/arch/i386-pc/bios/bootstrap.h>
 #include <SPLoader/MBR/MBR.h>
 
-BOOT_SEGMENT    = 0x07C0     /* default BIOS addr to load boot sector */
-BOOT_ADDRESS    = 0x00007C00
-START_SEGMENT   = 0x0000     /* where we'll put the startup code */
-START_OFFSET    = 0x00007E00
-SECTOR_SIZE     = 0x200      /* typical sector size for floppy & HD */
-BOOTSTRAP_SIZE  = 446        /* maximum size of the bootstrap code */ 
-OFFSET_LIMIT	= 65536 - SECTOR_SIZE
+BOOT_SEGMENT = 0x07C0        // default BIOS addr to load boot sector
+BOOT_ADDRESS = 0x7C00
+
+LOADER_LBA_LOCATION  = 0x1B4 // location of the loader LBA
+LOADER_SIZE_LOCATION = 0x1BC // location of the loader size
 
 #define mkcode(type, char) (type << 8) | char
 
@@ -150,6 +148,12 @@ nextstage:
 ** Loads the loader image located at the LBA stored in loader_lba
 **
 ** On success, AX is zero. On failure, AX contains an exit code
+**
+** Returns
+**    AX=0                    - success
+**    AX=E_BOOTSTRAP_DISK     - a read error occurred
+**    AX=E_BOOTSTRAP_TOOSMALL - the loader image size was zero
+**    AX=E_BOOTSTRAP_TOOBIG   - the loader image size > 127 sectors
 */
 loadimage:
 
@@ -162,6 +166,7 @@ loadimage:
 	MAX_SECTORS_PER_TRANSFER = 127
 
 	// determine the number of sectors we need to load
+	// sectors = ceil( loader_size / dp_bytes_per_sector )
 	xorw    %dx, %dx
 	movw    loader_size, %ax
 	orw     %ax, %ax                       // check if the loader_size is zero
@@ -240,46 +245,44 @@ readsectors:
 	pushw   %bp
 	movw    %sp, %bp
 
-	pushw   %cx
 	pushw   %dx
 	pushw   %si
-	pushw   %di
 
-	// setup the DAP
-	movw    $16, dap
+	// setup the DAP (Data address packet)
+	movw    $16, dap                    // 16 bytes is the size of the packet
 
-	movw    4(%bp), %ax
+	movw    4(%bp), %ax                 // set the sectors to read
 	movw    %ax, dap_sectors
 
-	movw    16(%bp), %ax
+	movw    16(%bp), %ax                // move the buffer segment to the dap
 	movw    %ax, dap_buffer_segment
 
-	movw    18(%bp), %ax
+	movw    18(%bp), %ax                // move the buffer offset to the dap
 	movw    %ax, dap_buffer_offset
 
-	movl    8(%bp), %eax
-	movl    %eax, dap_lowlba
-	movl    12(%bp), %eax
-	movl    %eax, dap_highlba
+	movl    8(%bp), %eax                // move the lower 32-bits of the lba
+	movl    %eax, dap_lowlba            // to the dap
+	movl    12(%bp), %eax               // move the upper 32-bits of the lba
+	movl    %eax, dap_highlba           // to the dap
 	xorl    %eax, %eax                  // clear %eax
 
-	// perform INT 0x13
-	movw    $dap, %si
-	xorw    %ax, %ax
-	movw    6(%bp), %dx
-	movb    $0x42, %ah
-	int     $0x13
+	// perform INT 0x13, extended read
+	movw    $dap, %si                   // ds:si = pointer to dap
+	movw    6(%bp), %dx                 // set the drive to use from argument
+	movb    $0x42, %ah                  // extended read, AH=0x42
+	int     $0x13                       // do the read
 
-	popw    %di
 	popw    %si
 	popw    %dx
-	popw    %cx
 
 	popw    %bp
 	ret
 
 /*
 ** Support routine - display a message byte by byte to the monitor.
+**
+** Arguments
+**    DS:SI - The pointer to the null-terminated string to display
 */
 dispMsg:
 	pushw   %ax
@@ -295,6 +298,12 @@ dispMsg_exit:                    // we're done, so return
 	popw    %ax
 	ret
 
+/*
+** Support routine - display a character to the monitor.
+**
+** Arguments:
+**    AL - The character to write
+*/
 dispChar:
 	pushw   %ax
 	pushw   %bx
@@ -309,28 +318,28 @@ dispChar:
 ** Stops execution. Displays the error code stored in label die_code
 */
 die:
-	pushf                        // save register state
-	pushw   %ds                  // only needed for debugging
+	pushf                         // save register state
+	pushw   %ds                   // only needed for debugging
 	pushw   %es
 	pushw   %fs
 	pushw   %gs
 	pusha
 
-	movw    die_code, %ax        // ah = error type, al = error code
-	orb     %ah, %ah             // test error code
-	jz      die_booterror        // if ah=0 then we got a boot error
+	movw    die_code, %ax         // ah = error type, al = error code
+	orb     %ah, %ah              // test error code
+	jz      die_booterror         // if ah=0 then we got a boot error
 	movw    $str_debugError, %si  // otherwise it's a debug breakpoint
 	jmp     die_printerror
 die_booterror:
 	movw    $str_bootError, %si
 die_printerror:
-	call    dispMsg              // print error message
+	call    dispMsg               // print error message
 	movw    $str_errorSuffix, %si
 	call    dispMsg
-	call    dispChar             // print the error code
+	call    dispChar              // print the error code
 	
-	popa                         // restore registers, so we can inspect them
-	popw    %gs                  // with qemu/gdb once halted
+	popa                          // restore registers, so we can inspect them
+	popw    %gs                   // with qemu/gdb once halted
 	popw    %fs
 	popw    %es
 	popw    %ds
@@ -346,8 +355,6 @@ die_code:
 
 /*
 ** DATA AREAS.
-**
-** Next sector number and head number to read from.
 */
 
 /*
@@ -406,6 +413,9 @@ dp_edd               = drive_parameters+26
 
 	.align 4
 
+drive:                           // the drive number we booted from
+	.byte   0
+
 drive_parameters:
 	.word 0x1E
 	.word 0
@@ -430,16 +440,14 @@ str_errorSuffix:
 ** Location and size of the loader image (loader.bin)
 ** These are set when installing the loader to the boot medium
 */
-
+	.org    LOADER_LBA_LOCATION
 loader_lba:                      // logical block address of the image
 	.long   0                    // lower 32 bits
 	.long   0                    // upper 32 bits
 
+	.org    LOADER_SIZE_LOCATION
 loader_size:                     // size (in bytes) of the loader image
 	.word   0
-
-drive:                           // the drive number we booted from
-	.byte   0
 
 // ===========================================================================
 //                      END OF MBR BOOTSTRAP CODE
