@@ -22,16 +22,25 @@ SECTOR_SIZE     = 0x200      /* typical sector size for floppy & HD */
 BOOTSTRAP_SIZE  = 446        /* maximum size of the bootstrap code */ 
 OFFSET_LIMIT	= 65536 - SECTOR_SIZE
 
+#define mkcode(type, char) (type << 8) | char
 
-E_BOOTSTRAP_DEFAULT  = '0'
-E_BOOTSTRAP_DISK     = '1'
-E_BOOTSTRAP_NOLBA    = '2'
-E_BOOTSTRAP_TOOBIG   = '3'
-E_BOOTSTRAP_TOOSMALL = '4'
+// error codes
+//   byte 1: 0
+//   byte 0: error code character
 
-E_BOOTSTRAP_DEBUG1 = 'A'
-E_BOOTSTRAP_DEBUG2 = 'B'
-E_BOOTSTRAP_DEBUG3 = 'C'
+E_BOOTSTRAP_DEFAULT  = mkcode(0, '0')
+E_BOOTSTRAP_DISK     = mkcode(0, '1')
+E_BOOTSTRAP_NOLBA    = mkcode(0, '2')
+E_BOOTSTRAP_TOOBIG   = mkcode(0, '3')
+E_BOOTSTRAP_TOOSMALL = mkcode(0, '4')
+
+// debug codes
+//   byte 1: 1
+//   byte 0: debug code character
+
+E_BOOTSTRAP_DEBUG1 = mkcode(1, 'A')
+E_BOOTSTRAP_DEBUG2 = mkcode(1, 'B')
+E_BOOTSTRAP_DEBUG3 = mkcode(1, 'C')
 
 
 //
@@ -269,30 +278,63 @@ readsectors:
 	popw    %bp
 	ret
 
+/*
+** Support routine - display a message byte by byte to the monitor.
+*/
+dispMsg:
+	pushw   %ax
+dispMsg_loop:
+	lodsb                        // grab next character
+	orb     %al, %al             // AL is character to write
+	jz      dispMsg_exit         // if we've reached the NUL, get out
+
+	call    dispChar             // otherwise, print and repeat
+	jmp     dispMsg_loop
+
+dispMsg_exit:                    // we're done, so return
+	popw    %ax
+	ret
+
+dispChar:
+	pushw   %ax
+	pushw   %bx
+	movb    $0x0e, %ah           // write and advance cursor
+	movw    $0x07, %bx           // page 0, white on black, no blink
+	int     $0x10
+	popw    %ax
+	popw    %bx
+	ret
 
 /*
 ** Stops execution. Displays the error code stored in label die_code
 */
 die:
-	pusha                      // save register state
-	pushw   %ds                // only needed for debugging
+	pushf                        // save register state
+	pushw   %ds                  // only needed for debugging
 	pushw   %es
 	pushw   %fs
 	pushw   %gs
-	pushf
+	pusha
 
-
-	movb    $0x0e, %ah         // write and advance cursor
-	movb    die_code, %al      // char to print = die_code
-	movw    $0x07, %bx         // page 0, white on black, no blink
-	int     $0x10
+	movw    die_code, %ax        // ah = error type, al = error code
+	orb     %ah, %ah             // test error code
+	jz      die_booterror        // if ah=0 then we got a boot error
+	movw    $str_debugError, %si  // otherwise it's a debug breakpoint
+	jmp     die_printerror
+die_booterror:
+	movw    $str_bootError, %si
+die_printerror:
+	call    dispMsg              // print error message
+	movw    $str_errorSuffix, %si
+	call    dispMsg
+	call    dispChar             // print the error code
 	
-	popf                       // restore registers, so we can inspect them
-	popw    %gs                // with qemu/gdb once halted
+	popa                         // restore registers, so we can inspect them
+	popw    %gs                  // with qemu/gdb once halted
 	popw    %fs
 	popw    %es
 	popw    %ds
-	popa
+	popf
 
 die_loop:
 	hlt
@@ -373,6 +415,15 @@ drive_parameters:
 	.quad 0
 	.word 0
 	.long 0
+
+str_bootError:
+	.asciz "Boot error"
+
+str_debugError:
+	.asciz "Debug breakpoint"
+
+str_errorSuffix:
+	.asciz ". Code: "
 
 
 /*
