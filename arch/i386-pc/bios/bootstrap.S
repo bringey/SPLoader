@@ -7,6 +7,12 @@
 ** binary is installed to the MBR and is responsible for loading the loader
 ** binary.
 **
+** As of commit id 852560b406c38fa4f20f893ad86558a5d41a7cc9
+** The text section of this binary is 400 bytes in size. This only leaves 46
+** bytes for any future additions. Should an addition be needed, the bootstrap
+** will need to be modified to load another sector (or optimizations could be
+** made).
+**
 ** The boot process:
 **     bootstrap.bin -> loader.bin -> kern.bin
 */
