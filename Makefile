@@ -1,4 +1,7 @@
 
+# Default target TODO
+all: loader.bin
+
 include mk/marker.mk
 
 include mk/verbose.mk
@@ -13,8 +16,16 @@ include includes.default.mk
 include arch/$(ISA)-$(PLATFORM)/arch.mk
 
 
-# Default target TODO
-#all:
+LOADER_OBJ =
+LOADER_OBJ := $(addprefix $(OBJDIR)/loader/,$(LOADER_OBJ))
+
+LOADER_FINAL_OBJ = loader.o
+LOADER_FINAL_OBJ := $(addprefix $(BINDIR)/loader/,$(LOADER_FINAL_OBJ))
+
+LOADER_BIN = loader.bin
+LOADER_BIN := $(addprefix $(BINDIR)/loader/,$(LOADER_BIN))
+
+LOADER_OBJ_LIST = $(LOADER_ENTRY_OBJ) $(LOADER_ARCH_OBJ) $(LOADER_OBJ)
 
 
 # Pattern Rules
@@ -31,6 +42,19 @@ $(OBJDIR)/%.o: %.S $(MARKER)
 	$(AS_V) $(ASFLAGS) -o $@ $(OBJDIR)/$*.s -a=$(OBJDIR)/$*.lst
 	@$(RM) -f $(OBJDIR)/$*.s
 
+# TARGETS
+
+.PHONY: all loader.bin bootstrap.bin
+
+loader.bin: $(LOADER_BIN)
+
+bootstrap.bin: $(BIOS_BOOTSTRAP_BIN)
+
+$(LOADER_FINAL_OBJ): $(LOADER_OBJ_LIST) $(MARKER)
+	$(LD_V) $(LDFLAGS) -o $@ -e early -Ttext 0x1000 $(LOADER_OBJ_LIST)
+
+$(LOADER_BIN): $(LOADER_FINAL_OBJ) $(MARKER)
+	$(LD_V) $(LDFLAGS) -o $@ -s -e early --oformat binary -Ttext 0x1000 $<
 
 
 #
@@ -57,3 +81,4 @@ clean: $(CLEAN_TARGETS)
 realclean: $(REALCLEAN_TARGETS)
 	rm -f $(BUILD_DIR)/*
 
+-include $(LOADER_OBJ:.o=.d)
