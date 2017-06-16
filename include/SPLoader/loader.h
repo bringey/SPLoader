@@ -1,0 +1,8 @@
+#ifndef _SPLOADER_LOADER_H
+#define _SPLOADER_LOADER_H
+
+#define LOADER_GDT_SEGMENT 0x01100
+#define LOADER_GDT_ADDRESS 0x11000
+
+
+#endif

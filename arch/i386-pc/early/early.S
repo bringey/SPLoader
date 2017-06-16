@@ -7,8 +7,11 @@
 **
 ** The bootstrap transfers control here after loading the loader image.
 ** The early routine is responsible for enabling the A20 gate, setting up the
-** GDT and IDT and entering protected mode.
+** the GDT and IDT and entering protected mode.
 */
+
+#include <SPLoader/loader.h>
+
 
 	.arch i686
 
@@ -17,17 +20,108 @@
 	.globl early, begtext
 
 	.globl a20_check, a20_enable
+	.globl die
 
 
 begtext:
 early:
 	cli
-	call    a20_check
-	hlt
+	movw    $0, %ax
+	movw    %ax, %ds                 // adjust ds to match cs
+
+	movb    $0x80, %al               // disable NMIs
+	outb    %al, $0x70
+
+	call    a20_check                // check the status of the A20 gate
 	orw     %ax, %ax                 // test result
 	jnz     early_a20done            // if 1, A20 is already enabled
 	call    a20_enable               // enable A20 gate
-
 early_a20done:
-	hlt
 
+	/* 
+	** Move the GDT defined in start_gdt to LOADER_GDT_ADDRESS
+	** Now that A20 is enabled, we can access memory above 1 MiB
+	*/
+	call    __move_gdt
+	jmp     die
+
+__move_gdt:
+	pushw   %bp
+	movw    %sp, %bp
+
+	pushw   %es
+	pushw   %si
+	pushw   %di
+
+	movw    $LOADER_GDT_SEGMENT, %ax
+	movw    %ax, %es
+	movw    $early_gdt, %si           // source = early_gdt
+	movw    $0, %di                   // destination = $LOADER_GDT_SEGMENT:0
+	movw    $gdt_len, %cx             // cx = length of early_gdt in bytes
+	cld
+	rep movsb
+
+	xorw    %ax, %ax
+	popw    %di
+	popw    %si
+	popw    %es
+	popw    %bp
+	ret
+
+
+
+early_idt:
+	.word   0x800
+	.quad   0x0
+
+early_gdt:
+	.word   gdt_len - 1
+	.quad   LOADER_GDT_ADDRESS
+
+
+/*
+** The GDT.  This cannot be created in C because the bootstrap is not
+** linked with that code.
+*/
+start_gdt:       // first GDT entry is always null
+	.word 0, 0, 0, 0
+
+code32_seg:	     // limit FFFFF, base 0, R/E code seg, 32-bit 4K
+	.word 0xFFFF
+	.word 0x0000
+	.byte   0x00
+	.byte   0x9A // 1 00 1 1010: present, prio 0, C/D, R/E code
+	.byte   0xCF // 1 1 00 1111: 4K, 32-bit, 0, 0, limit[19:16]
+	.byte   0x00
+
+data32_seg:	     // limit FFFFF, base 0, R/W data seg, 32-bit 4K
+	.word 0xFFFF
+	.word 0x0000
+	.byte   0x00
+	.byte   0x92 // 1 00 1 0010: present, prio 0, C/D, R/W data
+	.byte   0xCF
+	.byte   0x00
+
+//
+// 16-bit code and data segments
+// These segments are used if a return to real mode is needed
+//
+
+code16_seg:
+	.word 0xFFFF
+	.word 0x0000
+	.byte   0x00 
+	.byte   0x9A
+	.byte   0x0F
+	.byte   0x00
+
+data16_seg:
+	.word 0xFFFF
+	.word 0x0000
+	.byte   0x00
+	.byte   0x92
+	.byte   0x0F
+	.byte   0x00
+
+end_gdt:
+gdt_len = end_gdt - start_gdt
