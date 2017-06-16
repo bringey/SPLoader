@@ -19,12 +19,16 @@
 
 #include <SPLoader/arch/i386-pc/bios/bootstrap.h>
 #include <SPLoader/MBR/MBR.h>
+#include <SPLoader/loader.h>
 
 BOOT_SEGMENT = 0x07C0        // default BIOS addr to load boot sector
 BOOT_ADDRESS = 0x7C00
 
 LOADER_LBA_LOCATION  = 0x1B4 // location of the loader LBA
 LOADER_SIZE_LOCATION = 0x1BC // location of the loader size
+
+DP_LOCATION  = 0x400 // location of the drive parameter structure
+DAP_LOCATION = 0x420 // location of the data address packet structure
 
 #define mkcode(type, char) (type << 8) | char
 
@@ -121,6 +125,7 @@ lbasupport:
 */
 
 	movw    $drive_parameters, %si
+	movw    $0x1E, (%si)
 	movb    drive, %dl
 	movw    $0x4800, %ax
 	int     $0x13
@@ -135,10 +140,25 @@ diskready:
 ** after the MBR.
 */
 
+	// start with loader_early.bin
+	// This is the first sector of loader.bin, located at loader_lba
+	/*pushw   $LOADER_EARLY_ADDRESS          // buffer: %ds:0x200
+	pushw   %ds
+	pushl   loader_lba+4                   // LBA of the loader image
+	pushl   loader_lba
+	pushw   drive                          // drive: drive we booted from
+	pushw   $1                             // sectors: 1
+	call    readsectors
+	add     $16, %sp
+	debug_breakpoint(1)
+	orw     %ax, %ax
+	jnz     diskerror                      // check if the read was successful
+*/
 	call    loadimage
 	orw     %ax, %ax
 	jz      nextstage
 
+diskerror:
 	exit(%ax)                    // error occured during load, die
 
 nextstage:
@@ -385,7 +405,9 @@ dap_buffer_offset  = dap_buffer
 dap_lowlba         = dap+8
 dap_highlba        = dap+12
 
-	.align 4
+dap = DAP_LOCATION
+
+/*	.align 4
 
 dap:
 	.byte 16
@@ -393,7 +415,7 @@ dap:
 	.word 0
 	.long 0
 	.long 0
-	.long 0
+	.long 0*/
 
 /*
 ** Boot drive parameters
@@ -418,12 +440,14 @@ dp_sectors           = drive_parameters+16
 dp_bytes_per_sector  = drive_parameters+24
 dp_edd               = drive_parameters+26
 
-	.align 4
+drive_parameters = DP_LOCATION
+
+	//.align 4
 
 drive:                           // the drive number we booted from
 	.byte   0
 
-drive_parameters:
+/*drive_parameters:
 	.word 0x1E
 	.word 0
 	.long 0
@@ -431,7 +455,7 @@ drive_parameters:
 	.long 0
 	.quad 0
 	.word 0
-	.long 0
+	.long 0*/
 
 str_bootError:
 	.asciz "Boot error"
