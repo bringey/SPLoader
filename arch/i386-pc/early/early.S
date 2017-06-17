@@ -26,8 +26,6 @@
 begtext:
 early:
 	cli
-	movw    $0, %ax
-	movw    %ax, %ds                 // adjust ds to match cs
 
 	movb    $0x80, %al               // disable NMIs
 	outb    %al, $0x70
@@ -43,7 +41,24 @@ early_a20done:
 	** Now that A20 is enabled, we can access memory above 1 MiB
 	*/
 	call    __move_gdt
-	jmp     die
+
+	// Load IDT and GDT
+
+	lidt    early_idt
+	lgdt    early_gdt
+
+	// enter protected mode
+
+	movl    %cr0, %eax               // get current CR0
+	orl     $1, %eax                 // enable the PE bit
+	movl    %eax, %cr0               // update CR0
+
+	.byte 0x66 // 32-bit mode prefix
+	.code32
+	ljmp    $LOADER_GDT_CODE32, $LOADER_ADDRESS
+	.code16
+
+
 
 __move_gdt:
 	pushw   %bp
@@ -55,7 +70,7 @@ __move_gdt:
 
 	movw    $LOADER_GDT_SEGMENT, %ax
 	movw    %ax, %es
-	movw    $early_gdt, %si           // source = early_gdt
+	movw    $start_gdt, %si           // source = early_gdt
 	movw    $0, %di                   // destination = $LOADER_GDT_SEGMENT:0
 	movw    $gdt_len, %cx             // cx = length of early_gdt in bytes
 	cld
@@ -72,7 +87,7 @@ __move_gdt:
 
 early_idt:
 	.word   0x800
-	.quad   0x0
+	.quad   LOADER_IDT_ADDRESS
 
 early_gdt:
 	.word   gdt_len - 1

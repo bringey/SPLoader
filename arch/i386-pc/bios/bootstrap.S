@@ -67,7 +67,7 @@ E_BOOTSTRAP_DEBUG3 = mkcode(1, 'C')
 	.code16
 	.text
 
-	.globl die, dispMsg, dispChar
+	.globl die, die_code, dispMsg, dispChar
 
 // ===========================================================================
 //                      START OF MBR BOOTSTRAP CODE

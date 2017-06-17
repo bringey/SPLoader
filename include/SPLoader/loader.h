@@ -15,9 +15,23 @@
 
 //
 // Location of the loader's GDT
+// 0xD00 - 0xD28
 //
-#define LOADER_GDT_SEGMENT 0x01100
-#define LOADER_GDT_ADDRESS 0x11000
+#define LOADER_GDT_SEGMENT 0x0D0
+#define LOADER_GDT_ADDRESS 0xD00
+
+#define LOADER_GDT_NULL   0x00
+#define LOADER_GDT_CODE32 0x08
+#define LOADER_GDT_DATA32 0x10
+#define LOADER_GDT_CODE16 0x18
+#define LOADER_GDT_DATA16 0x20
+
+//
+// Location of the loader's IDT
+// 0x500 - 0xD00
+//
+#define LOADER_IDT_SEGMENT 0x050
+#define LOADER_IDT_ADDRESS 0x500
 
 
 #endif
