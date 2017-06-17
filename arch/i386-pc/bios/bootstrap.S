@@ -24,7 +24,7 @@
 BOOT_SEGMENT = 0x07C0        // default BIOS addr to load boot sector
 BOOT_ADDRESS = 0x7C00
 
-LOADER_LBA_LOCATION  = 0x1B4 // location of the loader LBA
+LOADER_LBA_LOCATION  = 0x1B8 // location of the loader LBA
 LOADER_SIZE_LOCATION = 0x1BC // location of the loader size
 
 DP_LOCATION  = 0x400 // location of the drive parameter structure
@@ -140,25 +140,10 @@ diskready:
 ** after the MBR.
 */
 
-	// start with loader_early.bin
-	// This is the first sector of loader.bin, located at loader_lba
-	/*pushw   $LOADER_EARLY_ADDRESS          // buffer: %ds:0x200
-	pushw   %ds
-	pushl   loader_lba+4                   // LBA of the loader image
-	pushl   loader_lba
-	pushw   drive                          // drive: drive we booted from
-	pushw   $1                             // sectors: 1
-	call    readsectors
-	add     $16, %sp
-	debug_breakpoint(1)
-	orw     %ax, %ax
-	jnz     diskerror                      // check if the read was successful
-*/
 	call    loadimage
 	orw     %ax, %ax
 	jz      nextstage
 
-diskerror:
 	exit(%ax)                    // error occured during load, die
 
 nextstage:
@@ -169,7 +154,7 @@ nextstage:
 */
 
 	//debug_breakpoint(3)
-	jmp     $0, $LOADER_ADDRESS
+	jmp     LOADER_EARLY_ADDRESS
 
 /*
 ** Loads the loader image located at the LBA stored in loader_lba
@@ -183,10 +168,6 @@ nextstage:
 **    AX=E_BOOTSTRAP_TOOBIG   - the loader image size > 127 sectors
 */
 loadimage:
-
-	pushw   %bp
-	movw    %sp, %bp
-
 	pushw   %dx
 
 
@@ -208,17 +189,34 @@ loadimage_sectors:
 	cmpw    $MAX_SECTORS_PER_TRANSFER, %ax
 	jg      loadimage_toobig               // test if the image is too big
 
-	pushw   $0                             // buffer: LOADER_SEGMENT:0
-	pushw   $LOADER_SEGMENT
-	pushl   loader_lba+4                   // LBA of the loader image
-	pushl   loader_lba
-	pushw   drive                          // drive: drive we booted from
-	pushw   %ax                            // sectors: AX
+	// load loader_early.bin first, then loader.bin second
+	// loader_early.bin is in the first sector
+
+	movw    %ax, %dx                       // save the sector count for later
+	movw    $dap, %si                      // si = pointer to DAP struct
+	movw    $16, dap_size                  // set the size to 16 (must be set)
+	movw    %ds, dap_buffer_segment
+	movw    $LOADER_EARLY_ADDRESS, dap_buffer_offset
+	movl    loader_lba, %eax
+	movl    %eax, dap_lowlba
+	xorl    %eax, %eax
+	movw    $1, dap_sectors
 	call    readsectors
-	add     $16, %sp
+	orw     %ax, %ax
+	jnz     loadimage_diskerror
+
+	// now load loader.bin which is %DX-1 sectors long
+
+	movw    $0, dap_buffer_offset
+	movw    $LOADER_SEGMENT, dap_buffer_segment
+	incl    dap_lowlba                     // we read the first sector,
+	decw    %dx                            // increment lba and decrement the
+	movw    %dx, dap_sectors               // sector count
+	call    readsectors
 	orw     %ax, %ax
 	jz      loadimage_success              // was the read successful?
 
+loadimage_diskerror:
 	movw    $E_BOOTSTRAP_DISK, %ax         // read error occurred
 	jmp     loadimage_exit                 // error, AX=E_BOOTSTRAP_DISK
 
@@ -235,74 +233,29 @@ loadimage_success:
 
 loadimage_exit:
 	popw    %dx
-	popw    %bp
 	ret
 
 
 
+
 /*
-** __cdecl void readsectors(
-**          word sectors,
-**          word drive,
-**          quadword lba,
-**          word buffer_segment,
-**          word buffer_offset
-** );
-**
 ** Reads a specified number of sectors from a starting LBA of a drive
 ** If an error occurred, AX will be nonzero and CF will be set.
 **
-** Arguments
-**    word sectors
-**        The number of sectors to load, note that some BIOS limit this to 127
-**    word drive
-**        The drive to read from (0x80 for the first drive, 0x0 for floppy)
-**    quad lba
-**        The 48-bit starting LBA to read from, stored as a quadword.
-**    word buffer_segment
-**    word buffer_offset
-**        Segment:Offset pair for the location in memory to store the sectors
+** Arguments:
+**   SI: pointer to the DAP structure
 **
-** Returns
-**    AX = 0 on success, nonzero otherwise
-**
+** Returns:
+**   AX = 0 on success, nonzero otherwise
 */
 readsectors:
-
-	pushw   %bp
-	movw    %sp, %bp
-
 	pushw   %dx
-	pushw   %si
 
-	// setup the DAP (Data address packet)
-	movw    $16, dap                    // 16 bytes is the size of the packet
+	movw    drive, %dx
+	movw    $0x4200, %ax
+	int     $0x13
 
-	movw    4(%bp), %ax                 // set the sectors to read
-	movw    %ax, dap_sectors
-
-	movw    16(%bp), %ax                // move the buffer segment to the dap
-	movw    %ax, dap_buffer_segment
-
-	movw    18(%bp), %ax                // move the buffer offset to the dap
-	movw    %ax, dap_buffer_offset
-
-	movl    8(%bp), %eax                // move the lower 32-bits of the lba
-	movl    %eax, dap_lowlba            // to the dap
-	movl    12(%bp), %eax               // move the upper 32-bits of the lba
-	movl    %eax, dap_highlba           // to the dap
-	xorl    %eax, %eax                  // clear %eax
-
-	// perform INT 0x13, extended read
-	movw    $dap, %si                   // ds:si = pointer to dap
-	movw    6(%bp), %dx                 // set the drive to use from argument
-	movb    $0x42, %ah                  // extended read, AH=0x42
-	int     $0x13                       // do the read
-
-	popw    %si
 	popw    %dx
-
-	popw    %bp
 	ret
 
 /*
@@ -474,7 +427,7 @@ str_errorSuffix:
 	.org    LOADER_LBA_LOCATION
 loader_lba:                      // logical block address of the image
 	.long   0                    // lower 32 bits
-	.long   0                    // upper 32 bits
+//	.long   0                    // upper 32 bits
 
 	.org    LOADER_SIZE_LOCATION
 loader_size:                     // size (in bytes) of the loader image

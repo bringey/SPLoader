@@ -13,9 +13,9 @@
 #ifndef	_SPLOADER_ARCH_I386_PC_BIOS_BOOTSTRAP_H
 #define	_SPLOADER_ARCH_I386_PC_BIOS_BOOTSTRAP_H
 
-#define LOADER_SEGMENT 0x0100  // 0100:0000
-#define LOADER_ADDRESS 0x1000  // and up
-#define LOADER_STACK   0x1000  // and down
+//#define LOADER_SEGMENT 0x0100  // 0100:0000
+//#define LOADER_ADDRESS 0x1000  // and up
+//#define LOADER_STACK   0x1000  // and down
 
 /*
 ** The target program itself
