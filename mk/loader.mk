@@ -4,10 +4,10 @@
 SUBDIR := loader
 
 # Architecture-specific makefile
--include mk/$(ISA)/loader.mk
+-include $(ISA_MAKEFILE)
 
 # Platform-specific makefile
--include mk/$(ISA)/$(PLATFORM)/loader.mk
+-include $(PLATFORM_MAKEFILE)
 
 
 LOADER_OBJ =

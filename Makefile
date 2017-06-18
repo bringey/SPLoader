@@ -27,7 +27,7 @@ $(BUILD_DIR)/%.o: %.c $(MARKER)
 $(BUILD_DIR)/%.o: %.S $(MARKER)
 	@$(CPP) -MD -MT $@ $(CPPFLAGS) -o $(BUILD_DIR)/$*.s $<
 	$(AS_V) $(ASFLAGS) -o $@ $(BUILD_DIR)/$*.s -a=$(BUILD_DIR)/$*.lst
-	@$(RM) -f $(BUILD_DIR)/$*.s
+#	@$(RM) -f $(BUILD_DIR)/$*.s
 
 # TARGETS
 
