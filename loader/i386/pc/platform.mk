@@ -31,6 +31,18 @@ LOADER_EARLY_BIN := $(addprefix $(BUILD_DIR)/,$(LOADER_EARLY_BIN))
 # linker script for loader_early.bin
 LOADER_EARLY_LDS := $(PLATFORMDIR)/early/loader_early.lds
 
+#
+# Platform-specific object files
+#
+
+LOADER_ENTRY_OBJ = startup.o
+
+LOADER_ENTRY_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_ENTRY_OBJ))
+
+LOADER_ARCH_OBJ = 
+LOADER_ARCH_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_ARCH_OBJ))
+
+
 
 $(BIOS_BOOTSTRAP_FINAL_OBJ): $(BIOS_BOOTSTRAP_OBJ) $(MARKER)
 	$(LD_V) $(LDFLAGS) -Ttext 0x0 -e begtext -o $@ $(BIOS_BOOTSTRAP_OBJ)

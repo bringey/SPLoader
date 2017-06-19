@@ -11,6 +11,7 @@
 // Where loader.bin gets loaded to
 //
 #define LOADER_ADDRESS 0x10000
+#define LOADER_STACK   0x10000
 #define LOADER_SEGMENT 0x01000
 
 //
