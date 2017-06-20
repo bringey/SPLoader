@@ -16,14 +16,14 @@ LOADER_OBJ := $(addprefix $(BUILD_DIR)/loader/,$(LOADER_OBJ))
 LOADER_FINAL_OBJ = loader.final.o
 LOADER_FINAL_OBJ := $(addprefix $(BUILD_DIR)/loader/,$(LOADER_FINAL_OBJ))
 
-LOADER_BIN = loader.bin
+LOADER_BIN = loader32.bin
 LOADER_BIN := $(addprefix $(BUILD_DIR)/,$(LOADER_BIN))
 
 LOADER_OBJ_LIST = $(LOADER_ENTRY_OBJ) $(LOADER_ARCH_OBJ) $(LOADER_OBJ)
 
 .PHONY: loader.bin
 
-loader.bin: $(LOADER_BIN)
+loader32.bin: $(LOADER_BIN)
 
 
 $(LOADER_FINAL_OBJ): $(LOADER_OBJ_LIST) $(MARKER)

@@ -14,7 +14,7 @@ BIOS_BOOTSTRAP_BIN = bootstrap.bin
 BIOS_BOOTSTRAP_BIN := $(addprefix $(BUILD_DIR)/,$(BIOS_BOOTSTRAP_BIN))
 
 #
-# loader_early binary targets
+# loader_early (aka loader16) binary targets
 #
 
 # early is first since it's the entry point
@@ -25,7 +25,7 @@ LOADER_EARLY_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_EARLY_OBJ)
 LOADER_EARLY_FINAL_OBJ = early/loader_early.final.o
 LOADER_EARLY_FINAL_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_EARLY_FINAL_OBJ))
 
-LOADER_EARLY_BIN = loader_early.bin
+LOADER_EARLY_BIN = loader16.bin
 LOADER_EARLY_BIN := $(addprefix $(BUILD_DIR)/,$(LOADER_EARLY_BIN))
 
 # linker script for loader_early.bin
@@ -65,7 +65,7 @@ $(LOADER_EARLY_BIN): $(LOADER_EARLY_FINAL_OBJ) $(MARKER)
 
 bootstrap.bin: $(BIOS_BOOTSTRAP_BIN)
 
-loader_early.bin: $(LOADER_EARLY_BIN)
+loader16.bin: $(LOADER_EARLY_BIN)
 
 -include $(BIOS_BOOTSTRAP_OBJ:.o=.d)
 -include $(LOADER_EARLY_OBJ:.o=.d)
