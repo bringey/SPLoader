@@ -10,8 +10,8 @@
 ** Description:	Addresses where various stuff goes in memory.
 */
 
-#ifndef	_SPLOADER_ARCH_I386_PC_BIOS_BOOTSTRAP_H
-#define	_SPLOADER_ARCH_I386_PC_BIOS_BOOTSTRAP_H
+#ifndef	_SPLOADER_I386_PC_BIOS_BOOTSTRAP_H
+#define	_SPLOADER_I386_PC_BIOS_BOOTSTRAP_H
 
 //#define LOADER_SEGMENT 0x0100  // 0100:0000
 //#define LOADER_ADDRESS 0x1000  // and up

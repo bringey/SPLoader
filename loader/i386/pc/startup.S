@@ -36,3 +36,11 @@ _start:
 
 
 	call    main
+
+
+	// returned from main! do nothing forever
+	cli
+
+_end:
+	hlt
+	jmp     _end

@@ -17,7 +17,7 @@
 **     bootstrap.bin -> loader.bin -> kern.bin
 */
 
-#include <SPLoader/arch/i386-pc/bios/bootstrap.h>
+#include <SPLoader/i386/pc/bios/bootstrap.h>
 #include <SPLoader/MBR/MBR.h>
 #include <SPLoader/loader.h>
 
