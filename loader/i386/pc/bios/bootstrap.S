@@ -21,11 +21,11 @@
 #include <SPLoader/MBR/MBR.h>
 #include <SPLoader/loader.h>
 
-BOOT_SEGMENT = 0x07C0        // default BIOS addr to load boot sector
-BOOT_ADDRESS = 0x7C00
+//BOOT_SEGMENT = 0x07C0        // default BIOS addr to load boot sector
+//BOOT_ADDRESS = 0x7C00
 
-LOADER_LBA_LOCATION  = 0x1B8 // location of the loader LBA
-LOADER_SIZE_LOCATION = 0x1BC // location of the loader size
+//LOADER_LBA_LOCATION  = 0x1B8 // location of the loader LBA
+//LOADER_SIZE_LOCATION = 0x1BC // location of the loader size
 
 DP_LOCATION  = 0x400 // location of the drive parameter structure
 DAP_LOCATION = 0x420 // location of the data address packet structure
