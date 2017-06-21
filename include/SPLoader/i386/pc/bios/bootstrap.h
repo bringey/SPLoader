@@ -13,8 +13,9 @@
 #define BOOT_ADDRESS 0x7C00
 #define BOOT_STACK   0x4000        // stack top: 07C0:4000 (0xBC00)
 
-#define LOADER_LBA_LOCATION 0x1B8 // location of the loader LBA
-#define LOADER_SIZE_LOCATION 0x1BC // location of the loader size
+#define LOADER_LBA_LOCATION    0x1B4 // location of the loader LBA
+#define LOADER_SIZE_LOCATION   0x1B8 // location of the loader size
+#define LOADER16_SIZE_LOCATION 0x1BA // location of the loader16 size
 
 #define mkcode(type, char) (type << 8) | char
 

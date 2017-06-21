@@ -135,15 +135,20 @@ nextstage:
 **    AX=E_BOOTSTRAP_TOOBIG   - the loader image size > 127 sectors
 */
 loadimage:
+	pushw   %bx
+	pushw   %cx
 	pushw   %dx
+	pushw   %si
+	pushw   %di
 
 
 	MAX_SECTORS_PER_TRANSFER = 127
 
 	// determine the number of sectors we need to load
-	// sectors = ceil( loader_size / dp_bytes_per_sector )
+	// sectors = ceil( (loader_size + loader16_size) / dp_bytes_per_sector )
 	xorw    %dx, %dx
 	movw    loader_size, %ax
+	addw    loader16_size, %ax
 	orw     %ax, %ax                       // check if the loader_size is zero
 	jz      loadimage_toosmall             // if so exit
 	divw    dp_bytes_per_sector            // ax = sectors to load
@@ -156,32 +161,70 @@ loadimage_sectors:
 	cmpw    $MAX_SECTORS_PER_TRANSFER, %ax
 	jg      loadimage_toobig               // test if the image is too big
 
-	// load loader16.bin first, then loader.bin second
-	// loader16.bin is in the first sector
+	// process:
+	// load the entire thing to 0x10000
+	// move loader16.bin to 0x7E00
+	// shift loader.bin so that it starts at 0x10000
+	// clear the mem after the move
 
-	movw    %ax, %dx                       // save the sector count for later
 	movw    $dap, %si                      // si = pointer to DAP struct
 	movw    $16, dap_size                  // set the size to 16 (must be set)
-	movw    %ds, dap_buffer_segment
-	movw    $LOADER16_ADDRESS, dap_buffer_offset
-	movl    loader_lba, %eax
+	movw    $LOADER_SEGMENT, dap_buffer_segment  // setup transfer buffer
+	movw    $0, dap_buffer_offset                // 1000:0000 (0x10000)
+	movw    %ax, dap_sectors               // set the sectors to read
+	movl    loader_lba, %eax               // set the starting LBA
 	movl    %eax, dap_lowlba
-	xorl    %eax, %eax
-	movw    $1, dap_sectors
-	call    readsectors
+	xorl    %eax, %eax                     // clear the high order bits
+	call    readsectors                    // do the read
 	orw     %ax, %ax
-	jnz     loadimage_diskerror
+	jnz     loadimage_diskerror            // was read successful?
 
-	// now load loader.bin which is %DX-1 sectors long
+	// move loader16.bin to 0x7E00
+	// CX = loader16_size
+	// DS:SI = 1000:0000
+	// ES:DI = 07C0:0200
 
-	movw    $0, dap_buffer_offset
-	movw    $LOADER_SEGMENT, dap_buffer_segment
-	incl    dap_lowlba                     // we read the first sector,
-	decw    %dx                            // increment lba and decrement the
-	movw    %dx, dap_sectors               // sector count
-	call    readsectors
-	orw     %ax, %ax
-	jz      loadimage_success              // was the read successful?
+	movw    loader_size, %bx               // BX = loader_size (save for later)
+	movw    loader16_size, %cx             // CX = loader16_size
+	movw    %cx, %dx                       // DX = CX (save for later)
+
+	pushw   %ds                            // save segment regs
+	pushw   %es
+	movw    $BOOT_SEGMENT, %ax
+	movw    %ax, %es                       // ES = 0x07C0
+	movw    $LOADER_SEGMENT, %ax
+	movw    %ax, %ds                       // DS = 0x1000
+
+	xorw    %si, %si                       // SI = 0
+	movw    $LOADER16_ADDRESS, %di         // DI = 0x200
+	cld
+	rep movsb                              // copy
+
+	// shift loader.bin to 0x10000
+	// CX = loader_size
+	// DS:SI = 1000:(loader16_size)
+	// ES:DI = 1000:0000
+
+	movw    %ax, %es                       // AX still has LOADER_SEGMENT
+	movw    %bx, %cx                       // CX = loader_size
+	movw    %dx, %si                       // SI = loader16_size
+	xorw    %di, %di                       // DI = 0
+	rep movsb
+
+	// clear parts of loader.bin leftover from the shift
+	// CX = loader16_size
+	// AX = 0
+	// ES:DI = 1000:(loader_size)
+	movw    %dx, %cx                       // DX still has loader16_size
+	xorw    %ax, %ax                       // AX = 0
+	movw    %bx, %di                       // BX still has loader_size
+	rep stosb                              // clear mem
+
+
+	popw    %es                            // restore segment regs
+	popw    %ds
+
+	jmp     loadimage_success              // done!
 
 loadimage_diskerror:
 	movw    $E_BOOTSTRAP_DISK, %ax         // read error occurred
@@ -199,9 +242,26 @@ loadimage_success:
 	xorw    %ax, %ax                       // success, AX=0
 
 loadimage_exit:
+	popw    %di
+	popw    %si
 	popw    %dx
+	popw    %cx
+	popw    %bx
 	ret
 
+
+/*
+** Routine for calculating the number of sectors to read from an image size.
+** Drive Parameters must be read before calling this function.
+**
+** Arguments:
+**   AX: image size
+**
+** Returns:
+**   AX: sector count
+*/
+//sectorcount:
+//	ret
 
 
 
@@ -405,6 +465,10 @@ loader_lba:                      // logical block address of the image
 loader_size:                     // size (in bytes) of the loader image
 	.word   0
 
+	.org    LOADER16_SIZE_LOCATION
+loader16_size:
+	.word   0
+
 // ===========================================================================
 //                      END OF MBR BOOTSTRAP CODE
 // ===========================================================================
@@ -453,6 +517,6 @@ boot_sig:
 //.fill 130 * 512, 1, 0xF0
 
 //.fill 0x200, 1, 0xFF
-//.fill 0x200, 1, 0xF0
+//.fill 0x700, 1, 0xF0
 //.fill 0x400, 1, 0xF
 
