@@ -7,12 +7,6 @@
 ** binary is installed to the MBR and is responsible for loading the loader
 ** binary.
 **
-** As of commit id 852560b406c38fa4f20f893ad86558a5d41a7cc9
-** The text section of this binary is 400 bytes in size. This only leaves 46
-** bytes for any future additions. Should an addition be needed, the bootstrap
-** will need to be modified to load another sector (or optimizations could be
-** made).
-**
 ** The boot process:
 **     bootstrap.bin -> loader.bin -> kern.bin
 */
@@ -21,35 +15,8 @@
 #include <SPLoader/MBR/MBR.h>
 #include <SPLoader/loader.h>
 
-//BOOT_SEGMENT = 0x07C0        // default BIOS addr to load boot sector
-//BOOT_ADDRESS = 0x7C00
-
-//LOADER_LBA_LOCATION  = 0x1B8 // location of the loader LBA
-//LOADER_SIZE_LOCATION = 0x1BC // location of the loader size
-
 DP_LOCATION  = 0x400 // location of the drive parameter structure
 DAP_LOCATION = 0x420 // location of the data address packet structure
-
-#define mkcode(type, char) (type << 8) | char
-
-// error codes
-//   byte 1: 0
-//   byte 0: error code character
-
-E_BOOTSTRAP_DEFAULT  = mkcode(0, '0')
-E_BOOTSTRAP_DISK     = mkcode(0, '1')
-E_BOOTSTRAP_NOLBA    = mkcode(0, '2')
-E_BOOTSTRAP_TOOBIG   = mkcode(0, '3')
-E_BOOTSTRAP_TOOSMALL = mkcode(0, '4')
-
-// debug codes
-//   byte 1: 1
-//   byte 0: debug code character
-
-E_BOOTSTRAP_DEBUG1 = mkcode(1, 'A')
-E_BOOTSTRAP_DEBUG2 = mkcode(1, 'B')
-E_BOOTSTRAP_DEBUG3 = mkcode(1, 'C')
-
 
 //
 // Macro for stopping execution with a code as an immediate/register/address
@@ -82,7 +49,7 @@ begtext:
 	movw    $BOOT_SEGMENT, %ax  // get our data seg
 	movw    %ax, %ds
 	movw    %ax, %ss            // stack segment starts at BOOT_SEGMENT
-	movw    $0x4000, %ax        // and the stack starts 0x4000 beyond that
+	movw    $BOOT_STACK, %ax    // and the stack starts 0x4000 beyond that
 	movw    %ax, %sp
 
 	movb    %dl, drive          // save the drive number that we booted from
@@ -305,19 +272,16 @@ die:
 	pushw   %gs
 	pusha
 
-	movw    die_code, %ax         // ah = error type, al = error code
-	orb     %ah, %ah              // test error code
-	jz      die_booterror         // if ah=0 then we got a boot error
-	movw    $str_debugError, %si  // otherwise it's a debug breakpoint
-	jmp     die_printerror
-die_booterror:
-	movw    $str_bootError, %si
-die_printerror:
-	call    dispMsg               // print error message
+	movw    die_code, %ax         // load the error into AX (AH=type, AL=code)
+	movw    %ax, %bx
+	shrw    $8, %bx               // get the error type into bx
+	shlw    $1, %bx               // multiply by 2
+	movw    errortab(%bx), %si    // get the error string using bx as an index
+	call    dispMsg               // print the error type
 	movw    $str_errorSuffix, %si
-	call    dispMsg
-	call    dispChar              // print the error code
-	
+	call    dispMsg               // print ". Code: "
+	call    dispChar              // print error code
+
 	popa                          // restore registers, so we can inspect them
 	popw    %gs                   // with qemu/gdb once halted
 	popw    %fs
@@ -409,6 +373,14 @@ drive:                           // the drive number we booted from
 	.quad 0
 	.word 0
 	.long 0*/
+
+/*
+** Error table
+** Array of strings describing the error type
+*/
+errortab:
+	.word str_bootError       // errortab[0] = boot error
+	.word str_debugError      // errortab[1] = debug error
 
 str_bootError:
 	.asciz "Boot error"
