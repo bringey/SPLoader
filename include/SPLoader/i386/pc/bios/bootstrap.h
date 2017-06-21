@@ -29,19 +29,19 @@
 //   byte 1: 0
 //   byte 0: error code character
 
-E_BOOTSTRAP_DEFAULT  = mkcode(ET_BOOTSTRAP_BOOT, '0')
-E_BOOTSTRAP_DISK     = mkcode(ET_BOOTSTRAP_BOOT, '1')
-E_BOOTSTRAP_NOLBA    = mkcode(ET_BOOTSTRAP_BOOT, '2')
-E_BOOTSTRAP_TOOBIG   = mkcode(ET_BOOTSTRAP_BOOT, '3')
-E_BOOTSTRAP_TOOSMALL = mkcode(ET_BOOTSTRAP_BOOT, '4')
+#define E_BOOTSTRAP_DEFAULT  mkcode(ET_BOOTSTRAP_BOOT, '0')
+#define E_BOOTSTRAP_DISK     mkcode(ET_BOOTSTRAP_BOOT, '1')
+#define E_BOOTSTRAP_NOLBA    mkcode(ET_BOOTSTRAP_BOOT, '2')
+#define E_BOOTSTRAP_TOOBIG   mkcode(ET_BOOTSTRAP_BOOT, '3')
+#define E_BOOTSTRAP_TOOSMALL mkcode(ET_BOOTSTRAP_BOOT, '4')
 
 // debug codes
 //   byte 1: 1
 //   byte 0: debug code character
 
-E_BOOTSTRAP_DEBUG1 = mkcode(ET_BOOTSTRAP_DEBUG, 'A')
-E_BOOTSTRAP_DEBUG2 = mkcode(ET_BOOTSTRAP_DEBUG, 'B')
-E_BOOTSTRAP_DEBUG3 = mkcode(ET_BOOTSTRAP_DEBUG, 'C')
+#define E_BOOTSTRAP_DEBUG1 mkcode(ET_BOOTSTRAP_DEBUG, 'A')
+#define E_BOOTSTRAP_DEBUG2 mkcode(ET_BOOTSTRAP_DEBUG, 'B')
+#define E_BOOTSTRAP_DEBUG3 mkcode(ET_BOOTSTRAP_DEBUG, 'C')
 
 
 #endif
