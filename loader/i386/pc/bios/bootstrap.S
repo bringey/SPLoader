@@ -121,7 +121,7 @@ nextstage:
 */
 
 	//debug_breakpoint(3)
-	jmp     LOADER_EARLY_ADDRESS
+	jmp     LOADER16_ADDRESS
 
 /*
 ** Loads the loader image located at the LBA stored in loader_lba
@@ -156,14 +156,14 @@ loadimage_sectors:
 	cmpw    $MAX_SECTORS_PER_TRANSFER, %ax
 	jg      loadimage_toobig               // test if the image is too big
 
-	// load loader_early.bin first, then loader.bin second
-	// loader_early.bin is in the first sector
+	// load loader16.bin first, then loader.bin second
+	// loader16.bin is in the first sector
 
 	movw    %ax, %dx                       // save the sector count for later
 	movw    $dap, %si                      // si = pointer to DAP struct
 	movw    $16, dap_size                  // set the size to 16 (must be set)
 	movw    %ds, dap_buffer_segment
-	movw    $LOADER_EARLY_ADDRESS, dap_buffer_offset
+	movw    $LOADER16_ADDRESS, dap_buffer_offset
 	movl    loader_lba, %eax
 	movl    %eax, dap_lowlba
 	xorl    %eax, %eax

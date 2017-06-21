@@ -4,8 +4,8 @@
 //
 // Location where loader_early.bin gets loaded to
 //
-#define LOADER_EARLY_SEGMENT 0x7C0
-#define LOADER_EARLY_ADDRESS 0x200
+#define LOADER16_SEGMENT 0x7C0
+#define LOADER16_ADDRESS 0x200
 
 //
 // Where loader.bin gets loaded to
