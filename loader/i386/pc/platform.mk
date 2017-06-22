@@ -39,7 +39,8 @@ LOADER_ENTRY_OBJ = startup.o
 
 LOADER_ENTRY_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_ENTRY_OBJ))
 
-LOADER_ARCH_OBJ = 
+LOADER_ARCH_OBJ = c_io.o \
+                  io.o
 LOADER_ARCH_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_ARCH_OBJ))
 
 
