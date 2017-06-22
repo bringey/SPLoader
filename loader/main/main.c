@@ -1,5 +1,5 @@
 
-#include <SPLoader/i386/pc/c_io.h>
+#include <SPLoader/i386-pc/c_io.h>
 
 int main(void) {
 
