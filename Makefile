@@ -34,7 +34,10 @@ $(BUILD_DIR)/%.o: %.S $(MARKER)
 $(BUILD_DIR)/usb.img: $(BIOS_BOOTSTRAP_BIN) $(LOADER_EARLY_BIN) $(LOADER_BIN)
 	tools/mkimage/mkimage -o $@ -b $(BIOS_BOOTSTRAP_BIN) $(LOADER_EARLY_BIN) $(LOADER_BIN)
 
-.PHONY: all 
+$(MKIMAGE):
+	$(MAKE) -C $(MKIMAGE_DIR)
+
+.PHONY: all
 #
 # Clean
 #

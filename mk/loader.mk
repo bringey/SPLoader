@@ -19,7 +19,10 @@ LOADER_FINAL_OBJ := $(addprefix $(BUILD_DIR)/loader/,$(LOADER_FINAL_OBJ))
 LOADER_BIN = loader.bin
 LOADER_BIN := $(addprefix $(BUILD_DIR)/,$(LOADER_BIN))
 
-LOADER_OBJ_LIST = $(LOADER_ENTRY_OBJ) $(LOADER_ARCH_OBJ) $(LOADER_OBJ)
+LOADER_OBJ_LIST = $(LOADER_ENTRY_OBJ) \
+                  $(LOADER_ARCH_OBJ) \
+                  $(LOADER_PLAT_OBJ) \
+                  $(LOADER_OBJ)
 
 .PHONY: loader.bin
 

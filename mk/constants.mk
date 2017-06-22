@@ -14,3 +14,6 @@ PLATFORMDIR = $(SUBDIR)/$(ISA)/$(PLATFORM)
 
 ISA_MAKEFILE      = $(ISADIR)/arch.mk
 PLATFORM_MAKEFILE = $(PLATFORMDIR)/platform.mk
+
+MKIMAGE_DIR := tools/mkimage
+MKIMAGE := $(MKIMAGE_DIR)/mkimage
