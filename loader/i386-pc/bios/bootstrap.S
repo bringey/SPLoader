@@ -48,8 +48,9 @@ begtext:
 */
 	movw    $BOOT_SEGMENT, %ax  // get our data seg
 	movw    %ax, %ds
-	movw    %ax, %ss            // stack segment starts at BOOT_SEGMENT
-	movw    $BOOT_STACK, %ax    // and the stack starts 0x4000 beyond that
+	xorw    %ax, %ax
+	movw    %ax, %ss            // stack segment starts at 0
+	movw    $BOOT_STACK_ADDRESS, %ax // and the stack starts from bootstrap
 	movw    %ax, %sp
 
 	movb    %dl, drive          // save the drive number that we booted from
