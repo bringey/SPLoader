@@ -11,8 +11,14 @@
 // Where loader.bin gets loaded to
 //
 #define LOADER_ADDRESS 0x10000
-#define LOADER_STACK   0x10000
+//#define LOADER_STACK   0x10000
 #define LOADER_SEGMENT 0x01000
+
+//
+// Location of the Loader's stack (0000:4000)
+//
+#define LOADER_STACK_ADDRESS 0x4000
+#define LOADER_STACK_SEGMENT 0x0000
 
 //
 // Location of the loader's GDT

@@ -50,7 +50,7 @@ begtext:
 	movw    %ax, %ds
 	xorw    %ax, %ax
 	movw    %ax, %ss            // stack segment starts at 0
-	movw    $BOOT_STACK_ADDRESS, %ax // and the stack starts from bootstrap
+	movw    $LOADER_STACK_ADDRESS, %ax // and the stack starts from bootstrap
 	movw    %ax, %sp
 
 	movb    %dl, drive          // save the drive number that we booted from

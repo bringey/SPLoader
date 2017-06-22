@@ -27,7 +27,8 @@ _start:
 	movw    %ax, %gs
 	movw    %ax, %ss
 
-	movl    $LOADER_STACK, %ebp     // setup stack
+	// reset stack, just in case it got trashed somehow
+	movl    $LOADER_STACK_ADDRESS, %ebp
 	movl    %ebp, %esp
 
 	// initialize console
