@@ -11,7 +11,7 @@ ENTRY(early)
 
 SECTIONS
 {
-	. = 0x200;
-	.text : { *(.text) }
-	. = 0x400;
+    . = 0x200;
+    .text : { *(.text) }
+    . = 0x400;
 }

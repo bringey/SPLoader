@@ -3,9 +3,9 @@
 
 int main(void) {
 
-	c_clearscreen();
+    c_clearscreen();
 
-	c_puts("SPLoader v0.1\n");
+    c_puts("SPLoader v0.1\n");
 
-	return 0;
+    return 0;
 }
