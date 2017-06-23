@@ -19,7 +19,8 @@ BIOS_BOOTSTRAP_BIN := $(addprefix $(BUILD_DIR)/,$(BIOS_BOOTSTRAP_BIN))
 
 # early is first since it's the entry point
 LOADER_EARLY_OBJ = early/early.o \
-                   early/a20gate.o
+                   early/a20gate.o \
+                   early/memmap.o
 LOADER_EARLY_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_EARLY_OBJ))
 
 LOADER_EARLY_FINAL_OBJ = early/loader_early.final.o

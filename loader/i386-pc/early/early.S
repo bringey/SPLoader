@@ -19,7 +19,7 @@
     .text
     .globl early, begtext
 
-    .globl a20_check, a20_enable
+    .globl a20_check, a20_enable, get_mem_map
     .globl die
 
 
@@ -35,6 +35,11 @@ early:
     jnz     early_a20done            // if 1, A20 is already enabled
     call    a20_enable               // enable A20 gate
 early_a20done:
+
+    /*
+    ** Get the system memory map
+    */
+    call    get_mem_map
 
     /* 
     ** Move the GDT defined in start_gdt to LOADER_GDT_ADDRESS
