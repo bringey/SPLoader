@@ -4,6 +4,8 @@
 
 #include <SPLoader/i386-pc/mem/MemMap.h>
 
+#include <stdbool.h>
+
 #define MEMMAP_LOCATION        0x4000
 #define MEMMAP_LENGTH          (MEMMAP_LOCATION + 0x0)
 #define MEMMAP_BYTES_PER_ENTRY (MEMMAP_LOCATION + 0x4)
@@ -17,7 +19,9 @@
 
 // Non-CPP stuff goes here
 
-extern MemMap MEMMAP;
+void memmap_dump(bool showAvailable);
+
+void memmap_dumpEntry(MemMapEntry *entry);
 
 
 #endif

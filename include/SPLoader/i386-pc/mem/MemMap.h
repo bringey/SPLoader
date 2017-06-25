@@ -5,14 +5,17 @@
 #ifndef __ASM__
 
 #include <stdint.h>
+#include <SPLoader/i386-pc/mem/MemMapEntry.h>
 
-typedef struct MemMap_s {
+struct MemMap_s {
 
     uint32_t length;           // length of the table
     uint32_t length_per_entry; // actual length per entry per BIOS
     MemMapEntry *table;        // array of MemMapEntries
 
-} MemMap;
+} __attribute__((packed));
+
+typedef struct MemMap_s MemMap;
 
 #endif
 

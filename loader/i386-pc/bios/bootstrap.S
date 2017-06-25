@@ -120,8 +120,15 @@ nextstage:
 ** image is loaded, now we transfer control to the loader, which will
 ** handle loading the kernel from the boot partition
 */
+    /*movw   $80, %cx
+    movw   $0x8400, %si
+dbg_loop:
+    movb   (%si), %al
+    incw   %si
+    call   dispChar
+    loop   dbg_loop
 
-    //debug_breakpoint(3)
+    debug_breakpoint(3)*/
     jmp     LOADER16_ADDRESS
 
 /*
