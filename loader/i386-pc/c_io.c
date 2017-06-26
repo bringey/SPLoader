@@ -16,7 +16,7 @@
 */
 
 #include <SPLoader/i386-pc/c_io.h>
-#include <SPLoader/i386/support/io.h>
+#include <SPLoader/i386/io.h>
 //#include "startup.h"
 //#include "support.h"
 #include <SPLoader/i386/x86arch.h>

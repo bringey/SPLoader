@@ -1,11 +1,11 @@
 /*
-** File: include/SPLoader/i386/support/io.h
+** File: include/SPLoader/i386/io.h
 **
 ** Contains routines callable from C for using the x86 in and out instructions
 */
 
-#ifndef _SPLOADER_I386_SUPPORT_IO_H
-#define _SPLOADER_I386_SUPPORT_IO_H
+#ifndef _SPLOADER_I386_IO_H
+#define _SPLOADER_I386_IO_H
 
 
 int __inb(int port);
