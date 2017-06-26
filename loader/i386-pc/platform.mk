@@ -4,10 +4,10 @@
 # BIOS Bootstrap binary targets
 #
 
-BIOS_BOOTSTRAP_OBJ = bios/bootstrap.o
+BIOS_BOOTSTRAP_OBJ = stage0a/bootstrap.o
 BIOS_BOOTSTRAP_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(BIOS_BOOTSTRAP_OBJ))
 
-BIOS_BOOTSTRAP_FINAL_OBJ = bios/bootstrap.final.o
+BIOS_BOOTSTRAP_FINAL_OBJ = stage0a/bootstrap.final.o
 BIOS_BOOTSTRAP_FINAL_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(BIOS_BOOTSTRAP_FINAL_OBJ))
 
 BIOS_BOOTSTRAP_BIN = bootstrap.bin
@@ -18,19 +18,19 @@ BIOS_BOOTSTRAP_BIN := $(addprefix $(BUILD_DIR)/,$(BIOS_BOOTSTRAP_BIN))
 #
 
 # early is first since it's the entry point
-LOADER_EARLY_OBJ = early/early.o \
-                   early/a20gate.o \
-                   early/memmap.o
+LOADER_EARLY_OBJ = stage0b/early.o \
+                   stage0b/a20gate.o \
+                   stage0b/memmap.o
 LOADER_EARLY_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_EARLY_OBJ))
 
-LOADER_EARLY_FINAL_OBJ = early/loader_early.final.o
+LOADER_EARLY_FINAL_OBJ = stage0b/loader_early.final.o
 LOADER_EARLY_FINAL_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_EARLY_FINAL_OBJ))
 
 LOADER_EARLY_BIN = loader16.bin
 LOADER_EARLY_BIN := $(addprefix $(BUILD_DIR)/,$(LOADER_EARLY_BIN))
 
 # linker script for loader_early.bin
-LOADER_EARLY_LDS := $(PLATFORMDIR)/early/loader_early.lds
+LOADER_EARLY_LDS := $(PLATFORMDIR)/stage0b/loader16.lds
 
 #
 # Platform-specific object files
