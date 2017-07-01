@@ -1,5 +1,5 @@
 /*
-** File: loader/arch/i386/bios/bootstrap.S
+** File: loader/i386-pc/stage0a/bootstrap.S
 **
 ** Author: Brennan Ringey
 **
@@ -15,8 +15,8 @@
 #include <SPLoader/MBR/MBR.h>
 #include <SPLoader/loader.h>
 
-DP_LOCATION  = 0x400 // location of the drive parameter structure
-DAP_LOCATION = 0x420 // location of the data address packet structure
+DP_LOCATION  = 0x8000 // location of the drive parameter structure
+DAP_LOCATION = 0x8020 // location of the data address packet structure
 
 //
 // Macro for stopping execution with a code as an immediate/register/address
@@ -49,8 +49,8 @@ begtext:
     movw    $BOOT_SEGMENT, %ax  // get our data seg
     movw    %ax, %ds
     xorw    %ax, %ax
-    movw    %ax, %ss            // stack segment starts at 0
-    movw    $LOADER_STACK_ADDRESS, %ax // and the stack starts from bootstrap
+    movw    %ax, %ss
+    movw    $LOADER_STACK_ADDRESS, %ax // stack: 0000:4000 and downward
     movw    %ax, %sp
 
     movb    %dl, drive          // save the drive number that we booted from

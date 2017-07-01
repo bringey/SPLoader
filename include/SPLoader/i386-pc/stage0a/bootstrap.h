@@ -1,5 +1,5 @@
 /*
-** File: include/SPLoader/i386/pc/bios/bootstrap.h
+** File: include/SPLoader/i386-pc/stage0a/bootstrap.h
 **
 ** Author: Brennan Ringey
 **
@@ -11,8 +11,6 @@
 
 #define BOOT_SEGMENT 0x07C0        // default BIOS addr to load boot sector
 #define BOOT_ADDRESS 0x7C00
-#define BOOT_STACK_SEGMENT 0x0
-#define BOOT_STACK_ADDRESS 0x7C00  // stack top: 0000:7C00 to 0000:0000
 
 #define LOADER_LBA_LOCATION    0x1B4 // location of the loader LBA
 #define LOADER_SIZE_LOCATION   0x1B8 // location of the loader size
