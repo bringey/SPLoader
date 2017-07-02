@@ -41,6 +41,8 @@ LOADER_ENTRY_OBJ = startup.o
 LOADER_ENTRY_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_ENTRY_OBJ))
 
 LOADER_PLAT_OBJ = c_io.o \
+                  console/_driver.o \
+                  console/driver.o \
                   mem/map.o
 
 LOADER_PLAT_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_PLAT_OBJ))

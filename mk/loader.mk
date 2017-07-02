@@ -10,7 +10,8 @@ SUBDIR := loader
 -include $(PLATFORM_MAKEFILE)
 
 
-LOADER_OBJ = main/main.o
+LOADER_OBJ = main/main.o \
+             console/console.o
 LOADER_OBJ := $(addprefix $(BUILD_DIR)/loader/,$(LOADER_OBJ))
 
 LOADER_FINAL_OBJ = loader.final.o
