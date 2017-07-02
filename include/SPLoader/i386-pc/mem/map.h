@@ -1,3 +1,9 @@
+/*
+** File: include/SPLoader/i386-pc/mem/map.h
+**
+** Author: Brennan Ringey
+**
+*/
 
 #ifndef _SPLOADER_I386_PC_MEM_MAP_H
 #define _SPLOADER_I386_PC_MEM_MAP_H

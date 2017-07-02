@@ -1,3 +1,10 @@
+/*
+** File: include/SPLoader/MBR/MBR.h
+**
+** Author: Brennan Ringey
+**
+*/
+
 #ifndef _SPLOADER_MBR_MBR_H
 #define _SPLOADER_MBR_MBR_H
 

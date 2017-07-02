@@ -1,3 +1,10 @@
+/*
+** File: include/SPLoader/err.h
+**
+** Author: Brennan Ringey
+**
+*/
+
 #ifndef _SPLOADER_ERR_H
 #define _SPLOADER_ERR_H
 

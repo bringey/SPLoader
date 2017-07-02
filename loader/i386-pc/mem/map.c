@@ -1,4 +1,9 @@
-
+/*
+** File: loader/i386-pc/mem/map.c
+**
+** Author: Brennan Ringey
+**
+*/
 
 #include <SPLoader/i386-pc/mem/map.h>
 #include <SPLoader/i386-pc/c_io.h>

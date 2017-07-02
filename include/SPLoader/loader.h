@@ -1,3 +1,10 @@
+/*
+** File: include/SPLoader/loader.h
+**
+** Author: Brennan Ringey
+**
+*/
+
 #ifndef _SPLOADER_LOADER_H
 #define _SPLOADER_LOADER_H
 
