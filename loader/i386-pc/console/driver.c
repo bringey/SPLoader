@@ -14,8 +14,12 @@
 #include <SPLoader/err.h>
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include "constants.h"
+
+
+#define calcIndex(col, row) ((row * VGA_WIDTH) + col)
 
 //
 // con_driver_clear is implemented in assembly, see _driver.S
@@ -32,13 +36,76 @@ int con_driver_height(unsigned *heightVar) {
 }
 
 int con_driver_put(char ch, unsigned x, unsigned y) {
-    (void)ch; (void)x; (void)y;
-    return -1;
+    if (x >= VGA_WIDTH || y >= VGA_HEIGHT) {
+        return E_ARGBOUNDS;
+    }
+
+    unsigned cursor = calcIndex(x, y);
+
+    ((uint16_t*)(VGA_BUFFER))[cursor] = (uint16_t)(VGA_DEFAULT_COLOR | ch);
+
+    return E_SUCCESS;
 }
 
 int con_driver_scroll(unsigned lines) {
-    (void)lines;
-    return -1;
+
+    // if lines is zero, we don't need to do anything
+
+    if (lines) {
+
+        // if the lines is greater than the height, just clear it
+        // otherwise, copy it line by line
+        if (lines >= VGA_HEIGHT) {
+            con_driver_clear();
+        } else {
+
+            // size, in cells, of the scrolling region
+            unsigned scrollLength = VGA_WIDTH * (VGA_HEIGHT - lines);
+            // size, in cells, of the blank region (empty rows created after
+            // the scroll)
+            unsigned windowLength = VGA_WIDTH * lines;
+
+            // shift the scroll region via a 'rep movsw'
+            // %esi = VGA_BUFFER + windowLength
+            // %edi = VGA_BUFFER
+            // %ecx = scrollLength
+
+            asm volatile (
+                "movl   %0, %%esi;"
+                "movl   %1, %%edi;"
+                "movl   %2, %%ecx;"
+                "cld;"
+                "rep movsw;"
+                :
+                : "imr"(((uint16_t*)VGA_BUFFER) + windowLength),
+                  "imr"(VGA_BUFFER),
+                  "imr"(scrollLength)
+                : "%esi", "%edi", "ecx"
+            );
+
+            // clear the blank region via a 'rep stosw'
+            // %eax = VGA_NULLCELL
+            // %edi = VGA_BUFFER + scrollLength
+            // %ecx = windowLength
+
+            asm volatile (
+                "movl   %0, %%eax;"
+                "movl   %1, %%edi;"
+                "movl   %2, %%ecx;"
+                "cld;"
+                "rep stosw;"
+                :
+                : "imr"(VGA_NULLCELL),
+                  "imr"(((uint16_t*)VGA_BUFFER) + scrollLength),
+                  "imr"(windowLength)
+                : "%eax", "%edi", "%ecx"
+            );
+
+        }
+
+    }
+
+    return E_SUCCESS;
 }
 
 int con_driver_updateCursor(unsigned x, unsigned y) {
@@ -46,7 +113,7 @@ int con_driver_updateCursor(unsigned x, unsigned y) {
         return E_ARGBOUNDS;
     }
 
-    unsigned cursor = (y * VGA_WIDTH) + x;
+    unsigned cursor = calcIndex(x, y);
 
     //
     // The following sets the cursor position using inline assembly
@@ -58,37 +125,45 @@ int con_driver_updateCursor(unsigned x, unsigned y) {
     //
 
     //__outb(0x3D4, 0xE);
-    __asm("movb $0xE, %%al; \
-           movw $0x3D4, %%dx; \
-           outb (%%dx);"
-          :
-          :
-          :"%eax","%edx");
+    asm volatile (
+        "movb $0xE, %%al;"
+        "movw $0x3D4, %%dx;"
+        "outb (%%dx);"
+        :
+        :
+        : "%eax","%edx"
+    );
 
     //__outb(0x3D5, (cursor >> 8) & 0xFF);
-    __asm("movl %0, %%eax; \
-           shrw $8, %%ax; \
-           movw $0x3D5, %%dx; \
-           outb (%%dx);"
-          :
-          :"r"(cursor)
-          :"%eax","%edx");
+    asm volatile (
+        "movl %0, %%eax;"
+        "shrw $8, %%ax;"
+        "movw $0x3D5, %%dx;"
+        "outb (%%dx);"
+        :
+        : "mor"(cursor)
+        : "%eax","%edx"
+    );
 
     //__outb(0x3D4, 0xF);
-    __asm("movb $0xF, %%al; \
-           movw $0x3D4, %%dx; \
-           outb (%%dx);"
-          :
-          :
-          :"%eax","%edx");
+    asm volatile (
+        "movb $0xF, %%al;"
+        "movw $0x3D4, %%dx;"
+        "outb (%%dx);"
+        :
+        :
+        : "%eax","%edx"
+    );
 
     // __outb(0x3D5, cursor & 0xFF);
-    __asm("movl %0, %%eax; \
-           movw $0x3D5, %%dx; \
-           outb (%%dx);"
-          :
-          :"r"(cursor)
-          :"%eax","%edx");
+    asm volatile (
+        "movl %0, %%eax;"
+        "movw $0x3D5, %%dx;"
+        "outb (%%dx);"
+        :
+        : "mor"(cursor)
+        : "%eax","%edx"
+    );
 
     return E_SUCCESS;
 }

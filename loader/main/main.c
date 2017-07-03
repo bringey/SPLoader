@@ -14,15 +14,27 @@
 
 int main(void) {
 
-    c_clearscreen();
+    //c_clearscreen();
 
-    c_puts("SPLoader v0.1\n");
+    //c_puts("SPLoader v0.1\n");
 
-    memmap_dump(true);
+    //memmap_dump(true);
 
     con_init();
     con_clear();
-    con_setCursor(40, 12);
+    //con_setCursor(40, 12);
+
+    for (int i = 0; i != 25; ++i) {
+        con_puts("Test Line: ");
+        con_putchar('A' + i);
+        con_putchar('\n');
+    }
+
+    con_driver_scroll(3);
+
+    //con_puts("Test test test\n");
+    //con_puts("scroll");
+    //con_driver_scroll(1);
 
     return 0;
 }

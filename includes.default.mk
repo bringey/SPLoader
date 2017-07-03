@@ -37,7 +37,7 @@ WERROR :=
 
 WARNFLAGS := -Wall -Wextra
 
-CFLAGS = -std=c11 -ffreestanding $(WARNFLAGS) $(WERROR)
+CFLAGS = -std=gnu11 -ffreestanding $(WARNFLAGS) $(WERROR)
 
 CPPFLAGS = -I$(INC_DIR)
 

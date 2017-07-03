@@ -62,6 +62,25 @@ int con_putchar(char ch) {
     return E_SUCCESS;
 }
 
+// int con_putchar_at(unsigned x, unsigned y, char ch) {
+//     if (x >= WIDTH || y >= HEIGHT) {
+//         return E_ARGBOUNDS;
+//     }
+
+//     switch (ch) {
+//         case '\n':
+//             for (unsigned i = x; i != WIDTH; ++i) {
+//                 con_driver_put(' ', i, y);
+//             }
+//             break;
+//         default:
+//             con_driver_put(ch, x, y);
+//             break;
+//     }
+
+//     return E_SUCCESS;
+// }
+
 int con_puts(const char *str) {
 
     char ch;
@@ -71,6 +90,10 @@ int con_puts(const char *str) {
 
     return E_SUCCESS;
 }
+
+// int con_puts_at(unsigned x, unsigned y, const char *str) {
+
+// }
 
 int con_setCursor(unsigned x, unsigned y) {
     if (x >= WIDTH || y >= HEIGHT) {
