@@ -95,6 +95,10 @@ int con_puts(const char *str) {
 
 // }
 
+int con_scroll(unsigned lines) {
+    return con_driver_scroll(lines);
+}
+
 int con_setCursor(unsigned x, unsigned y) {
     if (x >= WIDTH || y >= HEIGHT) {
         return E_ARGBOUNDS;

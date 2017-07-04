@@ -21,6 +21,8 @@ int con_puts(const char *str);
 
 //int con_puts_at(unsigned x, unsigned y, const char *str);
 
+int con_scroll(unsigned lines);
+
 int con_setCursor(unsigned x, unsigned y);
 
 
