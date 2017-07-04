@@ -10,7 +10,7 @@
 #include <SPLoader/i386-pc/c_io.h>
 #include <SPLoader/i386-pc/mem/map.h>
 
-#include <SPLoader/console/console.h>
+#include <SPLoader/console/out.h>
 
 int main(void) {
 

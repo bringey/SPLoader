@@ -1,5 +1,12 @@
+/*
+** File: loader/console/out.c
+**
+** Author: Brennan Ringey
+**
+*/
 
 #include <SPLoader/err.h>
+#include <SPLoader/console/out.h>
 #include <SPLoader/console/driver.h>
 
 #include <stdarg.h>

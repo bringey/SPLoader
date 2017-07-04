@@ -1,12 +1,12 @@
 /*
-** File: include/SPLoader/console/console.h
+** File: include/SPLoader/console/out.h
 **
 ** Author: Brennan Ringey
 **
 */
 
-#ifndef _SPLOADER_CONSOLE_CONSOLE_H
-#define _SPLOADER_CONSOLE_CONSOLE_H
+#ifndef _SPLOADER_CONSOLE_OUT_H
+#define _SPLOADER_CONSOLE_OUT_H
 
 
 int con_clear(void);
