@@ -24,13 +24,19 @@ int main(void) {
     con_clear();
     //con_setCursor(40, 12);
 
-    for (int i = 0; i != 25; ++i) {
-        con_puts("Test Line: ");
-        con_putchar('A' + i);
-        con_putchar('\n');
-    }
+    // for (int i = 0; i != 25; ++i) {
+    //     con_puts("Test Line: ");
+    //     con_putchar('A' + i);
+    //     con_putchar('\n');
+    // }
 
-    con_driver_scroll(3);
+    // con_scroll(3);
+
+    con_puts("test test test");
+    con_puts_at(10, 10, "STR placed at 10,10");
+
+    con_printf("Printf testing\n");
+    con_printf_at(20, 20, "PRINTF placed at 20,20");
 
     //con_puts("Test test test\n");
     //con_puts("scroll");

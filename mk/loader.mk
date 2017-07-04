@@ -37,4 +37,7 @@ $(LOADER_FINAL_OBJ): $(LOADER_OBJ_LIST) $(MARKER)
 $(LOADER_BIN): $(LOADER_FINAL_OBJ) $(MARKER)
 	$(LD_V) $(LDFLAGS) -o $@ -s -e _start --oformat binary -Ttext 0x10000 $<
 
+
+-include $(LOADER_OBJ:.o=.d)
+
 undefine SUBDIR

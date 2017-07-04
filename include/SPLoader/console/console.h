@@ -15,11 +15,15 @@ int con_init(void);
 
 int con_putchar(char ch);
 
-//int con_putchar_at(unsigned x, unsigned y, char ch);
+int con_putchar_at(unsigned x, unsigned y, char ch);
 
 int con_puts(const char *str);
 
-//int con_puts_at(unsigned x, unsigned y, const char *str);
+int con_puts_at(unsigned x, unsigned y, const char *str);
+
+int con_printf(const char *fmt, ...);
+
+int con_printf_at(unsigned x, unsigned y, const char *fmt, ...);
 
 int con_scroll(unsigned lines);
 
