@@ -36,6 +36,10 @@ early:
     call    a20_enable               // enable A20 gate
 early_a20done:
 
+    movw    $0x1003, %ax             // disable blinking foreground colors
+    movw    $0x0, %bx                // for the console
+    int     $0x10
+
     /*
     ** Get the system memory map
     */
