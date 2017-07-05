@@ -6,7 +6,6 @@
 */
 
 #include <SPLoader/i386-pc/mem/map.h>
-//#include <SPLoader/i386-pc/c_io.h>
 #include <SPLoader/console/out.h>
 
 static MemMap *MEMMAP = (MemMap*)MEMMAP_LOCATION;
@@ -28,7 +27,7 @@ void memmap_dump(bool showAvailable) {
     con_printf("[MemMap] length           = %d\n", len);
     con_printf("[MemMap] length_per_entry = %d\n", MEMMAP->length_per_entry);
 
-    //c_puts("[   Base Addr   ] [    Length     ] [Type]  [              Range              ]\n");
+    //con_puts("[   Base Addr   ] [    Length     ] [Type]  [              Range              ]\n");
     con_puts("     Base Addr     |      Length                 | Type\n");
     con_puts("-------------------+-----------------------------+------------------------------");
 
@@ -53,11 +52,11 @@ void memmap_dumpEntry(MemMapEntry *entry) {
     
     con_printf(" %x\n", entry->type);
 
-    //c_printf(" %16d\n", entry->length_lo / 1024);
+    //con_printf(" %16d\n", entry->length_lo / 1024);
     
 
-    //c_printf(" %08x%08x-", (rangeStart >> 16) >> 16, rangeStart & 0xFFFFFFFF);
-    //c_printf("%08x%08x\n", (rangeEnd >> 16) >> 16, rangeEnd & 0xFFFFFFFF);
+    //con_printf(" %08x%08x-", (rangeStart >> 16) >> 16, rangeStart & 0xFFFFFFFF);
+    //con_printf("%08x%08x\n", (rangeEnd >> 16) >> 16, rangeEnd & 0xFFFFFFFF);
 
 
 }

@@ -33,7 +33,6 @@ _start:
 
     // initialize console
     call    con_init
-    //call    c_io_init
 
     // initialize interrupts
 
