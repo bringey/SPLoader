@@ -6,8 +6,8 @@
 */
 
 #include <SPLoader/i386-pc/mem/map.h>
-#include <SPLoader/i386-pc/c_io.h>
-
+//#include <SPLoader/i386-pc/c_io.h>
+#include <SPLoader/console/out.h>
 
 static MemMap *MEMMAP = (MemMap*)MEMMAP_LOCATION;
 static MemMapEntry *TABLE = (MemMapEntry*)MEMMAP_TABLE;
@@ -25,12 +25,12 @@ void memmap_dump(bool showAvailable) {
 
     uint32_t len = MEMMAP->length;
 
-    c_printf("[MemMap] length           = %d\n", len);
-    c_printf("[MemMap] length_per_entry = %d\n", MEMMAP->length_per_entry);
+    con_printf("[MemMap] length           = %d\n", len);
+    con_printf("[MemMap] length_per_entry = %d\n", MEMMAP->length_per_entry);
 
     //c_puts("[   Base Addr   ] [    Length     ] [Type]  [              Range              ]\n");
-    c_puts("     Base Addr     |      Length                 | Type\n");
-    c_puts("-------------------+-----------------------------+------------------------------");
+    con_puts("     Base Addr     |      Length                 | Type\n");
+    con_puts("-------------------+-----------------------------+------------------------------");
 
     MemMapEntry *e = TABLE;
     for (unsigned i = 0; i < len; ++i, ++e) {
@@ -44,14 +44,14 @@ void memmap_dump(bool showAvailable) {
 
 void memmap_dumpEntry(MemMapEntry *entry) {
 
-    c_printf(" %08x %08x |", entry->base_hi, entry->base_lo);
-    c_printf(" %08x %08x ", entry->length_hi, entry->length_lo);
+    con_printf(" %08x %08x |", entry->base_hi, entry->base_lo);
+    con_printf(" %08x %08x ", entry->length_hi, entry->length_lo);
 
     char *prefix;
     uint32_t len = __prettylength(entry->length_hi, entry->length_lo, &prefix);
-    c_printf(" %4d %3s |", len, prefix);
+    con_printf(" %4d %3s |", len, prefix);
     
-    c_printf(" %x\n", entry->type);
+    con_printf(" %x\n", entry->type);
 
     //c_printf(" %16d\n", entry->length_lo / 1024);
     

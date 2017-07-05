@@ -11,7 +11,7 @@
 
     .arch i686
     .text
-    .globl _start, main, c_io_init
+    .globl _start, main, con_init
 
 _start:
     cli
@@ -32,7 +32,8 @@ _start:
     movl    %ebp, %esp
 
     // initialize console
-    call    c_io_init
+    call    con_init
+    //call    c_io_init
 
     // initialize interrupts
 

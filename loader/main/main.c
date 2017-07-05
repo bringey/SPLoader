@@ -15,13 +15,13 @@
 int main(void) {
 
     //c_clearscreen();
+    con_clear();
 
     //c_puts("SPLoader v0.1\n");
+    con_puts("SPLoader\n");
 
-    //memmap_dump(true);
+    memmap_dump(true);
 
-    con_init();
-    con_clear();
     //con_setCursor(40, 12);
 
     // for (int i = 0; i != 25; ++i) {
@@ -32,13 +32,13 @@ int main(void) {
 
     // con_scroll(3);
 
-    con_puts("test test test");
-    con_puts_at(10, 10, "STR placed at 10,10");
+    // con_puts("test test test");
+    // con_puts_at(10, 10, "STR placed at 10,10");
 
-    con_printf("Printf testing\n");
-    con_printf_at(20, 20, "PRINTF placed at 20,20");
+    // con_printf("Printf testing\n");
+    // con_printf_at(20, 20, "PRINTF placed at 20,20");
 
-    con_printf("%-8x", 0xBABE);
+    // con_printf("%-8x", 0xBABE);
 
     //con_puts("Test test test\n");
     //con_puts("scroll");
