@@ -27,4 +27,9 @@ int con_cvthex(char *buf, int value);
 int con_cvtoct(char *buf, int value);
 
 
+/*
+** Returns the length of the given string
+*/
+unsigned con_strlen(char *str);
+
 #endif

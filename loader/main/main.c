@@ -38,6 +38,8 @@ int main(void) {
     con_printf("Printf testing\n");
     con_printf_at(20, 20, "PRINTF placed at 20,20");
 
+    con_printf("%-8x", 0xBABE);
+
     //con_puts("Test test test\n");
     //con_puts("scroll");
     //con_driver_scroll(1);

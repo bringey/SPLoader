@@ -8,10 +8,11 @@
 #include <SPLoader/err.h>
 #include <SPLoader/console/out.h>
 #include <SPLoader/console/driver.h>
+#include <SPLoader/console/string.h>
 
 #include <stdarg.h>
 #include <stdint.h>
-
+#include <stdbool.h>
 
 static unsigned curX, curY;
 static unsigned WIDTH, HEIGHT;
@@ -28,6 +29,13 @@ typedef int (*PutcharFn)(char);
 static int __putchar(char ch);
 static void __puts(PutcharFn fn, const char *str);
 static void __printf(PutcharFn fn, const char *fmt, va_list args);
+static void __pad(PutcharFn fn, int extra, char padchar);
+static void __padstr(PutcharFn fn,
+                     char *str,
+                     unsigned len,
+                     unsigned width,
+                     bool leftadjust,
+                     int padchar);
 
 int con_clear(void) {
     curX = 0;
@@ -143,6 +151,9 @@ int con_setCursor(unsigned x, unsigned y) {
     return E_SUCCESS;
 }
 
+// ============================================================================
+// STATIC FUNCTIONS
+// ============================================================================
 
 
 int __putchar(char ch) {
@@ -181,10 +192,97 @@ void __puts(PutcharFn putchar, const char *str) {
     }
 }
 
+void __pad(PutcharFn putchar, int extra, char padchar) {
+    for (; extra > 0; --extra) {
+        putchar(padchar);
+    }
+}
+
+void __padstr(PutcharFn putchar, char *str, unsigned len, unsigned width, bool leftadjust, int padchar) {
+    int extra = width - len;
+
+    // pad if needed for right-adjust
+    if (extra > 0 && !leftadjust) {
+        __pad(putchar, extra, padchar);
+    }
+    
+    // print the string
+    __puts(putchar, str);
+
+    // pad if needed for left-adjust
+    if (extra > 0 && leftadjust) {
+        __pad(putchar, extra, padchar);
+    }
+}
+
+
+
+#define PRINTF_BUF_SIZE 80
+
 void __printf(PutcharFn putchar, const char *fmt, va_list args) {
+
+    bool leftadjust, typeValid;
+    char buf[PRINTF_BUF_SIZE];
+    char *str;
+    unsigned width, len;
+    char padchar;
+
     char ch;
     while ((ch = *fmt++) != '\0') {
         if (ch == '%') {
+            // defaults
+            // right-adjusted, space-padded, no width constraint
+            leftadjust = false;
+            padchar = ' ';
+            width = 0;
+            str = buf;
+            typeValid = true;
+            ch = *fmt++; // get next part of fmt and consume it
+            if (ch == '-') {
+                leftadjust = true; // left alignment
+                ch = *fmt++;
+            }
+            if (ch == '0') {
+                padchar = '0';  // pad with zeros instead of spaces
+                ch = *fmt++;
+            }
+            // get the width if specified
+            while ( ch >= '0' && ch <= '9') {
+                width *= 10;
+                width += ch - '0';
+                ch = *fmt++;
+            }
+
+            switch (ch) {
+                case 'c':       // character
+                    buf[0] = (char)va_arg(args, int);
+                    buf[1] = '\0';
+                    len = 1;
+                    break;
+                case 'd':       // decimal integer
+                    len = con_cvtdec(buf, (int)va_arg(args, int));
+                    break;
+                case 'o':       // octal integer
+                    len = con_cvtoct(buf, (unsigned)va_arg(args, unsigned));
+                    break;
+                case 's':       // string
+                    str = (char*)va_arg(args, char*);
+                    len = con_strlen(str);
+                    break;
+                case 'x':       // hexadecimal integer (lowercase)
+                case 'X':       // hexadecimal integer (uppercase)
+                    len = con_cvthex(buf, (unsigned)va_arg(args, unsigned));
+                    break;
+                default:
+                    typeValid = false;
+                    break;
+            }
+
+            if (typeValid) {
+                __padstr(putchar, str, len, width, leftadjust, padchar);
+            }
+
+
 
         } else {
             putchar(ch);

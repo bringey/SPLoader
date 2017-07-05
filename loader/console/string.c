@@ -77,3 +77,11 @@ int con_cvtoct(char *buf, int value) {
 
     return bp - buf;
 }
+
+unsigned con_strlen(char *str) {
+    unsigned len = 0;
+    while (*str++ != '\0') {
+        ++len;
+    }
+    return len;
+}
