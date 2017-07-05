@@ -21,6 +21,9 @@
 
 #define calcIndex(col, row) ((row * VGA_WIDTH) + col)
 
+static uint16_t curColor = VGA_DEFAULT_COLOR;
+
+
 //
 // con_driver_clear is implemented in assembly, see _driver.S
 //
@@ -42,7 +45,7 @@ int con_driver_put(char ch, unsigned x, unsigned y) {
 
     unsigned cursor = calcIndex(x, y);
 
-    ((uint16_t*)(VGA_BUFFER))[cursor] = (uint16_t)(VGA_DEFAULT_COLOR | ch);
+    ((uint16_t*)(VGA_BUFFER))[cursor] = (uint16_t)(curColor | ch);
 
     return E_SUCCESS;
 }
@@ -105,6 +108,18 @@ int con_driver_scroll(unsigned lines) {
 
     }
 
+    return E_SUCCESS;
+}
+
+int con_driver_setBgColor(ConColor color) {
+    color = (color & 0xF) << 12;
+    curColor = (curColor & 0x0F00) | color;
+    return E_SUCCESS;
+}
+
+int con_driver_setFgColor(ConColor color) {
+    color = (color & 0xF) << 8;
+    curColor = (curColor & 0xF000) | color;
     return E_SUCCESS;
 }
 

@@ -134,10 +134,23 @@ int con_printf_at(unsigned x, unsigned y, const char *fmt, ...) {
     return E_SUCCESS;
 }
 
-
+#ifndef con_scroll
 int con_scroll(unsigned lines) {
     return con_driver_scroll(lines);
 }
+#endif
+
+#ifndef con_setBgColor
+int con_setBgColor(ConColor color) {
+    return con_driver_setBgColor(color);
+}
+#endif
+
+#ifndef con_setFgColor
+int con_setFgColor(ConColor color) {
+    return con_driver_setFgColor(color);
+}
+#endif
 
 int con_setCursor(unsigned x, unsigned y) {
     if (x >= WIDTH || y >= HEIGHT) {

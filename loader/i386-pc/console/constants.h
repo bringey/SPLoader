@@ -15,8 +15,8 @@
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
-// no blink, black background, gray foreground
-#define VGA_DEFAULT_COLOR (7 << 8)
+// no blink, black background, white foreground
+#define VGA_DEFAULT_COLOR (0xF << 8)
 
 // black background, gray foreground, ASCII space
 #define VGA_NULLCELL (VGA_DEFAULT_COLOR | ' ')

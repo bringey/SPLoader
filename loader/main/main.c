@@ -15,7 +15,11 @@ int main(void) {
 
     con_clear();
 
-    con_puts("SPLoader\n");
+    con_setBgColor(CON_COLOR_WHITE);
+    con_setFgColor(CON_COLOR_BLACK);
+    con_printf(" SPLoader %69s ", "v0.1");
+    con_setBgColor(CON_DEFAULT_BG);
+    con_setFgColor(CON_DEFAULT_FG);
 
     memmap_dump(true);
 
