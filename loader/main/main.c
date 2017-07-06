@@ -21,7 +21,7 @@ int main(void) {
     con_setBgColor(CON_DEFAULT_BG);
     con_setFgColor(CON_DEFAULT_FG);
 
-    memmap_dump(true);
+    memmap_dump(false);
 
     //con_setCursor(40, 12);
 

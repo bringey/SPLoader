@@ -50,7 +50,7 @@ void memmap_dumpEntry(MemMapEntry *entry) {
     uint32_t len = __prettylength(entry->length_hi, entry->length_lo, &prefix);
     con_printf(" %4d %3s |", len, prefix);
     
-    con_printf(" %x\n", entry->type);
+    con_printf(" %x (%s)\n", entry->type, (entry->type == 1) ? "Available" : "Reserved");
 
     //con_printf(" %16d\n", entry->length_lo / 1024);
     
