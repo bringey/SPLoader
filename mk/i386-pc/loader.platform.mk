@@ -45,7 +45,8 @@ LOADER_PLAT_OBJ = abort.o \
                   console/driver.o \
                   idt/isr.o \
                   idt/stubs.o \
-                  mem/map.o
+                  mem/map.o \
+                  timer/timer.o
 
 LOADER_PLAT_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_PLAT_OBJ))
 

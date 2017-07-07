@@ -10,6 +10,11 @@
 #include <SPLoader/i386-pc/mem/map.h>
 
 #include <SPLoader/console/out.h>
+#include <SPLoader/timer/timer.h>
+
+void testCallback(unsigned ticks) {
+    con_printf("Timer callback! ticks: %d\n", ticks);
+}
 
 int main(void) {
 
@@ -22,6 +27,9 @@ int main(void) {
     con_setFgColor(CON_DEFAULT_FG);
 
     memmap_dump(false);
+
+    timer_init();
+    timer_start(testCallback);
 
     for (;;) {
         asm("hlt");
