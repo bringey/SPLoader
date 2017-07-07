@@ -11,7 +11,8 @@
 
     .arch i686
     .text
-    .globl _start, main, con_init
+    .globl _start, main, con_init, con_putchar_at
+    .globl isr_init
 
 _start:
     cli
@@ -35,13 +36,21 @@ _start:
     call    con_init
 
     // initialize interrupts
-
+    call    isr_init
+    sti
 
     call    main
 
 
     // returned from main! do nothing forever
     cli
+
+    // display a ! in the lower right corner of the console
+    pushl   $'!'
+    pushl   $24
+    pushl   $79
+    call    con_putchar_at
+    addl    $0xC, %esp
 
 _end:
     hlt

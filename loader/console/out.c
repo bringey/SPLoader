@@ -170,6 +170,12 @@ int con_setCursor(unsigned x, unsigned y) {
 
 
 int __putchar(char ch) {
+
+    if (curY == HEIGHT) {
+        con_driver_scroll(1);
+        --curY;
+    }
+
     switch (ch) {
         case '\n':
             for (; curX != WIDTH; ++curX) {
@@ -188,11 +194,6 @@ int __putchar(char ch) {
                 ++curY;
             }
             break;
-    }
-
-    if (curY == HEIGHT) {
-        con_driver_scroll(1);
-        --curY;
     }
 
     return 0;

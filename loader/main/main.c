@@ -23,6 +23,10 @@ int main(void) {
 
     memmap_dump(false);
 
+    for (;;) {
+        asm("hlt");
+    }
+
     //con_setCursor(40, 12);
 
     // for (int i = 0; i != 25; ++i) {

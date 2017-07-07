@@ -40,8 +40,11 @@ LOADER_ENTRY_OBJ = startup.o
 
 LOADER_ENTRY_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_ENTRY_OBJ))
 
-LOADER_PLAT_OBJ = console/_driver.o \
+LOADER_PLAT_OBJ = abort.o \
+                  console/_driver.o \
                   console/driver.o \
+                  idt/isr.o \
+                  idt/stubs.o \
                   mem/map.o
 
 LOADER_PLAT_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_PLAT_OBJ))
