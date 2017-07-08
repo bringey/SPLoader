@@ -1,6 +1,6 @@
 
 #include <SPLoader/abort.h>
-
+#include <SPLoader/console/out.h>
 
 
 void abort(const char *reason) {
