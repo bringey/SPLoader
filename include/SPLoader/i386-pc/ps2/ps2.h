@@ -1,3 +1,10 @@
+/*
+** File: SPLoader/i386-pc/ps2/ps2.h
+**
+** Author: Brennan Ringey
+**
+** PS/2 Constants
+*/
 
 #ifndef _SPLOADER_I386_PC_PS2_PS2_H
 #define _SPLOADER_I386_PC_PS2_PS2_H
@@ -78,8 +85,22 @@
 #define PS2_CMD_DIAGNOSTIC      0xAC
 #define PS2_CMD_READ_CTRL_IN    0xC0
 
+//
+// Response Bytes (RB)
+// Bytes sent from the keyboard/device that have special meaning
+//
+#define PS2_RB_ERROR1           0x00  // key-detection error, buffer overrun
+#define PS2_RB_SELFTEST_PASSED  0xAA  // self-test passed after reset/power up
+#define PS2_RB_ECHO             0xEE  // echo
+#define PS2_RB_ACK              0xFA  // command acknowledgement
+#define PS2_RB_SELFTEST_FAILED1 0xFC  // self-test failed after reset/power up
+#define PS2_RB_SELFTEST_FAILED2 0xFF  // same as SELFTEST_FAILED1
+#define PS2_RB_RESEND           0xFE  // resend (repeat last command sent)
+#define PS2_RB_ERROR2           0xFF  // same as ERROR1
+
+#define PS2_RB_ERROR PS2_RB_ERROR1
+#define PS2_RB_SELFTEST_FAILED PS2_RB_SELFTEST_FAILED1
 
 
-int ps2_init(void);
 
 #endif
