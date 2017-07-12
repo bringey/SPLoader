@@ -10,7 +10,6 @@
 
 #include <SPLoader/i386-pc/mem/MemMap.h>
 
-#include <stdbool.h>
 
 #define MEMMAP_LOCATION        0x4000
 #define MEMMAP_LENGTH          (MEMMAP_LOCATION + 0x0)
@@ -23,13 +22,13 @@
 
 #ifndef __ASM__
 
-// Non-CPP stuff goes here
+#include <stdbool.h>
 
 void memmap_dump(bool showAvailable);
 
 void memmap_dumpEntry(MemMapEntry *entry);
 
 
-#endif
+#endif  // __ASM__
 
 #endif

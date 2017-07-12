@@ -8,6 +8,8 @@
 #ifndef _SPLOADER_I386_PC_IDT_IDTGATE_H
 #define _SPLOADER_I386_PC_IDT_IDTGATE_H
 
+#ifndef __ASM__
+
 #include <stdint.h>
 
 typedef struct IDTGate_s {
@@ -19,5 +21,6 @@ typedef struct IDTGate_s {
 
 } IDTGate;
 
+#endif  // __ASM__
 
 #endif

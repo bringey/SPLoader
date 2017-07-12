@@ -42,5 +42,7 @@
 #define E_BOOTSTRAP_DEBUG2 mkcode(ET_BOOTSTRAP_DEBUG, 'B')
 #define E_BOOTSTRAP_DEBUG3 mkcode(ET_BOOTSTRAP_DEBUG, 'C')
 
+#ifndef __ASM__
+#endif  // __ASM__
 
 #endif

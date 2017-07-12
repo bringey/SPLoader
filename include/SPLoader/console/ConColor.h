@@ -7,6 +7,8 @@
 #ifndef _SPLOADER_CONSOLE_CONCOLOR_H
 #define _SPLOADER_CONSOLE_CONCOLOR_H
 
+#ifndef __ASM__
+
 typedef enum {
     CON_COLOR_BLACK          = 0x0,
     CON_COLOR_BLUE           = 0x1,
@@ -26,5 +28,6 @@ typedef enum {
     CON_COLOR_WHITE          = 0xF,
 } ConColor;
 
+#endif  // __ASM__
 
 #endif

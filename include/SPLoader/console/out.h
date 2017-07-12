@@ -14,6 +14,8 @@
 #define CON_DEFAULT_FG CON_COLOR_WHITE
 #define CON_DEFAULT_BG CON_COLOR_BLACK
 
+#ifndef __ASM__
+
 int con_clear(void);
 
 int con_init(void);
@@ -39,5 +41,6 @@ int con_printf_at(unsigned x, unsigned y, const char *fmt, ...);
 
 int con_setCursor(unsigned x, unsigned y);
 
+#endif  //__ASM__
 
 #endif

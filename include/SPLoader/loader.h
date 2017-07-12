@@ -47,5 +47,7 @@
 #define LOADER_IDT_SEGMENT 0x050
 #define LOADER_IDT_ADDRESS 0x500
 
+#ifndef __ASM__
+#endif  // __ASM__
 
 #endif

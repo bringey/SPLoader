@@ -101,6 +101,7 @@
 #define PS2_RB_ERROR PS2_RB_ERROR1
 #define PS2_RB_SELFTEST_FAILED PS2_RB_SELFTEST_FAILED1
 
-
+#ifndef __ASM__
+#endif  // __ASM__
 
 #endif

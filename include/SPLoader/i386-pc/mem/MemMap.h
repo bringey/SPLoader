@@ -8,10 +8,11 @@
 #ifndef _SPLOADER_I386_PC_MEM_MEMMAP_H
 #define _SPLOADER_I386_PC_MEM_MEMMAP_H
 
+#include <SPLoader/i386-pc/mem/MemMapEntry.h>
+
 #ifndef __ASM__
 
 #include <stdint.h>
-#include <SPLoader/i386-pc/mem/MemMapEntry.h>
 
 struct MemMap_s {
 
@@ -23,6 +24,6 @@ struct MemMap_s {
 
 typedef struct MemMap_s MemMap;
 
-#endif
+#endif  // __ASM__
 
 #endif

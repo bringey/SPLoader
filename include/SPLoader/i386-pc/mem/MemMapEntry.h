@@ -10,6 +10,8 @@
 
 #ifndef __ASM__
 
+#include <stdint.h>
+
 struct MemMapEntry_s {
 
     union {

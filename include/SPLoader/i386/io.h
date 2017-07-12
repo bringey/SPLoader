@@ -7,6 +7,8 @@
 #ifndef _SPLOADER_I386_IO_H
 #define _SPLOADER_I386_IO_H
 
+#ifndef __ASM__
+
 
 int __inb(int port);
 
@@ -19,6 +21,7 @@ void __outb(int port, int value);
 void __outw(int port, int value);
 
 void __outl(int port, int value);
- 
+
+#endif  // __ASM__
 
 #endif

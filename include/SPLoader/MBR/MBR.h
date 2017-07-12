@@ -27,5 +27,7 @@
 
 #define MBR_BOOTSIG 0xAA55
 
+#ifndef __ASM__
+#endif  // __ASM__
 
 #endif

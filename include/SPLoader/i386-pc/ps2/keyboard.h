@@ -44,5 +44,7 @@
 #define PS2_SCANCODE_SET_2 2 // ^ set 2
 #define PS2_SCANCODE_SET_3 3 // ^ set 3
 
+#ifndef __ASM__
+#endif  // __ASM__
 
 #endif
