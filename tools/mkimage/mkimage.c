@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include <SPLoader/i386/pc/bios/bootstrap.h>
+#include <SPLoader/i386-pc/stage0a/bootstrap.h>
 
 
 #define SECTOR_SIZE 512
