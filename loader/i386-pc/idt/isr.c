@@ -44,7 +44,7 @@ int isr_init(void) {
 
     isr_install(INT_VEC_KEYBOARD, isr_defaultExpectedHandler, NULL);
     isr_install(INT_VEC_TIMER, isr_defaultExpectedHandler, NULL);
-    isr_install(INT_VEC_MYSTERY, isr_defaultExpectedHandler, NULL);
+    //isr_install(INT_VEC_MYSTERY, isr_defaultExpectedHandler, NULL);
 
     // exceptions (the first 32 ISR vectors are reserved for exceptions)
 
@@ -184,6 +184,9 @@ void isr_exceptionHandler(int vector, int code) {
             break;
         case INT_VEC_SIMD_FP_EXCEPTION:
             name = "SIMD Floating-Point Exception";
+            break;
+        case INT_VEC_VIRT_EXCEPTION:
+            name = "Virtualization Exception";
             break;
         default:
             name = "Reserved";
