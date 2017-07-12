@@ -14,14 +14,19 @@
 #define E_SUCCESS 0
 
 //
+// Generic error
+//
+#define E_FAILURE 1
+
+//
 // A passed argument was null
 //
-#define E_ARGNULL 1
+#define E_ARGNULL 2
 
 //
 // A passed argument is out of bounds
 //
-#define E_ARGBOUNDS 2
+#define E_ARGBOUNDS 3
 
 #ifndef __ASM__
 #endif
