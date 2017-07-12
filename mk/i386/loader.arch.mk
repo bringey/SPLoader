@@ -2,3 +2,6 @@
 LOADER_ARCH_OBJ = io.o
 
 LOADER_ARCH_OBJ := $(addprefix $(BUILD_DIR)/$(ISADIR)/,$(LOADER_ARCH_OBJ))
+LOADER_ARCH_DEP := $(LOADER_ARCH_OBJ:.o=.d)
+
+-include $(LOADER_ARCH_DEP)

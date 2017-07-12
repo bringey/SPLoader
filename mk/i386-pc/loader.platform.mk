@@ -6,6 +6,7 @@
 
 BIOS_BOOTSTRAP_OBJ = stage0a/bootstrap.o
 BIOS_BOOTSTRAP_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(BIOS_BOOTSTRAP_OBJ))
+BIOS_BOOTSTRAP_DEP := $(BIOS_BOOTSTRAP_OBJ:.o=.d)
 
 BIOS_BOOTSTRAP_FINAL_OBJ = stage0a/bootstrap.final.o
 BIOS_BOOTSTRAP_FINAL_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(BIOS_BOOTSTRAP_FINAL_OBJ))
@@ -22,6 +23,7 @@ LOADER_EARLY_OBJ = stage0b/early.o \
                    stage0b/a20gate.o \
                    stage0b/memmap.o
 LOADER_EARLY_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_EARLY_OBJ))
+LOADER_EARLY_DEP := $(LOADER_EARLY_OBJ:.o=.d)
 
 LOADER_EARLY_FINAL_OBJ = stage0b/loader_early.final.o
 LOADER_EARLY_FINAL_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_EARLY_FINAL_OBJ))
@@ -39,6 +41,7 @@ LOADER_EARLY_LDS := $(PLATFORMDIR)/stage0b/loader16.lds
 LOADER_ENTRY_OBJ = startup.o
 
 LOADER_ENTRY_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_ENTRY_OBJ))
+LOADER_ENTRY_DEP := $(LOADER_ENTRY_OBJ:.o=.d)
 
 LOADER_PLAT_OBJ = abort.o \
                   console/_driver.o \
@@ -49,7 +52,7 @@ LOADER_PLAT_OBJ = abort.o \
                   timer/timer.o
 
 LOADER_PLAT_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_PLAT_OBJ))
-
+LOADER_PLAT_DEP := $(LOADER_PLAT_OBJ:.o=.d)
 
 
 $(BIOS_BOOTSTRAP_FINAL_OBJ): $(BIOS_BOOTSTRAP_OBJ) $(MARKER)
@@ -75,6 +78,6 @@ bootstrap.bin: $(BIOS_BOOTSTRAP_BIN)
 
 loader16.bin: $(LOADER_EARLY_BIN)
 
--include $(BIOS_BOOTSTRAP_OBJ:.o=.d)
--include $(LOADER_EARLY_OBJ:.o=.d)
-
+-include $(BIOS_BOOTSTRAP_DEP)
+-include $(LOADER_EARLY_DEP)
+-include $(LOADER_PLAT_DEP)

@@ -14,6 +14,7 @@ LOADER_OBJ = main/main.o \
              console/out.o \
              console/string.o
 LOADER_OBJ := $(addprefix $(BUILD_DIR)/loader/,$(LOADER_OBJ))
+LOADER_DEP := $(LOADER_OBJ:.o=.d)
 
 LOADER_FINAL_OBJ = loader.final.o
 LOADER_FINAL_OBJ := $(addprefix $(BUILD_DIR)/loader/,$(LOADER_FINAL_OBJ))
@@ -38,6 +39,7 @@ $(LOADER_BIN): $(LOADER_FINAL_OBJ) $(MARKER)
 	$(LD_V) $(LDFLAGS) -o $@ -s -e _start --oformat binary -Ttext 0x10000 $<
 
 
--include $(LOADER_OBJ:.o=.d)
+-include $(LOADER_DEP)
+
 
 undefine SUBDIR
