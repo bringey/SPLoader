@@ -1,6 +1,12 @@
+/*
+** File: include/SPLoader/i386-pc/idt/isr.h
+**
+** Author: Brennan Ringey
+**
+*/
 
-#ifndef _SPLOADER_I386_PC_IDT_INIT_H
-#define _SPLOADER_I386_PC_IDT_INIT_H
+#ifndef _SPLOADER_I386_PC_IDT_ISR_H
+#define _SPLOADER_I386_PC_IDT_ISR_H
 
 #include <SPLoader/i386-pc/idt/ISRHandler.h>
 

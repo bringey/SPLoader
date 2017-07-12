@@ -1,3 +1,9 @@
+/*
+** File: include/SPLoader/timer/timer.h
+**
+** Author: Brennan Ringey
+**
+*/
 
 #ifndef _SPLOADER_TIMER_TIMER_H
 #define _SPLOADER_TIMER_TIMER_H

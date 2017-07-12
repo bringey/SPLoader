@@ -1,5 +1,5 @@
 /*
-** File: arch/i386-pc/early/a20gate.S
+** File: loader/i386-pc/stage0b/a20gate.S
 **
 ** Author: Brennan Ringey
 **

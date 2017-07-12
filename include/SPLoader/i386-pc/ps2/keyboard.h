@@ -1,3 +1,9 @@
+/*
+** File: include/SPLoader/ps2/keyboard.h
+**
+** Author: Brennan Ringey
+**
+*/
 
 #ifndef _SPLOADER_I386_PC_PS2_KEYBOARD_H
 #define _SPLOADER_I386_PC_PS2_KEYBOARD_H

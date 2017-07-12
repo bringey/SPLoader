@@ -1,3 +1,9 @@
+/*
+** File: include/SPLoader/i386-pc/idt/IDTGate.h
+**
+** Author: Brennan Ringey
+**
+*/
 
 #ifndef _SPLOADER_I386_PC_IDT_IDTGATE_H
 #define _SPLOADER_I386_PC_IDT_IDTGATE_H

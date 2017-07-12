@@ -1,3 +1,9 @@
+/*
+** File: loader/i386-pc/idt/stubs.S
+**
+** Author: Brennan Ringey
+**
+*/
 
     .globl IDT_ISR_TABLE
 

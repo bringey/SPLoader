@@ -1,4 +1,9 @@
-
+/*
+** File: loader/i386-pc/timer/timer.c
+**
+** Author: Brennan Ringey
+**
+*/
 
 #include <SPLoader/timer/timer.h>
 #include <SPLoader/err.h>
