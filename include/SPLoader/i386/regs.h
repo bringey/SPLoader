@@ -47,7 +47,7 @@
 **
 ** IA-32 V3, page 2-12.
 */
-#define	CR0_RSVD        0x1ffaffc0
+#define CR0_RSVD        0x1ffaffc0
 #define CR0_PG          0x80000000
 #define CR0_CD          0x40000000
 #define CR0_NW          0x20000000
@@ -59,14 +59,14 @@
 #define CR0_EM          0x00000004
 #define CR0_MP          0x00000002
 #define CR0_PE          0x00000001
-#define	CR1_RSVD        0xffffffff
-#define	CR2_RSVD        0x00000000
-#define	CR2_PF_LIN_ADDR 0xffffffff
-#define	CR3_RSVD        0x00000fe7
+#define CR1_RSVD        0xffffffff
+#define CR2_RSVD        0x00000000
+#define CR2_PF_LIN_ADDR 0xffffffff
+#define CR3_RSVD        0x00000fe7
 #define CR3_PD_BASE     0xfffff000
 #define CR3_PCD         0x00000010
 #define CR3_PWT         0x00000008
-#define	CR4_RSVD        0xfffff800
+#define CR4_RSVD        0xfffff800
 #define CR4_OSXMMEXCPT  0x00000400
 #define CR4_OSFXSR      0x00000200
 #define CR4_PCE         0x00000100
