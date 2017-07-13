@@ -203,18 +203,18 @@
 ** and 7 devoted to the 16 bits of the Offset, with the low nybble of
 ** byte 4 reserved.
 */
-#define	IDT_PRESENT		0x8000
-#define	IDT_DPL_MASK		0x6000
-#	define		IDT_DPL_0	0x0000
-#	define		IDT_DPL_1	0x2000
-#	define		IDT_DPL_2	0x4000
-#	define		IDT_DPL_3	0x6000
-#define	IDT_GATE_TYPE		0x0f00
-#	define		IDT_TASK_GATE	0x0500
-#	define		IDT_INT16_GATE	0x0600
-#	define		IDT_INT32_GATE	0x0e00
-#	define		IDT_TRAP16_GATE	0x0700
-#	define		IDT_TRAP32_GATE	0x0f00
+// #define	IDT_PRESENT		0x8000
+// #define	IDT_DPL_MASK		0x6000
+// #	define		IDT_DPL_0	0x0000
+// #	define		IDT_DPL_1	0x2000
+// #	define		IDT_DPL_2	0x4000
+// #	define		IDT_DPL_3	0x6000
+// #define	IDT_GATE_TYPE		0x0f00
+// #	define		IDT_TASK_GATE	0x0500
+// #	define		IDT_INT16_GATE	0x0600
+// #	define		IDT_INT32_GATE	0x0e00
+// #	define		IDT_TRAP16_GATE	0x0700
+// #	define		IDT_TRAP32_GATE	0x0f00
 
 // /*
 // ** Interrupt vectors
