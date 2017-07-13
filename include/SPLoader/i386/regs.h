@@ -1,3 +1,10 @@
+/*
+** File: include/SPLoader/i386/regs.h
+**
+** Author: Brennan Ringey
+**
+*/
+
 
 #ifndef _SPLOADER_I386_REGS_H
 #define _SPLOADER_I386_REGS_H
