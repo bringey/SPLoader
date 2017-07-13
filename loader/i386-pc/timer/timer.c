@@ -9,6 +9,7 @@
 #include <SPLoader/err.h>
 
 #include <SPLoader/i386-pc/idt/isr.h>
+#include <SPLoader/i386-pc/pit.h>
 #include <SPLoader/i386/io.h>
 #include <SPLoader/i386/x86arch.h>
 
@@ -33,7 +34,7 @@ int timer_init(void) {
     _callback = NULL;
 
     // disable PIT timer 0 by setting it to one-shot mode
-    __outb(TIMER_CONTROL_PORT, TIMER_0_SELECT | TIMER_MODE_1);
+    __outb(PIT_CONTROL_PORT, PIT_0_SELECT | PIT_MODE_1);
 
 
     isr_install(INT_VEC_TIMER, __timer_isr, NULL);
@@ -52,10 +53,10 @@ int timer_start(TimerCallback callback) {
     _callback = callback;
 
     // start PIT timer 0
-    uint32_t divisor = TIMER_FREQUENCY / CLOCK_FREQ;
-    __outb(TIMER_CONTROL_PORT, TIMER_0_LOAD | TIMER_0_SQUARE);
-    __outb(TIMER_0_PORT, divisor & 0xFF);
-    __outb(TIMER_0_PORT, (divisor >> 8) & 0xFF);
+    uint32_t divisor = PIT_FREQUENCY / CLOCK_FREQ;
+    __outb(PIT_CONTROL_PORT, PIT_0_LOAD | PIT_0_SQUARE);
+    __outb(PIT_0_PORT, divisor & 0xFF);
+    __outb(PIT_0_PORT, (divisor >> 8) & 0xFF);
 
     return E_SUCCESS;
 }
@@ -64,7 +65,7 @@ int timer_stop(void) {
     _timer_enabled = false;
 
     // stop PIT timer 0 by setting it to one-shot mode
-    __outb(TIMER_CONTROL_PORT, TIMER_0_SELECT | TIMER_MODE_1);
+    __outb(PIT_CONTROL_PORT, PIT_0_SELECT | PIT_MODE_1);
 
     return E_SUCCESS;
 }
