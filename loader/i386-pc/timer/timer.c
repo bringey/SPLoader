@@ -10,6 +10,7 @@
 
 #include <SPLoader/i386-pc/idt/isr.h>
 #include <SPLoader/i386-pc/pit.h>
+#include <SPLoader/i386-pc/pic.h>
 #include <SPLoader/i386/io.h>
 #include <SPLoader/i386/x86arch.h>
 

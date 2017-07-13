@@ -7,6 +7,7 @@
 
 #include <SPLoader/i386-pc/idt/isr.h>
 #include <SPLoader/i386-pc/idt/IDTGate.h>
+#include <SPLoader/i386-pc/pic.h>
 #include <SPLoader/loader.h>
 #include <SPLoader/i386/x86arch.h>
 #include <SPLoader/i386/io.h>
@@ -53,35 +54,35 @@ int isr_init(void) {
     }
 
     /*
-	** ICW1
-	*/
-	__outb( PIC_MASTER_CMD_PORT, PIC_ICW1BASE | PIC_NEEDICW4 );
-	__outb( PIC_SLAVE_CMD_PORT, PIC_ICW1BASE | PIC_NEEDICW4 );
+    ** ICW1
+    */
+    __outb(PIC_MASTER_CMD_PORT, PIC_ICW1_INIT | PIC_ICW1_NEEDICW4);
+    __outb(PIC_SLAVE_CMD_PORT, PIC_ICW1_INIT | PIC_ICW1_NEEDICW4);
 
-	/*
-	** ICW2: master offset of 20 in the IDT, slave offset of 28
-	*/
-	__outb( PIC_MASTER_IMR_PORT, 0x20 );
-	__outb( PIC_SLAVE_IMR_PORT, 0x28 );
+    /*
+    ** ICW2: master offset of 20 in the IDT, slave offset of 28
+    */
+    __outb(PIC_MASTER_DATA_PORT, 0x20);
+    __outb(PIC_SLAVE_DATA_PORT, 0x28);
 
-	/*
-	** ICW3: slave attached to line 2 of master, bit mask is 00000100
-	**	 slave id is 2
-	*/
-	__outb( PIC_MASTER_IMR_PORT, PIC_MASTER_SLAVE_LINE );
-	__outb( PIC_SLAVE_IMR_PORT, PIC_SLAVE_ID );
+    /*
+    ** ICW3: slave attached to line 2 of master, bit mask is 00000100
+    ** slave id is 2
+    */
+    __outb(PIC_MASTER_DATA_PORT, 4);
+    __outb(PIC_SLAVE_DATA_PORT, 2);
 
-	/*
-	** ICW4
-	*/
-	__outb( PIC_MASTER_IMR_PORT, PIC_86MODE );
-	__outb( PIC_SLAVE_IMR_PORT, PIC_86MODE );
+    /*
+    ** ICW4
+    */
+    __outb(PIC_MASTER_DATA_PORT, PIC_ICW4_8086);
+    __outb(PIC_SLAVE_DATA_PORT, PIC_ICW4_8086);
 
-	/*
-	** OCW1: allow interrupts on all lines
-	*/
-	__outb( PIC_MASTER_IMR_PORT, 0x00 );
-	__outb( PIC_SLAVE_IMR_PORT, 0x00 );
+    /*
+    ** OCW1: allow interrupts on all lines
+    */
+    __outb(PIC_MASTER_DATA_PORT, 0x00);
+    __outb(PIC_SLAVE_DATA_PORT, 0x00);
 
     return E_SUCCESS;
 }
