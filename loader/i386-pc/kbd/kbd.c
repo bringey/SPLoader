@@ -47,7 +47,7 @@ int kbd_waitForEvent(KeyEvent *evt) {
     _eventFlag = false;
     do {
         asm("hlt");
-    //} while (!_eventFlag);
+    } while (!_eventFlag);
 
     *evt = _lastEvent;
     //_eventFlag = false;
@@ -81,7 +81,7 @@ void __kbd_isr(int vector, int code) {
     uint8_t scancode = __inb(PS2_PORT_DATA);
     __outb(0x80, 0);
 
-    con_printf("%02x ", scancode);
+    //con_printf("%02x ", scancode);
 
     int result;
     KeyEvent evt;
@@ -105,14 +105,14 @@ void __kbd_isr(int vector, int code) {
                 case KBD_PARSE_COMPLETE:
                     _lastEvent = evt;
                     _eventFlag = true;
-                    con_putchar('C');
+                    //con_putchar('C');
                     // fall-through
                 case KBD_PARSE_ERROR:
                     _packet.length = 0;
-                    con_putchar('\n');
+                    //con_putchar('\n');
                     break;
                 case KBD_PARSE_INCOMPLETE:
-                    con_puts("I ");
+                    //con_puts("I ");
                     break;
             }
             break;
