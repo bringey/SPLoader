@@ -23,10 +23,10 @@ static void __kbd_isr(int vector, int code);
 
 static bool _eventFlag;
 static KeyEvent _lastEvent;
+static KeyFlags _flags;
 
 static ScancodePacket _packet;
 static ScancodeParseFn _parseFn;
-
 
 
 int kbd_init(void) {
@@ -34,6 +34,7 @@ int kbd_init(void) {
     _eventFlag = false;
     _packet.length = 0;
     _parseFn = kbd_parse_set1;
+    _flags = 0;
     isr_install(INT_VEC_KEYBOARD, __kbd_isr, NULL);
 
     return E_SUCCESS;
@@ -116,6 +117,60 @@ void __kbd_isr(int vector, int code) {
                     break;
             }
             break;
+    }
+
+    if (_eventFlag) {
+        bool keypressed = (_lastEvent.flags & KEY_FLAG_PRESSED) == KEY_FLAG_PRESSED;
+        bool modifier = false;
+        bool toggle = false;
+        KeyFlags mask;
+
+        switch (_lastEvent.key) {
+            case KEY_LSHIFT:
+            case KEY_RSHIFT:
+                mask = KEY_FLAG_SHIFT;
+                modifier = true;
+                break;
+            case KEY_LCTRL:
+            case KEY_RCTRL:
+                mask = KEY_FLAG_CTRL;
+                modifier = true;
+                break;
+            case KEY_LALT:
+            case KEY_RALT:
+                mask = KEY_FLAG_ALT;
+                modifier = true;
+                break;
+            case KEY_NUM_LOCK:
+                mask = KEY_FLAG_NUM_LOCK;
+                toggle = true;
+                break;
+            case KEY_CAPS_LOCK:
+                mask = KEY_FLAG_CAPS_LOCK;
+                toggle = true;
+                break;
+            case KEY_SCROLL_LOCK:
+                mask = KEY_FLAG_SCROLL_LOCK;
+                toggle = true;
+                break;
+            default:
+                break;
+        }
+
+        if (modifier) {
+            if (keypressed) {
+                _flags |= mask;  // set the modifier
+            } else {
+                _flags &= ~mask; // clear the modifier
+            }
+        }
+
+        if (toggle) {
+            if (keypressed) {
+                _flags ^= mask;  // toggle the lock
+            }
+        }
+        _lastEvent.flags |= _flags; // add the current flags to the latest event
     }
 
     // if (_scancodeBufIndex != SCANCODE_BUFSIZE) {
