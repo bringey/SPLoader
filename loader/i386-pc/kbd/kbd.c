@@ -1,6 +1,8 @@
 
 
 #include <SPLoader/kbd/kbd.h>
+#include <SPLoader/kbd/parse.h>
+#include <SPLoader/kbd/ScancodeParseFn.h>
 #include <SPLoader/err.h>
 
 #include <SPLoader/i386-pc/idt/isr.h>
@@ -22,11 +24,16 @@ static void __kbd_isr(int vector, int code);
 static bool _eventFlag;
 static KeyEvent _lastEvent;
 
+static ScancodePacket _packet;
+static ScancodeParseFn _parseFn;
+
 
 
 int kbd_init(void) {
     //_scancodeBufIndex = 0;
     _eventFlag = false;
+    _packet.length = 0;
+    _parseFn = kbd_parse_set1;
     isr_install(INT_VEC_KEYBOARD, __kbd_isr, NULL);
 
     return E_SUCCESS;
@@ -40,9 +47,10 @@ int kbd_waitForEvent(KeyEvent *evt) {
     _eventFlag = false;
     do {
         asm("hlt");
-    } while (!_eventFlag);
+    //} while (!_eventFlag);
 
     *evt = _lastEvent;
+    //_eventFlag = false;
 
     // _scancodeBufIndex = 0;
     // do {
@@ -73,11 +81,14 @@ void __kbd_isr(int vector, int code) {
     uint8_t scancode = __inb(PS2_PORT_DATA);
     __outb(0x80, 0);
 
+    con_printf("%02x ", scancode);
+
+    int result;
+    KeyEvent evt;
+
     switch (scancode) {
         case PS2_RB_ERROR1:
         case PS2_RB_ERROR2:
-        case PS2_RB_SELFTEST_PASSED:
-        case PS2_RB_SELFTEST_FAILED:
         case PS2_RB_RESEND:
         case PS2_RB_ECHO:
         case PS2_RB_ACK:
@@ -85,8 +96,25 @@ void __kbd_isr(int vector, int code) {
             // a command, or due to an error. Since we do not support sending
             // commands at the moment, any response other than a scancode is
             // to be considered an error. Reset the scancode buffer
+            _packet.length = 0;
             break;
         default:
+            _packet.buffer[_packet.length++] = scancode;
+            result = _parseFn(&_packet, &evt);
+            switch (result) {
+                case KBD_PARSE_COMPLETE:
+                    _lastEvent = evt;
+                    _eventFlag = true;
+                    con_putchar('C');
+                    // fall-through
+                case KBD_PARSE_ERROR:
+                    _packet.length = 0;
+                    con_putchar('\n');
+                    break;
+                case KBD_PARSE_INCOMPLETE:
+                    con_puts("I ");
+                    break;
+            }
             break;
     }
 
