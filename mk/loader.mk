@@ -12,7 +12,8 @@ SUBDIR := loader
 
 LOADER_OBJ = main/main.o \
              console/out.o \
-             console/string.o
+             console/string.o \
+             kbd/parse.o
 LOADER_OBJ := $(addprefix $(BUILD_DIR)/loader/,$(LOADER_OBJ))
 LOADER_DEP := $(LOADER_OBJ:.o=.d)
 
