@@ -125,7 +125,8 @@ typedef enum Key_e {
     KEY_DOWN        = keycode(5, 15),
     KEY_RIGHT       = keycode(5, 16),
     KEY_NP_0        = keycode(5, 17),
-    KEY_NP_PERIOD   = keycode(5, 19)
+    KEY_NP_PERIOD   = keycode(5, 19),
+    KEY_RSVD = 0xFF
 
 } Key;
 

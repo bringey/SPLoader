@@ -10,6 +10,10 @@
 
 #ifndef __ASM__
 
+#include <SPLoader/kbd/Key.h>
+#include <SPLoader/kbd/KeyFlags.h>
+
+
 typedef struct KeyEvent_s {
     Key key;
     KeyFlags flags;

@@ -48,6 +48,7 @@ LOADER_PLAT_OBJ = abort.o \
                   console/driver.o \
                   idt/isr.o \
                   idt/stubs.o \
+                  kbd/kbd.o \
                   mem/map.o \
                   timer/timer.o
 

@@ -11,6 +11,7 @@
 
 #include <SPLoader/console/out.h>
 #include <SPLoader/timer/timer.h>
+#include <SPLoader/kbd/kbd.h>
 
 void testCallback(unsigned ticks) {
     con_printf("Timer callback! ticks: %d\n", ticks);
@@ -28,11 +29,19 @@ int main(void) {
 
     memmap_dump(false);
 
-    timer_init();
-    timer_start(testCallback);
+    // timer_init();
+    // timer_start(testCallback);
 
+    // for (;;) {
+    //     asm("hlt");
+    // }
+
+    kbd_init();
+
+    KeyEvent evt;
     for (;;) {
-        asm("hlt");
+        kbd_waitForEvent(&evt);
+        con_printf("[KeyEvent] Key: %02x Flags: %02x\n", evt.key, evt.flags);
     }
 
     //con_setCursor(40, 12);

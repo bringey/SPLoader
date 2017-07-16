@@ -10,6 +10,8 @@
 
 #ifndef __ASM__
 
+#include <SPLoader/kbd/KeyEvent.h>
+
 int kbd_init(void);
 
 int kbd_waitForEvent(KeyEvent *evt);
