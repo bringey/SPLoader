@@ -81,6 +81,47 @@
 
 
 #ifndef __ASM__
+
+#define INLINE inline __attribute__((always_inline))
+
+// the following functions are inline since they only require 1 or 2
+// instructions.
+
+static INLINE int __eflags(void) {
+    int flags;
+    asm volatile (
+        "pushfl;"
+        "popl    %0;"
+        : "=r"(flags)
+        :
+        :
+    );
+    return flags;
+}
+
+static INLINE int __esp(void) {
+    int esp;
+    asm volatile (
+        "movl   %%esp, %0;"
+        : "=r"(esp)
+        :
+        :
+    );
+    return esp;
+}
+
+static INLINE int __ebp(void) {
+    int ebp;
+    asm volatile (
+        "movl   %%ebp, %0"
+        : "=r"(ebp)
+        :
+        :
+    );
+    return ebp;
+}
+
+
 #endif  // __ASM__
 
 #endif
