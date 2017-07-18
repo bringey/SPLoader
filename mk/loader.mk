@@ -23,10 +23,6 @@ LOADER_FINAL_OBJ := $(addprefix $(BUILD_DIR)/loader/,$(LOADER_FINAL_OBJ))
 LOADER_BIN = loader.bin
 LOADER_BIN := $(addprefix $(BUILD_DIR)/,$(LOADER_BIN))
 
-LOADER_SYMTAB = symtab.o
-LOADER_SYMTAB := $(addprefix $(BUILD_DIR)/loader/,$(LOADER_SYMTAB))
-
-
 LOADER_OBJ_LIST = $(LOADER_ENTRY_OBJ) \
                   $(LOADER_ARCH_OBJ) \
                   $(LOADER_PLAT_OBJ) \
@@ -38,17 +34,10 @@ loader.bin: $(LOADER_BIN)
 
 
 $(LOADER_FINAL_OBJ): $(LOADER_OBJ_LIST) $(MARKER)
-	$(LD_V) $(LDFLAGS) -o $@ -r -e _start -Ttext 0x10000 $(LOADER_OBJ_LIST)
+	$(LD_V) $(LDFLAGS) -o $@ -e _start -Ttext 0x10000 $(LOADER_OBJ_LIST)
 
-$(LOADER_SYMTAB): $(LOADER_FINAL_OBJ:.o=.nl) $(MARKER)
-	$(MKSYMTAB) $< > $*.S
-	@$(CPP) $(CPPFLAGS) -o $*.s $*.S
-	$(AS_V) $(ASFLAGS) -o $@ $*.s
-	@$(RM) $*.s
-
-
-$(LOADER_BIN): $(LOADER_FINAL_OBJ) $(LOADER_SYMTAB) $(MARKER)
-	$(LD_V) $(LDFLAGS) -o $@ -s -e _start --oformat binary -Ttext 0x10000 $(LOADER_FINAL_OBJ) $(LOADER_SYMTAB)
+$(LOADER_BIN): $(LOADER_FINAL_OBJ) $(MARKER)
+	$(LD_V) $(LDFLAGS) -o $@ -s -e _start --oformat binary -Ttext 0x10000 $<
 
 
 -include $(LOADER_DEP)
