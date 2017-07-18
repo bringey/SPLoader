@@ -12,17 +12,32 @@
 
 #include <SPLoader/i386/regs.h>
 
+#ifdef DEBUG_SYMBOLS
 //
 // Get the symbol name and location from a base address
 // 0 is returned on success, failure otherise
 //
-static int getSymbol(unsigned addr, char **name, unsigned *location);
+static int getSymbol(unsigned addr, char **name, unsigned *location) {
+    (void)addr; (void)name; (void)location;
+    // TODO
+    return E_FAILURE;
+}
 
-void _abort(const char *file, unsigned line, const char *reason) {
+#endif // DEBUG_SYMBOLS
+
+void _abort(
+    #ifdef DEBUG_SYMBOLS
+        const char *file, 
+        unsigned line,
+    #endif
+        const char *reason
+) {
     asm volatile ("cli");
     con_printf("ABORTED: %s\n", reason);
-    con_printf("%s:%d\n", file, line);
 
+    #ifdef DEBUG_SYMBOLS
+
+    con_printf("%s:%d\n", file, line);
     // backtrace
     // print all return addresses on the stack
     unsigned *ebp = (unsigned*)__ebp();
@@ -49,13 +64,10 @@ void _abort(const char *file, unsigned line, const char *reason) {
         ++frames;
     }
 
+    #endif // DEBUG_SYMBOLS
+
     for (;;) {
         asm("hlt");
     }
 }
 
-static int getSymbol(unsigned addr, char **name, unsigned *location) {
-    (void)addr; (void)name; (void)location;
-    // TODO
-    return E_FAILURE;
-}
