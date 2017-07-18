@@ -10,7 +10,9 @@
 
 #ifndef __ASM__
 
-void abort(const char *reason);
+#define abort(reason) _abort(__FILE__, __LINE__, reason)
+
+void _abort(const char *file, unsigned line, const char *reason);
 
 #endif  // __ASM__
 
