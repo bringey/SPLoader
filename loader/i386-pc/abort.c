@@ -66,7 +66,7 @@ void _abort(
     // backtrace
     // print all return addresses on the stack
     unsigned *ebp = (unsigned*)__ebp();
-    ebp = (unsigned*)ebp[0]; // skip _abort's frame
+    //ebp = (unsigned*)ebp[0]; // skip _abort's frame
 
     #define MAX_FRAMES 20
     unsigned frames = 0;
@@ -77,7 +77,6 @@ void _abort(
     //unsigned location;
 
     while (frames < MAX_FRAMES && ebp < (unsigned*)LOADER_STACK_ADDRESS) {
-        // TODO: get function names from mapping file
         // trace syntax:
         // (frame address) return address <symbol+offset>
         eip = ebp[1];

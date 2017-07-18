@@ -42,7 +42,9 @@ $(LOADER_FINAL_OBJ): $(LOADER_OBJ_LIST) $(MARKER)
 
 $(LOADER_SYMTAB): $(LOADER_FINAL_OBJ:.o=.nl) $(MARKER)
 	$(MKSYMTAB) $< > $*.S
-	$(AS_V) $(ASFLAGS) -o $@ $*.S
+	@$(CPP) $(CPPFLAGS) -o $*.s $*.S
+	$(AS_V) $(ASFLAGS) -o $@ $*.s
+	@$(RM) $*.s
 
 
 $(LOADER_BIN): $(LOADER_FINAL_OBJ) $(LOADER_SYMTAB) $(MARKER)
