@@ -14,7 +14,7 @@
 
 
 void _abort(
-    #ifdef DEBUG_SYMBOLS
+    #ifdef DEBUG_FILENAMES
         const char *file, 
         unsigned line,
     #endif
@@ -23,9 +23,11 @@ void _abort(
     asm volatile ("cli");
     con_printf("ABORTED: %s\n", reason);
 
-    #ifdef DEBUG_SYMBOLS
-
+    #ifdef DEBUG_FILENAMES
     con_printf("%s:%d\n", file, line);
+    #endif
+    
+    #ifdef DEBUG_BACKTRACE
     // backtrace
     // print all return addresses on the stack
     unsigned *ebp = (unsigned*)__ebp();
@@ -46,7 +48,7 @@ void _abort(
         ++frames;
     }
 
-    #endif // DEBUG_SYMBOLS
+    #endif // DEBUG_BACKTRACE
 
     for (;;) {
         asm("hlt");

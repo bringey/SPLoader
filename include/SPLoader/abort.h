@@ -10,14 +10,14 @@
 
 #ifndef __ASM__
 
-#ifdef DEBUG_SYMBOLS
+#ifdef DEBUG_FILENAMES
 #define abort(reason) _abort(__FILE__, __LINE__, reason)
 #else
 #define abort(reason) _abort(reason)
 #endif
 
 void _abort(
-    #ifdef DEBUG_SYMBOLS
+    #ifdef DEBUG_FILENAMES
         const char *file,
         unsigned line,
     #endif
