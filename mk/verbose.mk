@@ -24,6 +24,10 @@ LD_0 = @echo "    LD    $@"; $(LD)
 LD_1 = $(LD)
 LD_V = $(LD_$(VERBOSE))
 
+NM_0 = @echo "    NM    $@"; $(NM)
+NM_1 = $(NM)
+NM_V = $(NM_$(VERBOSE))
+
 BUILDIMAGE_0 = @echo "    BUILDIMAGE $@"; $(BUILDIMAGE)
 BUILDIMAGE_1 = $(BUILDIMAGE)
 BUILDIMAGE_V = $(BUILDIMAGE_$(VERBOSE))

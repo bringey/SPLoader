@@ -30,6 +30,9 @@ $(BUILD_DIR)/%.o: %.S $(MARKER)
 	$(AS_V) $(ASFLAGS) -o $@ $(BUILD_DIR)/$*.s -a=$(BUILD_DIR)/$*.lst
 #	@$(RM) -f $(BUILD_DIR)/$*.s
 
+$(BUILD_DIR)/%.nl: $(BUILD_DIR)/%.o $(MARKER)
+	$(NM_V) -n $< > $@
+
 # TARGETS
 
 $(BUILD_DIR)/usb.img: $(BIOS_BOOTSTRAP_BIN) $(LOADER_EARLY_BIN) $(LOADER_BIN)
