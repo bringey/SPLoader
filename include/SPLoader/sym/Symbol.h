@@ -3,7 +3,7 @@
 #define _SPLOADER_SYM_SYMBOL_H
 
 #ifndef SYM_WORD
-#define SYM_WORD uint32_t
+#define SYM_WORD unsigned
 #endif
 
 #ifndef __ASM__

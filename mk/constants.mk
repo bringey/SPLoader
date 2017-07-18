@@ -17,3 +17,5 @@ PLATFORM_MAKEFILE = mk/$(ISA)-$(PLATFORM)/$(SUBDIR).platform.mk
 
 MKIMAGE_DIR := tools/mkimage
 MKIMAGE := $(MKIMAGE_DIR)/mkimage
+
+MKSYMTAB := python tools/mksymtab.py

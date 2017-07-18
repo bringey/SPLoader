@@ -13,6 +13,8 @@
 #include <SPLoader/timer/timer.h>
 #include <SPLoader/kbd/kbd.h>
 
+#include <SPLoader/sym/symbols.h>
+
 void testCallback(unsigned ticks) {
     con_printf("Timer callback! ticks: %d\n", ticks);
 }
