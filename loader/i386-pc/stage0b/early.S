@@ -3,7 +3,7 @@
 **
 ** Author: Brennan Ringey
 **
-** Description: Entry point for the loader image
+** Description: Entry point for the loader16 image
 **
 ** The bootstrap transfers control here after loading the loader image.
 ** The early routine is responsible for enabling the A20 gate, setting up the

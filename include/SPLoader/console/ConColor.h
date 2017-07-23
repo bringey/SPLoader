@@ -2,6 +2,10 @@
 ** File: include/SPLoader/console/ConColor.h
 **
 ** Author: Brennan Ringey
+**
+** Enum definition for all possible color values in the console. The console
+** has a palette of 16 colors for both the foreground and background for each
+** character. Color support depends on the driver.
 */
 
 #ifndef _SPLOADER_CONSOLE_CONCOLOR_H
@@ -9,7 +13,11 @@
 
 #ifndef __ASM__
 
-typedef enum {
+//
+// ConColor enum. Based off of the default color palette for VGA 
+// text-compatible mode.
+//
+typedef enum ConColor_e {
     CON_COLOR_BLACK          = 0x0,
     CON_COLOR_BLUE           = 0x1,
     CON_COLOR_GREEN          = 0x2,

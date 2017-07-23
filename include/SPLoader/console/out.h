@@ -3,6 +3,7 @@
 **
 ** Author: Brennan Ringey
 **
+** Contains functions for console output.
 */
 
 #ifndef _SPLOADER_CONSOLE_OUT_H
