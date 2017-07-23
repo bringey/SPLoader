@@ -41,8 +41,18 @@ WARNFLAGS := -Wall -Wextra
 
 CFLAGS = -std=gnu11 -ffreestanding $(WARNFLAGS) $(WERROR)
 
-CPPFLAGS = -I$(INC_DIR)
+CPPFLAGS = -I$(INC_DIR) $(USER_DEFINES)
 
 ASFLAGS =
 
 LDFLAGS =
+
+
+#
+# User-specified compile flags
+# DEBUG_FILENAMES: filename and line number will be printed during abort
+# DEBUG_BACKTRACE: a stack backtrace will be printed during abort
+# DEBUG_KBD_PARSE: scancodes are printed as they are received, as well as
+#                  the result of the scancode buffer
+#
+USER_DEFINES =

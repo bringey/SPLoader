@@ -89,17 +89,17 @@ static uint8_t _SCANCODE_SET1_PAUSE[] = {
 };
 
 int kbd_parse_set1(ScancodePacket *packet, KeyEvent *evt) {
-    // set 1 has four possible scancode lengths
+    // set 1 has three possible scancode lengths
     // 1 - <c>                           - make
     //     (0x80 | <c>)                  - break
     // 2 - 0xE0 <c>                      - make
     //     0xE0 (0x80 | <c>)             - break
-    // 4 - 0xE0 0x2A 0xE0 <c>            - make code
-    //     0xE0 (0x80 | <c>) 0xE0 0xAA   - break code
     // 6 - 0xE1 0x1D 0x45 0xE1 0x9D 0xC5 - pause pressed
+    //
+    // Some keyboard/controller setups send some extra bytes for the 0xE0
+    // scancodes, like E0 2A <make code> and <break code> E0 AA. For those
+    // cases we simply discard them.
 
-    int result;
-    uint8_t head = packet->buffer[0];
     uint8_t length = packet->length;
 
     if (length == 0) {
@@ -107,24 +107,27 @@ int kbd_parse_set1(ScancodePacket *packet, KeyEvent *evt) {
         return KBD_PARSE_ERROR;
     }
 
+    int result;
+    uint8_t head = packet->buffer[0];
+
+    //
     // determine if the scancode is invalid or incomplete from
     // the first byte (head) in the buffer.
-    // If the head is 0xE0, then the scancode is either 2 or 4 bytes long
+    // If the head is 0xE0, then the scancode is 2 bytes long
     // If the head is 0xE1, then the scancode is a pause make code and is
     // 6 bytes long
     //
     if (head == 0xE0) {
-        //if (length < 2 || (length == 3 && packet->buffer[2] == 0xE0)) {
-        if (length == 1 || (length == 3 && packet->buffer[2] == 0xE0)) {
+        if (length == 1) {
             return KBD_PARSE_INCOMPLETE;
-        } else if (length > 4) {
-            return KBD_PARSE_ERROR;
+        } else if (length > 2) {
+            return KBD_PARSE_DISCARD;
         }
     } else if (head == 0xE1) {
         if (length < 6) {
             return KBD_PARSE_INCOMPLETE;
         } else if (length > 6) {
-            return KBD_PARSE_ERROR;
+            return KBD_PARSE_DISCARD;
         }
     }
 
@@ -142,34 +145,14 @@ int kbd_parse_set1(ScancodePacket *packet, KeyEvent *evt) {
             // 0xE0 <c>
             // 0xE0 (0x80 | <c>)
             scancode = packet->buffer[1];
-            if (scancode == 0x2A) {
-                result = KBD_PARSE_INCOMPLETE; // 4-byte E0 make scancode
-            } else {
-                // there's no way to tell if this a 4-byte or 2-byte break code
-                // so we handle both here, the leftover bytes (0xE0 0xAA) are
-                // just ignored.
-                table = _SCANCODE_SET1_E0;
-            }
-            break;
-        case 4:
-            // 0xE0 0x2A 0xE0 <c>
-            // 0xE0 (0x80 | <c>) 0xE0 0xAA
-            // some controllers like to add extra bytes for some keys
-            if (packet->buffer[1] == 0x2A) {
-                scancode = packet->buffer[3];
-                table = _SCANCODE_SET1_E0;
-            } else {
-                // the break code inadvertenly gets handled by case 2
-                return KBD_PARSE_ERROR;
-            }
+            table = _SCANCODE_SET1_E0;
             break;
         case 6:
             // 0xE1 0x1D 0x45 0xE1 0x9D 0xC5
             // all this for just a single make code
-            // WHY THE HELL DOES PAUSE NEED 6 BYTES FOR ITS SCANCODE?
             for (int i = 0; i != 6; ++i) {
                 if (packet->buffer[i] != _SCANCODE_SET1_PAUSE[i]) {
-                    return KBD_PARSE_ERROR;
+                    return KBD_PARSE_DISCARD;
                 }
             }
             evt->key = KEY_PAUSE;
@@ -196,7 +179,7 @@ int kbd_parse_set1(ScancodePacket *packet, KeyEvent *evt) {
         Key key = table[scancode];
         if (key == KEY_RSVD) {
             // invalid or unknown scancode, stop the parse
-            result = KBD_PARSE_ERROR;
+            result = KBD_PARSE_DISCARD;
         } else {
             // lookup successful, store the key and flags in the event pointer.
             evt->key = key;

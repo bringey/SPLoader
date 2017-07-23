@@ -2,7 +2,8 @@
 #ifndef _SPLOADER_KBD_PARSE_H
 #define _SPLOADER_KBD_PARSE_H
 
-#define KBD_PARSE_ERROR      2
+#define KBD_PARSE_ERROR      3
+#define KBD_PARSE_DISCARD    2
 #define KBD_PARSE_INCOMPLETE 1
 #define KBD_PARSE_COMPLETE   0
 

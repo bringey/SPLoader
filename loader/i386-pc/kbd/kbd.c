@@ -14,6 +14,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef DEBUG_KBD_PARSE
+#include <SPLoader/console/out.h>
+#endif
 
 static void __kbd_isr(int vector, int code);
 
@@ -82,7 +85,9 @@ void __kbd_isr(int vector, int code) {
     uint8_t scancode = __inb(PS2_PORT_DATA);
     __outb(0x80, 0);
 
-    //con_printf("%02x ", scancode);
+    #ifdef DEBUG_KBD_PARSE
+        con_printf("%02x ", scancode);
+    #endif
 
     int result;
     KeyEvent evt;
@@ -97,6 +102,9 @@ void __kbd_isr(int vector, int code) {
             // a command, or due to an error. Since we do not support sending
             // commands at the moment, any response other than a scancode is
             // to be considered an error. Reset the scancode buffer
+            #ifdef DEBUG_KBD_PARSE
+                con_puts(": RESPONSE\n");
+            #endif
             _packet.length = 0;
             break;
         default:
@@ -104,16 +112,28 @@ void __kbd_isr(int vector, int code) {
             result = _parseFn(&_packet, &evt);
             switch (result) {
                 case KBD_PARSE_COMPLETE:
+                    // scancode was complete, save event data
                     _lastEvent = evt;
                     _eventFlag = true;
-                    //con_putchar('C');
-                    // fall-through
-                case KBD_PARSE_ERROR:
+                    #ifdef DEBUG_KBD_PARSE
+                        con_puts(": COMPLETE\n");
+                    #endif
                     _packet.length = 0;
-                    //con_putchar('\n');
+                    break;
+                case KBD_PARSE_DISCARD:
+                    #ifdef DEBUG_KBD_PARSE
+                        con_puts(": DISCARD\n");
+                    #endif
+                    _packet.length = 0;
+                    break;
+                case KBD_PARSE_ERROR:
+                    #ifdef DEBUG_KBD_PARSE
+                        con_puts(": ERROR\n");
+                    #endif
+                    _packet.length = 0;
                     break;
                 case KBD_PARSE_INCOMPLETE:
-                    //con_puts("I ");
+                    // incomplete scancode, nothing to do
                     break;
             }
             break;
