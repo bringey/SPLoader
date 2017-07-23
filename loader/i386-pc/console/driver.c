@@ -45,7 +45,7 @@ int con_driver_put(char ch, unsigned x, unsigned y) {
 
     unsigned cursor = calcIndex(x, y);
 
-    ((uint16_t*)(VGA_BUFFER))[cursor] = (uint16_t)(curColor | ch);
+    ((uint16_t*)(VGA_BUFFER))[cursor] = (uint16_t)(curColor | ((unsigned char)ch));
 
     return E_SUCCESS;
 }
