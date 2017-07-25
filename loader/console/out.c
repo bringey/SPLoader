@@ -52,8 +52,8 @@ int con_init(void) {
     curX = 0;
     curY = 0;
 
-    con_driver_width(&WIDTH);
-    con_driver_height(&HEIGHT);
+    WIDTH = con_driver_width();
+    HEIGHT = con_driver_height();
 
     scrollMinY = 0;
     scrollMaxY = HEIGHT;

@@ -23,19 +23,9 @@
 int con_driver_clear(void);
 
 /*
-** @brief Gets the height, in rows, of the console.
-**
-** Stores the current console height, in rows, in the given unsigned pointer.
-**
-*/
-int con_driver_height(unsigned *heightVar);
-
-/*
 ** @brief Puts a character at the given row and column 
 */
 int con_driver_put(char ch, unsigned x, unsigned y);
-
-//int con_driver_scroll(unsigned lines);
 
 int con_driver_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines);
 
@@ -45,7 +35,16 @@ int con_driver_setFgColor(ConColor color);
 
 int con_driver_updateCursor(unsigned x, unsigned y);
 
-int con_driver_width(unsigned *widthVar);
+// driver properties
+
+unsigned con_driver_columnOffset(void);
+
+unsigned con_driver_rowOffset(void);
+
+unsigned con_driver_height(void);
+
+unsigned con_driver_width(void);
+
 
 #endif  // __ASM__
 

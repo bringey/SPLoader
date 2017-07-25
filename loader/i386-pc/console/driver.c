@@ -28,16 +28,6 @@ static uint16_t curColor = VGA_DEFAULT_COLOR;
 // con_driver_clear is implemented in assembly, see _driver.S
 //
 
-int con_driver_height(unsigned *heightVar) {
-    if (heightVar == NULL) {
-        return E_ARGNULL;
-    }
-
-    *heightVar = VGA_HEIGHT;
-
-    return E_SUCCESS;
-}
-
 int con_driver_put(char ch, unsigned x, unsigned y) {
     if (x >= VGA_WIDTH || y >= VGA_HEIGHT) {
         return E_ARGBOUNDS;
@@ -183,12 +173,20 @@ int con_driver_updateCursor(unsigned x, unsigned y) {
     return E_SUCCESS;
 }
 
-int con_driver_width(unsigned *widthVar) {
-    if (widthVar == NULL) {
-        return E_ARGNULL;
-    }
+// properties
 
-    *widthVar = VGA_WIDTH;
+unsigned con_driver_columnOffset(void) {
+    return 1;
+}
 
-    return E_SUCCESS;
+unsigned con_driver_rowOffset(void) {
+    return VGA_WIDTH;
+}
+
+unsigned con_driver_width(void) {
+    return VGA_WIDTH;
+}
+
+unsigned con_driver_height(void) {
+    return VGA_HEIGHT;
 }
