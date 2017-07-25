@@ -16,6 +16,7 @@
 
 static unsigned curX, curY;
 static unsigned WIDTH, HEIGHT;
+static unsigned scrollMinY, scrollMaxY;
 
 
 //
@@ -53,6 +54,9 @@ int con_init(void) {
 
     con_driver_width(&WIDTH);
     con_driver_height(&HEIGHT);
+
+    scrollMinY = 0;
+    scrollMaxY = HEIGHT;
 
     con_driver_updateCursor(curX, curY);
 
@@ -134,11 +138,9 @@ int con_printf_at(unsigned x, unsigned y, const char *fmt, ...) {
     return E_SUCCESS;
 }
 
-#ifndef con_scroll
 int con_scroll(unsigned lines) {
-    return con_driver_scroll(lines);
+    return con_driver_scroll(scrollMinY, scrollMaxY, lines);
 }
-#endif
 
 #ifndef con_setBgColor
 int con_setBgColor(ConColor color) {
@@ -164,6 +166,20 @@ int con_setCursor(unsigned x, unsigned y) {
     return E_SUCCESS;
 }
 
+int con_setScrollRegion(unsigned minY, unsigned maxY) {
+    if (minY >= maxY || maxY > HEIGHT) {
+        return E_ARGBOUNDS;
+    }
+
+    scrollMinY = minY;
+    scrollMaxY = maxY;
+    curX = 0;
+    curY = minY;
+    con_driver_updateCursor(curX, curY);
+
+    return E_SUCCESS;
+}
+
 // ============================================================================
 // STATIC FUNCTIONS
 // ============================================================================
@@ -172,7 +188,7 @@ int con_setCursor(unsigned x, unsigned y) {
 int __putchar(char ch) {
 
     if (curY == HEIGHT) {
-        con_driver_scroll(1);
+        con_driver_scroll(scrollMinY, scrollMaxY, 1);
         --curY;
     }
 

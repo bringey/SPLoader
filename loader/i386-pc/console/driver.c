@@ -50,7 +50,7 @@ int con_driver_put(char ch, unsigned x, unsigned y) {
     return E_SUCCESS;
 }
 
-int con_driver_scroll(unsigned lines) {
+int con_driver_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines) {
 
     // if lines is zero, we don't need to do anything
 

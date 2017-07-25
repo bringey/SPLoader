@@ -33,14 +33,16 @@ int con_printf(const char *fmt, ...);
 
 int con_printf_at(unsigned x, unsigned y, const char *fmt, ...);
 
-//int con_scroll(unsigned lines);
-#define con_scroll(lines) con_driver_scroll(lines)
+int con_scroll(unsigned lines);
+//#define con_scroll(lines) con_driver_scroll(lines)
 
 #define con_setBgColor(color) con_driver_setBgColor(color)
 
 #define con_setFgColor(color) con_driver_setFgColor(color)
 
 int con_setCursor(unsigned x, unsigned y);
+
+int con_setScrollRegion(unsigned minY, unsigned maxY);
 
 #endif  //__ASM__
 

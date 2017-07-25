@@ -35,7 +35,9 @@ int con_driver_height(unsigned *heightVar);
 */
 int con_driver_put(char ch, unsigned x, unsigned y);
 
-int con_driver_scroll(unsigned lines);
+//int con_driver_scroll(unsigned lines);
+
+int con_driver_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines);
 
 int con_driver_setBgColor(ConColor color);
 
