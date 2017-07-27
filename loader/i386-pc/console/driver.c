@@ -21,46 +21,76 @@
 
 #define calcIndex(col, row) ((row * VGA_WIDTH) + col)
 
-static uint16_t curColor = VGA_DEFAULT_COLOR;
 
-
-//
-// con_driver_clear is implemented in assembly, see _driver.S
-//
-
-int con_driver_put(char ch, unsigned x, unsigned y) {
-    if (x >= VGA_WIDTH || y >= VGA_HEIGHT) {
+int _con_clearRegion(unsigned rowStart, unsigned rowEnd) {
+    if (rowEnd <= rowStart) {
         return E_ARGBOUNDS;
     }
 
-    unsigned cursor = calcIndex(x, y);
+    // rep stosw
+    // %eax: VGA_NULLCELL
+    // %ecx: (rowEnd - rowStart) * VGA_WIDTH
+    // %edi: VGA_BUFFER + (rowStart * VGA_WIDTH)
 
-    ((uint16_t*)(VGA_BUFFER))[cursor] = (uint16_t)(curColor | ((unsigned char)ch));
+    asm volatile(
+        "movl   %0, %%eax;"
+        "movl   %1, %%ecx;"
+        "movl   %2, %%edi;"
+        "cld;"
+        "rep stosw;"
+        :
+        : "i"(VGA_NULLCELL),
+          "mr"((rowEnd - rowStart) * VGA_WIDTH),
+          "mr"(VGA_BUFFER + (rowStart * VGA_WIDTH))
+        : "%eax", "%ecx", "%edi"
+    );
 
     return E_SUCCESS;
 }
 
-int con_driver_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines) {
+
+unsigned _con_color(ConColor fg, ConColor bg) {
+    return (unsigned)(((uint16_t)bg << 12) | ((uint16_t)fg << 8));
+}
+
+unsigned _con_index(unsigned x, unsigned y) {
+    return (y * VGA_WIDTH) + x;
+}
+
+int _con_put(unsigned index, unsigned color, char ch) {
+    if (index >= (VGA_WIDTH * VGA_HEIGHT)) {
+        return E_ARGBOUNDS;
+    }
+
+    ((uint16_t*)(VGA_BUFFER))[index] = (uint16_t)(color | ((unsigned char)ch));
+
+    return E_SUCCESS;
+}
+
+int _con_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines) {
 
     // if lines is zero, we don't need to do anything
 
     if (lines) {
 
+        unsigned windowHeight = lineEnd - lineStart;
         // if the lines is greater than the height, just clear it
         // otherwise, copy it line by line
-        if (lines >= VGA_HEIGHT) {
-            con_driver_clear();
+        if (lines >= windowHeight) {
+            _con_clearRegion(lineStart, lineEnd);
         } else {
 
+            uint16_t *windowStart = (uint16_t*)VGA_BUFFER + (lineStart * VGA_WIDTH);
+
             // size, in cells, of the scrolling region
-            unsigned scrollLength = VGA_WIDTH * (VGA_HEIGHT - lines);
+            unsigned scrollLength = VGA_WIDTH * (windowHeight - lines);
             // size, in cells, of the blank region (empty rows created after
             // the scroll)
             unsigned windowLength = VGA_WIDTH * lines;
 
             // shift the scroll region via a 'rep movsw'
-            // %esi = VGA_BUFFER + windowLength
-            // %edi = VGA_BUFFER
+            // %esi = windowStart + windowLength
+            // %edi = windowStart
             // %ecx = scrollLength
 
             asm volatile (
@@ -70,15 +100,15 @@ int con_driver_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines) {
                 "cld;"
                 "rep movsw;"
                 :
-                : "imr"(((uint16_t*)VGA_BUFFER) + windowLength),
-                  "imr"(VGA_BUFFER),
+                : "imr"(windowStart + windowLength),
+                  "imr"(windowStart),
                   "imr"(scrollLength)
                 : "%esi", "%edi", "ecx"
             );
 
             // clear the blank region via a 'rep stosw'
             // %eax = VGA_NULLCELL
-            // %edi = VGA_BUFFER + scrollLength
+            // %edi = windowStart + scrollLength
             // %ecx = windowLength
 
             asm volatile (
@@ -89,7 +119,7 @@ int con_driver_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines) {
                 "rep stosw;"
                 :
                 : "imr"(VGA_NULLCELL),
-                  "imr"(((uint16_t*)VGA_BUFFER) + scrollLength),
+                  "imr"(windowStart + scrollLength),
                   "imr"(windowLength)
                 : "%eax", "%edi", "%ecx"
             );
@@ -101,24 +131,21 @@ int con_driver_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines) {
     return E_SUCCESS;
 }
 
-int con_driver_setBgColor(ConColor color) {
-    color = (color & 0xF) << 12;
-    curColor = (curColor & 0x0F00) | color;
-    return E_SUCCESS;
-}
+// int con_driver_setBgColor(ConColor color) {
+//     color = (color & 0xF) << 12;
+//     curColor = (curColor & 0x0F00) | color;
+//     return E_SUCCESS;
+// }
 
-int con_driver_setFgColor(ConColor color) {
-    color = (color & 0xF) << 8;
-    curColor = (curColor & 0xF000) | color;
-    return E_SUCCESS;
-}
+// int con_driver_setFgColor(ConColor color) {
+//     color = (color & 0xF) << 8;
+//     curColor = (curColor & 0xF000) | color;
+//     return E_SUCCESS;
+// }
 
-int con_driver_updateCursor(unsigned x, unsigned y) {
-    if (x >= VGA_WIDTH || y >= VGA_HEIGHT) {
-        return E_ARGBOUNDS;
-    }
+int _con_updateCursor(unsigned index) {
 
-    unsigned cursor = calcIndex(x, y);
+    //unsigned cursor = calcIndex(x, y);
 
     //
     // The following sets the cursor position using inline assembly
@@ -146,7 +173,7 @@ int con_driver_updateCursor(unsigned x, unsigned y) {
         "movw $0x3D5, %%dx;"
         "outb (%%dx);"
         :
-        : "mor"(cursor)
+        : "mor"(index)
         : "%eax","%edx"
     );
 
@@ -166,7 +193,7 @@ int con_driver_updateCursor(unsigned x, unsigned y) {
         "movw $0x3D5, %%dx;"
         "outb (%%dx);"
         :
-        : "mor"(cursor)
+        : "mor"(index)
         : "%eax","%edx"
     );
 
@@ -175,18 +202,10 @@ int con_driver_updateCursor(unsigned x, unsigned y) {
 
 // properties
 
-unsigned con_driver_columnOffset(void) {
-    return 1;
-}
-
-unsigned con_driver_rowOffset(void) {
+unsigned _con_width(void) {
     return VGA_WIDTH;
 }
 
-unsigned con_driver_width(void) {
-    return VGA_WIDTH;
-}
-
-unsigned con_driver_height(void) {
+unsigned _con_height(void) {
     return VGA_HEIGHT;
 }

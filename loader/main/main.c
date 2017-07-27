@@ -21,11 +21,14 @@ int main(void) {
 
     con_clear();
 
-    con_setBgColor(CON_COLOR_WHITE);
-    con_setFgColor(CON_COLOR_BLACK);
+    unsigned WHITE_ON_BLACK = con_color(CON_COLOR_WHITE, CON_COLOR_BLACK);
+    unsigned BLACK_ON_WHITE = con_color(CON_COLOR_BLACK, CON_COLOR_WHITE);
+
+    con_setColor(BLACK_ON_WHITE);
     con_printf(" SPLoader %69s ", "v0.1");
-    con_setBgColor(CON_DEFAULT_BG);
-    con_setFgColor(CON_DEFAULT_FG);
+    con_setColor(WHITE_ON_BLACK);
+
+    con_setWindow(1, con_height() - 1);
 
     memmap_dump(false);
 

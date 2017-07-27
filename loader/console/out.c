@@ -15,23 +15,26 @@
 #include <stdbool.h>
 
 static unsigned curX, curY;
+static unsigned curIndex;
+static unsigned curColor;
 static unsigned WIDTH, HEIGHT;
 static unsigned scrollMinY, scrollMaxY;
 
 
-//
-// Typedef for a putchar function
-// Two putchar functions are defined:
-//   __putchar:   writes a char at (curX,curY) to the console
-//   con_putchar: same as __putchar, but updates the cursor location
-//
-typedef int (*PutcharFn)(char);
 
-static int __putchar(char ch);
-static void __puts(PutcharFn fn, const char *str);
-static void __printf(PutcharFn fn, const char *fmt, va_list args);
-static void __pad(PutcharFn fn, int extra, char padchar);
-static void __padstr(PutcharFn fn,
+typedef struct PutcharOptions_s {
+    bool useCursor;      // should we put at the cursor location or a specified
+    unsigned x;          // coordinate pair
+    unsigned y;
+    unsigned index;      // index
+} PutcharOptions;
+
+
+static void __putchar(PutcharOptions *opt, char ch);
+static void __puts(PutcharOptions *opt, const char *str);
+static void __printf(PutcharOptions *opt, const char *fmt, va_list args);
+static void __pad(PutcharOptions *opt, int extra, char padchar);
+static void __padstr(PutcharOptions *opt,
                      char *str,
                      unsigned len,
                      unsigned width,
@@ -40,9 +43,20 @@ static void __padstr(PutcharFn fn,
 
 int con_clear(void) {
     curX = 0;
-    curY = 0;
-    con_driver_clear();
-    con_driver_updateCursor(curX, curY);
+    curY = scrollMinY;
+    curIndex = _con_index(curX, curY);
+    _con_clearRegion(0, HEIGHT); // clear the entire screen
+    _con_updateCursor(curIndex);
+
+    return E_SUCCESS;
+}
+
+int con_clearWindow(void) {
+    curX = 0;
+    curY = scrollMinY;
+    curIndex = _con_index(curX, curY); // clear the window
+    _con_clearRegion(scrollMinY, scrollMaxY);
+    _con_updateCursor(curIndex);
 
     return E_SUCCESS;
 }
@@ -51,22 +65,26 @@ int con_init(void) {
 
     curX = 0;
     curY = 0;
+    curIndex = _con_index(0, 0);
+    curColor = _con_color(CON_DEFAULT_FG, CON_DEFAULT_BG);
 
-    WIDTH = con_driver_width();
-    HEIGHT = con_driver_height();
+    WIDTH = _con_width();
+    HEIGHT = _con_height();
 
     scrollMinY = 0;
     scrollMaxY = HEIGHT;
 
-    con_driver_updateCursor(curX, curY);
+    _con_updateCursor(curIndex);
 
     return E_SUCCESS;
 }
 
 int con_putchar(char ch) {
 
-    __putchar(ch);
-    con_driver_updateCursor(curX, curY);
+    PutcharOptions opt = {
+        .useCursor = true
+    };
+    __putchar(&opt, ch);
 
     return E_SUCCESS;
 }
@@ -75,20 +93,24 @@ int con_putchar_at(unsigned x, unsigned y, char ch) {
     if (x >= WIDTH || y >= HEIGHT) {
         return E_ARGBOUNDS;
     }
-    unsigned oldX = curX, oldY = curY;
 
-    curX = x;
-    curY = y;
-    __putchar(ch);
-    curX = oldX;
-    curY = oldY;
+    PutcharOptions opt = {
+        .useCursor = false,
+        .x = x,
+        .y = y,
+        .index = _con_index(x, y)
+    };
+    __putchar(&opt, ch);
 
     return E_SUCCESS;
 }
 
 int con_puts(const char *str) {
 
-    __puts(con_putchar, str);
+    PutcharOptions opt = {
+        .useCursor = true
+    };
+    __puts(&opt, str);
 
     return E_SUCCESS;
 }
@@ -97,13 +119,14 @@ int con_puts_at(unsigned x, unsigned y, const char *str) {
     if (x >= WIDTH || y >= HEIGHT) {
         return E_ARGBOUNDS;
     }
-    unsigned oldX = curX, oldY = curY;
-
-    curX = x;
-    curY = y;
-    __puts(__putchar, str);
-    curX = oldX;
-    curY = oldY;
+    
+    PutcharOptions opt = {
+        .useCursor = false,
+        .x = x,
+        .y = y,
+        .index = _con_index(x, y)
+    };
+    __puts(&opt, str);
 
     return E_SUCCESS;
 }
@@ -112,7 +135,10 @@ int con_printf(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-    __printf(con_putchar, fmt, args);
+    PutcharOptions opt = {
+        .useCursor = true
+    };
+    __printf(&opt, fmt, args);
 
     va_end(args);
     return E_SUCCESS;
@@ -126,33 +152,26 @@ int con_printf_at(unsigned x, unsigned y, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-    unsigned oldX = curX, oldY = curY;
-
-    curX = x;
-    curY = y;
-    __printf(__putchar, fmt, args);
-    curX = oldX;
-    curY = oldY;
+    PutcharOptions opt = {
+        .useCursor = false,
+        .x = x,
+        .y = y,
+        .index = _con_index(x, y)
+    };
+    __printf(&opt, fmt, args);
 
     va_end(args);
     return E_SUCCESS;
 }
 
 int con_scroll(unsigned lines) {
-    return con_driver_scroll(scrollMinY, scrollMaxY, lines);
+    return _con_scroll(scrollMinY, scrollMaxY, lines);
 }
 
-#ifndef con_setBgColor
-int con_setBgColor(ConColor color) {
-    return con_driver_setBgColor(color);
+int con_setColor(unsigned color) {
+    curColor = color;
+    return E_SUCCESS;
 }
-#endif
-
-#ifndef con_setFgColor
-int con_setFgColor(ConColor color) {
-    return con_driver_setFgColor(color);
-}
-#endif
 
 int con_setCursor(unsigned x, unsigned y) {
     if (x >= WIDTH || y >= HEIGHT) {
@@ -161,12 +180,13 @@ int con_setCursor(unsigned x, unsigned y) {
 
     curX = x;
     curY = y;
-    con_driver_updateCursor(curX, curY);
+    curIndex = _con_index(x, y);
+    _con_updateCursor(curIndex);
 
     return E_SUCCESS;
 }
 
-int con_setScrollRegion(unsigned minY, unsigned maxY) {
+int con_setWindow(unsigned minY, unsigned maxY) {
     if (minY >= maxY || maxY > HEIGHT) {
         return E_ARGBOUNDS;
     }
@@ -175,7 +195,8 @@ int con_setScrollRegion(unsigned minY, unsigned maxY) {
     scrollMaxY = maxY;
     curX = 0;
     curY = minY;
-    con_driver_updateCursor(curX, curY);
+    curIndex = _con_index(0, minY);
+    _con_updateCursor(curIndex);
 
     return E_SUCCESS;
 }
@@ -185,63 +206,88 @@ int con_setScrollRegion(unsigned minY, unsigned maxY) {
 // ============================================================================
 
 
-int __putchar(char ch) {
+void __putchar(PutcharOptions *opt, char ch) {
 
-    if (curY == HEIGHT) {
-        con_driver_scroll(scrollMinY, scrollMaxY, 1);
-        --curY;
+    bool useCursor = opt->useCursor;
+
+    unsigned x, y, index;
+    if (useCursor) {
+        // scroll if needed
+        if (curY == scrollMaxY) {
+            _con_scroll(scrollMinY, scrollMaxY, 1);
+            --curY;
+            curIndex -= WIDTH;
+        }
+        x = curX;
+        y = curY;
+        index = curIndex;
+    } else {
+        x = opt->x;
+        y = opt->y;
+        index = opt->index;
     }
 
     switch (ch) {
         case '\n':
-            for (; curX != WIDTH; ++curX) {
-                con_driver_put(' ', curX, curY);
+            for (; x != WIDTH; ++x, ++index) {
+                _con_put(index, curColor, ' ');
             }
-            curX = 0;
-            ++curY;
+            x = 0;
+            ++y;
             break;
         case '\r':
-            curX = 0;
+            x = 0;
+            index = _con_index(x, y);
             break;
         default:
-            con_driver_put(ch, curX, curY);
-            if (++curX == WIDTH) {
-                curX = 0;
-                ++curY;
+            _con_put(index, curColor, ch);
+            ++index;
+            if (++x == WIDTH) {
+                x = 0;
+                ++y;
             }
             break;
     }
 
-    return 0;
+    if (useCursor) {
+        curX = x;
+        curY = y;
+        curIndex = index;
+        _con_updateCursor(index);
+    } else {
+        opt->x = x;
+        opt->y = y;
+        opt->index = index;
+    }
 }
 
-void __puts(PutcharFn putchar, const char *str) {
+void __puts(PutcharOptions *opt, const char *str) {
     char ch;
     while ((ch = *str++) != '\0') {
-        putchar(ch);
+        __putchar(opt, ch);
     }
 }
 
-void __pad(PutcharFn putchar, int extra, char padchar) {
+void __pad(PutcharOptions *opt, int extra, char padchar) {
     for (; extra > 0; --extra) {
-        putchar(padchar);
+        __putchar(opt, padchar);
     }
 }
 
-void __padstr(PutcharFn putchar, char *str, unsigned len, unsigned width, bool leftadjust, int padchar) {
+void __padstr(PutcharOptions *opt, char *str, unsigned len, unsigned width, bool leftadjust, int padchar) {
     int extra = width - len;
 
     // pad if needed for right-adjust
     if (extra > 0 && !leftadjust) {
-        __pad(putchar, extra, padchar);
+        __pad(opt, extra, padchar);
     }
     
     // print the string
-    __puts(putchar, str);
+    __puts(opt, str);
 
     // pad if needed for left-adjust
     if (extra > 0 && leftadjust) {
-        __pad(putchar, extra, padchar);
+        __pad(opt, extra, padchar);
     }
 }
 
@@ -249,7 +295,7 @@ void __padstr(PutcharFn putchar, char *str, unsigned len, unsigned width, bool l
 
 #define PRINTF_BUF_SIZE 80
 
-void __printf(PutcharFn putchar, const char *fmt, va_list args) {
+void __printf(PutcharOptions *opt, const char *fmt, va_list args) {
 
     bool leftadjust, typeValid;
     char buf[PRINTF_BUF_SIZE];
@@ -309,13 +355,13 @@ void __printf(PutcharFn putchar, const char *fmt, va_list args) {
             }
 
             if (typeValid) {
-                __padstr(putchar, str, len, width, leftadjust, padchar);
+                __padstr(opt, str, len, width, leftadjust, padchar);
             }
 
 
 
         } else {
-            putchar(ch);
+            __putchar(opt, ch);
         }
     }
 }

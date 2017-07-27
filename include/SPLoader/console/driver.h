@@ -18,32 +18,37 @@
 /*
 ** @brief clear function for the console driver
 **
-** Clears the on-screen console buffer.
+** Clears a region of the on-screen console buffer. The lines from
+** rowStart to rowEnd will be cleared. rowEnd must be greater than
+** rowStart.
 */
-int con_driver_clear(void);
+int _con_clearRegion(unsigned rowStart, unsigned rowEnd);
+
+/*
+** @brief calculates a color value for the given ConColor
+**
+*/
+unsigned _con_color(ConColor fg, ConColor bg);
+
+/*
+** @brief Calculates an index in the console buffer for the given coordinates
+*/
+unsigned _con_index(unsigned x, unsigned y);
 
 /*
 ** @brief Puts a character at the given row and column 
 */
-int con_driver_put(char ch, unsigned x, unsigned y);
+int _con_put(unsigned index, unsigned color, char ch);
 
-int con_driver_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines);
+int _con_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines);
 
-int con_driver_setBgColor(ConColor color);
-
-int con_driver_setFgColor(ConColor color);
-
-int con_driver_updateCursor(unsigned x, unsigned y);
+int _con_updateCursor(unsigned index);
 
 // driver properties
 
-unsigned con_driver_columnOffset(void);
+unsigned _con_height(void);
 
-unsigned con_driver_rowOffset(void);
-
-unsigned con_driver_height(void);
-
-unsigned con_driver_width(void);
+unsigned _con_width(void);
 
 
 #endif  // __ASM__
