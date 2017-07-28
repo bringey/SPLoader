@@ -38,10 +38,10 @@ int menu_main(void) {
     // print the title bar
     con_setColor(BLACK_ON_WHITE);
     con_printf_at(0, 0, " %s", TITLE);
-    int versionLen = width - sizeof(TITLE) - 2; // remaining space on line
+    int versionLen = width - sizeof(TITLE) - 1; // remaining space on line
     if (versionLen >= 0) {
-        //con_printf_at(sizeof(TITLE) + 1, 0, "%*s", versionLen, VERSION);
-        con_printf_at(sizeof(TITLE), 0, " %s", VERSION);
+        con_printf_at(sizeof(TITLE), 0, "%*s ", versionLen, VERSION);
+        //con_printf_at(sizeof(TITLE), 0, " %s", VERSION);
     }
 
     return E_SUCCESS;

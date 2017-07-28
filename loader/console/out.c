@@ -322,11 +322,18 @@ void __printf(PutcharOptions *opt, const char *fmt, va_list args) {
                 padchar = '0';  // pad with zeros instead of spaces
                 ch = *fmt++;
             }
-            // get the width if specified
-            while ( ch >= '0' && ch <= '9') {
-                width *= 10;
-                width += ch - '0';
+
+            if (ch == '*') {
+                // get the width from args
+                width = (unsigned)va_arg(args, unsigned);
                 ch = *fmt++;
+            } else {
+                // get the width if specified
+                while ( ch >= '0' && ch <= '9') {
+                    width *= 10;
+                    width += ch - '0';
+                    ch = *fmt++;
+                }
             }
 
             switch (ch) {
