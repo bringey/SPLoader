@@ -7,67 +7,39 @@
 **
 */
 
-#include <SPLoader/i386-pc/mem/map.h>
+#include <SPLoader/main/menu.h>
 
 #include <SPLoader/console/out.h>
 #include <SPLoader/timer/timer.h>
 #include <SPLoader/kbd/kbd.h>
 
-void testCallback(unsigned ticks) {
-    con_printf("Timer callback! ticks: %d\n", ticks);
-}
+#include <SPLoader/err.h>
+#include <SPLoader/abort.h>
+
 
 int main(void) {
 
     con_clear();
 
-    unsigned WHITE_ON_BLACK = con_color(CON_COLOR_WHITE, CON_COLOR_BLACK);
-    unsigned BLACK_ON_WHITE = con_color(CON_COLOR_BLACK, CON_COLOR_WHITE);
+    int error;
 
-    con_setColor(BLACK_ON_WHITE);
-    con_printf(" SPLoader %69s ", "v0.1");
-    con_setColor(WHITE_ON_BLACK);
-
-    con_setWindow(1, con_height() - 1);
-
-    memmap_dump(false);
-
-    // timer_init();
-    // timer_start(testCallback);
-
-    // for (;;) {
-    //     asm("hlt");
-    // }
-
-    kbd_init();
-
-    KeyEvent evt;
-    for (;;) {
-        kbd_waitForEvent(&evt);
-        con_printf("[KeyEvent] Key: %02x Flags: %02x\n", evt.key, evt.flags);
+    if ((error = timer_init()) != E_SUCCESS) {
+        abort("failed to initialize timer");
     }
 
-    //con_setCursor(40, 12);
+    if ((error = kbd_init()) != E_SUCCESS) {
+        abort("failed to initialized keyboard");
+    }
 
-    // for (int i = 0; i != 25; ++i) {
-    //     con_puts("Test Line: ");
-    //     con_putchar('A' + i);
-    //     con_putchar('\n');
+    menu_init();
+
+    menu_main();
+
+    // KeyEvent evt;
+    // for (;;) {
+    //     kbd_waitForEvent(&evt);
+    //     con_printf("[KeyEvent] Key: %02x Flags: %02x\n", evt.key, evt.flags);
     // }
-
-    // con_scroll(3);
-
-    // con_puts("test test test");
-    // con_puts_at(10, 10, "STR placed at 10,10");
-
-    // con_printf("Printf testing\n");
-    // con_printf_at(20, 20, "PRINTF placed at 20,20");
-
-    // con_printf("%-8x", 0xBABE);
-
-    //con_puts("Test test test\n");
-    //con_puts("scroll");
-    //con_driver_scroll(1);
 
     return 0;
 }
