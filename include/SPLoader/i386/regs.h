@@ -82,7 +82,7 @@
 
 #ifndef __ASM__
 
-#define INLINE inline __attribute__((always_inline))
+#include <SPLoader/inline.h>
 
 // the following functions are inline since they only require 1 or 2
 // instructions.
