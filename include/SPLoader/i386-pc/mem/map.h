@@ -8,7 +8,7 @@
 #ifndef _SPLOADER_I386_PC_MEM_MAP_H
 #define _SPLOADER_I386_PC_MEM_MAP_H
 
-#include <SPLoader/i386-pc/mem/MemMap.h>
+#include <SPLoader/i386-pc/mem/E820Map.h>
 
 
 #define MEMMAP_LOCATION        0x4000
@@ -26,7 +26,7 @@
 
 void memmap_dump(bool showAvailable);
 
-void memmap_dumpEntry(MemMapEntry *entry);
+void memmap_dumpEntry(E820Entry *entry);
 
 
 #endif  // __ASM__

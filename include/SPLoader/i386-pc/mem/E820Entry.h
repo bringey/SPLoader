@@ -1,18 +1,18 @@
 /*
-** File: include/SPLoader/i386-pc/mem/MemMapEntry.h
+** File: include/SPLoader/i386-pc/mem/E820Entry.h
 **
 ** Author: Brennan Ringey
 **
 */
 
-#ifndef _SPLOADER_I386_PC_MEM_MEMMAPENTRY_H
-#define _SPLOADER_I386_PC_MEM_MEMMAPENTRY_H
+#ifndef _SPLOADER_I386_PC_MEM_E820ENTRY_H
+#define _SPLOADER_I386_PC_MEM_E820ENTRY_H
 
 #ifndef __ASM__
 
 #include <stdint.h>
 
-struct MemMapEntry_s {
+struct E820Entry_s {
 
     union {
         struct {
@@ -34,7 +34,7 @@ struct MemMapEntry_s {
 } __attribute__((packed));
 
 
-typedef struct MemMapEntry_s MemMapEntry;
+typedef struct E820Entry_s E820Entry;
 
 #endif
 

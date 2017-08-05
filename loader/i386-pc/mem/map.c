@@ -8,8 +8,8 @@
 #include <SPLoader/i386-pc/mem/map.h>
 #include <SPLoader/console/out.h>
 
-static MemMap *MEMMAP = (MemMap*)MEMMAP_LOCATION;
-static MemMapEntry *TABLE = (MemMapEntry*)MEMMAP_TABLE;
+static E820Map *MEMMAP = (E820Map*)MEMMAP_LOCATION;
+static E820Entry *TABLE = (E820Entry*)MEMMAP_TABLE;
 
 static char* PREFIXES[] = {
     "B",
@@ -31,7 +31,7 @@ void memmap_dump(bool showAvailable) {
     con_puts("     Base Addr     |      Length                 | Type\n");
     con_puts("-------------------+-----------------------------+------------------------------");
 
-    MemMapEntry *e = TABLE;
+    E820Entry *e = TABLE;
     for (unsigned i = 0; i < len; ++i, ++e) {
         if (showAvailable && e->type != 1) {
             continue; // entry is reserved, do not dump it
@@ -41,7 +41,7 @@ void memmap_dump(bool showAvailable) {
 
 }
 
-void memmap_dumpEntry(MemMapEntry *entry) {
+void memmap_dumpEntry(E820Entry *entry) {
 
     con_printf(" %08x %08x |", entry->base_hi, entry->base_lo);
     con_printf(" %08x %08x ", entry->length_hi, entry->length_lo);
