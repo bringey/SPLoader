@@ -38,7 +38,7 @@ int kbd_init(void) {
     _packet.length = 0;
     _parseFn = kbd_parse_set1;
     _flags = 0;
-    isr_install(INT_VEC_KEYBOARD, __kbd_isr, NULL);
+    __isr_install(INT_VEC_KEYBOARD, __kbd_isr, NULL);
 
     return E_SUCCESS;
 }

@@ -41,7 +41,7 @@ int timer_init(void) {
     //__outb(PIT_CONTROL_PORT, PIT_0_SELECT | PIT_MODE_1);
 
 
-    isr_install(INT_VEC_TIMER, __timer_isr, NULL);
+    __isr_install(INT_VEC_TIMER, __timer_isr, NULL);
     return E_SUCCESS;
 }
 

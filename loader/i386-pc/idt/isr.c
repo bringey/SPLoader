@@ -23,7 +23,7 @@
 ISRHandler IDT_ISR_TABLE[ISR_TABLE_SIZE];
 
 
-int isr_init(void) {
+int __isr_init(void) {
 
     // defined in stubs.S
     extern uint32_t IDT_ISR_STUBTABLE[ISR_TABLE_SIZE];
@@ -39,17 +39,17 @@ int isr_init(void) {
         gate->flags = (uint16_t)(IDT_PRESENT | IDT_DPL_0 | IDT_INT32_GATE);
         gate->offset_hi = (uint16_t)((stub >> 16) & 0xFFFF);
 
-        isr_install(i, isr_defaultUnexpectedHandler, NULL);
+        __isr_install(i, __isr_defaultUnexpectedHandler, NULL);
     }
 
-    isr_install(INT_VEC_KEYBOARD, isr_defaultExpectedHandler, NULL);
-    isr_install(INT_VEC_TIMER, isr_defaultExpectedHandler, NULL);
-    //isr_install(INT_VEC_MYSTERY, isr_defaultExpectedHandler, NULL);
+    __isr_install(INT_VEC_KEYBOARD, __isr_defaultExpectedHandler, NULL);
+    __isr_install(INT_VEC_TIMER, __isr_defaultExpectedHandler, NULL);
+    //__isr_install(INT_VEC_MYSTERY, isr_defaultExpectedHandler, NULL);
 
     // exceptions (the first 32 ISR vectors are reserved for exceptions)
 
     for (int i = 0; i != 0x20; ++i) {
-        isr_install(i, isr_exceptionHandler, NULL);
+        __isr_install(i, __isr_exceptionHandler, NULL);
     }
 
     /*
@@ -86,7 +86,7 @@ int isr_init(void) {
     return E_SUCCESS;
 }
 
-int isr_install(int vector, ISRHandler isr, ISRHandler *oldIsr) {
+int __isr_install(int vector, ISRHandler isr, ISRHandler *oldIsr) {
 
     if (vector >= ISR_TABLE_SIZE) {
         return E_ARGBOUNDS;
@@ -101,7 +101,7 @@ int isr_install(int vector, ISRHandler isr, ISRHandler *oldIsr) {
     return E_SUCCESS;
 }
 
-void isr_defaultExpectedHandler(int vector, int code) {
+void __isr_defaultExpectedHandler(int vector, int code) {
     (void)code;
 
     //con_printf("[INT] %02x %02x ", vector, code);
@@ -119,12 +119,12 @@ void isr_defaultExpectedHandler(int vector, int code) {
     }
 }
 
-void isr_defaultUnexpectedHandler(int vector, int code) {
+void __isr_defaultUnexpectedHandler(int vector, int code) {
     con_printf("vector = 0x%02x, code = 0x%02x\n", vector, code);
     abort("Unexpected interrupt");
 }
 
-void isr_exceptionHandler(int vector, int code) {
+void __isr_exceptionHandler(int vector, int code) {
     char *name;
     // The names for each exception are taken from the intel manual, table 6-1
     switch (vector) {

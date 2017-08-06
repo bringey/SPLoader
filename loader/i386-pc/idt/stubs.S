@@ -7,7 +7,7 @@
 
     .globl IDT_ISR_TABLE
 
-_idt_isrSave:
+__idt_isrSave:
     pusha
     pushl   %ds
     pushl   %es
@@ -36,7 +36,7 @@ _idt_isrSave:
     call    *%ebx
     addl    $8, %esp                // pop the parameters
 
-_idt_isrRestore:
+__idt_isrRestore:
 /*
 ** Restore the context
 */
@@ -52,17 +52,17 @@ _idt_isrRestore:
 // STUB Macros
 
 #define ISR(vector) \
-    .globl _idt_isr_##vector  ; \
-_idt_isr_##vector:            ; \
-    pushl   $0              ; \
-    pushl   $vector         ; \
-    jmp     _idt_isrSave
+    .globl __idt_isr_##vector ; \
+__idt_isr_##vector:           ; \
+    pushl   $0                ; \
+    pushl   $vector           ; \
+    jmp     __idt_isrSave
 
 #define ERR_ISR(vector) \
-    .globl _idt_isr_##vector  ; \
-_idt_isr_##vector:            ; \
-    pushl   $vector         ; \
-    jmp     _idt_isrSave
+    .globl __idt_isr_##vector ; \
+__idt_isr_##vector:           ; \
+    pushl   $vector           ; \
+    jmp     __idt_isrSave
 
 // STUBS
 
@@ -137,67 +137,67 @@ ISR(0xFC);      ISR(0xFD);      ISR(0xFE);      ISR(0xFF);
     .data
 
 IDT_ISR_STUBTABLE:
-    .long   _idt_isr_0x00, _idt_isr_0x01, _idt_isr_0x02, _idt_isr_0x03
-    .long   _idt_isr_0x04, _idt_isr_0x05, _idt_isr_0x06, _idt_isr_0x07
-    .long   _idt_isr_0x08, _idt_isr_0x09, _idt_isr_0x0A, _idt_isr_0x0B
-    .long   _idt_isr_0x0C, _idt_isr_0x0D, _idt_isr_0x0E, _idt_isr_0x0F
-    .long   _idt_isr_0x10, _idt_isr_0x11, _idt_isr_0x12, _idt_isr_0x13
-    .long   _idt_isr_0x14, _idt_isr_0x15, _idt_isr_0x16, _idt_isr_0x17
-    .long   _idt_isr_0x18, _idt_isr_0x19, _idt_isr_0x1A, _idt_isr_0x1B
-    .long   _idt_isr_0x1C, _idt_isr_0x1D, _idt_isr_0x1E, _idt_isr_0x1F
-    .long   _idt_isr_0x20, _idt_isr_0x21, _idt_isr_0x22, _idt_isr_0x23
-    .long   _idt_isr_0x24, _idt_isr_0x25, _idt_isr_0x26, _idt_isr_0x27
-    .long   _idt_isr_0x28, _idt_isr_0x29, _idt_isr_0x2A, _idt_isr_0x2B
-    .long   _idt_isr_0x2C, _idt_isr_0x2D, _idt_isr_0x2E, _idt_isr_0x2F
-    .long   _idt_isr_0x30, _idt_isr_0x31, _idt_isr_0x32, _idt_isr_0x33
-    .long   _idt_isr_0x34, _idt_isr_0x35, _idt_isr_0x36, _idt_isr_0x37
-    .long   _idt_isr_0x38, _idt_isr_0x39, _idt_isr_0x3A, _idt_isr_0x3B
-    .long   _idt_isr_0x3C, _idt_isr_0x3D, _idt_isr_0x3E, _idt_isr_0x3F
-    .long   _idt_isr_0x40, _idt_isr_0x41, _idt_isr_0x42, _idt_isr_0x43
-    .long   _idt_isr_0x44, _idt_isr_0x45, _idt_isr_0x46, _idt_isr_0x47
-    .long   _idt_isr_0x48, _idt_isr_0x49, _idt_isr_0x4A, _idt_isr_0x4B
-    .long   _idt_isr_0x4C, _idt_isr_0x4D, _idt_isr_0x4E, _idt_isr_0x4F
-    .long   _idt_isr_0x50, _idt_isr_0x51, _idt_isr_0x52, _idt_isr_0x53
-    .long   _idt_isr_0x54, _idt_isr_0x55, _idt_isr_0x56, _idt_isr_0x57
-    .long   _idt_isr_0x58, _idt_isr_0x59, _idt_isr_0x5A, _idt_isr_0x5B
-    .long   _idt_isr_0x5C, _idt_isr_0x5D, _idt_isr_0x5E, _idt_isr_0x5F
-    .long   _idt_isr_0x60, _idt_isr_0x61, _idt_isr_0x62, _idt_isr_0x63
-    .long   _idt_isr_0x64, _idt_isr_0x65, _idt_isr_0x66, _idt_isr_0x67
-    .long   _idt_isr_0x68, _idt_isr_0x69, _idt_isr_0x6A, _idt_isr_0x6B
-    .long   _idt_isr_0x6C, _idt_isr_0x6D, _idt_isr_0x6E, _idt_isr_0x6F
-    .long   _idt_isr_0x70, _idt_isr_0x71, _idt_isr_0x72, _idt_isr_0x73
-    .long   _idt_isr_0x74, _idt_isr_0x75, _idt_isr_0x76, _idt_isr_0x77
-    .long   _idt_isr_0x78, _idt_isr_0x79, _idt_isr_0x7A, _idt_isr_0x7B
-    .long   _idt_isr_0x7C, _idt_isr_0x7D, _idt_isr_0x7E, _idt_isr_0x7F
-    .long   _idt_isr_0x80, _idt_isr_0x81, _idt_isr_0x82, _idt_isr_0x83
-    .long   _idt_isr_0x84, _idt_isr_0x85, _idt_isr_0x86, _idt_isr_0x87
-    .long   _idt_isr_0x88, _idt_isr_0x89, _idt_isr_0x8A, _idt_isr_0x8B
-    .long   _idt_isr_0x8C, _idt_isr_0x8D, _idt_isr_0x8E, _idt_isr_0x8F
-    .long   _idt_isr_0x90, _idt_isr_0x91, _idt_isr_0x92, _idt_isr_0x93
-    .long   _idt_isr_0x94, _idt_isr_0x95, _idt_isr_0x96, _idt_isr_0x97
-    .long   _idt_isr_0x98, _idt_isr_0x99, _idt_isr_0x9A, _idt_isr_0x9B
-    .long   _idt_isr_0x9C, _idt_isr_0x9D, _idt_isr_0x9E, _idt_isr_0x9F
-    .long   _idt_isr_0xA0, _idt_isr_0xA1, _idt_isr_0xA2, _idt_isr_0xA3
-    .long   _idt_isr_0xA4, _idt_isr_0xA5, _idt_isr_0xA6, _idt_isr_0xA7
-    .long   _idt_isr_0xA8, _idt_isr_0xA9, _idt_isr_0xAA, _idt_isr_0xAB
-    .long   _idt_isr_0xAC, _idt_isr_0xAD, _idt_isr_0xAE, _idt_isr_0xBF
-    .long   _idt_isr_0xB0, _idt_isr_0xB1, _idt_isr_0xB2, _idt_isr_0xB3
-    .long   _idt_isr_0xB4, _idt_isr_0xB5, _idt_isr_0xB6, _idt_isr_0xB7
-    .long   _idt_isr_0xB8, _idt_isr_0xB9, _idt_isr_0xBA, _idt_isr_0xBB
-    .long   _idt_isr_0xBC, _idt_isr_0xBD, _idt_isr_0xBE, _idt_isr_0xCF
-    .long   _idt_isr_0xC0, _idt_isr_0xC1, _idt_isr_0xC2, _idt_isr_0xC3
-    .long   _idt_isr_0xC4, _idt_isr_0xC5, _idt_isr_0xC6, _idt_isr_0xC7
-    .long   _idt_isr_0xC8, _idt_isr_0xC9, _idt_isr_0xCA, _idt_isr_0xCB
-    .long   _idt_isr_0xCC, _idt_isr_0xCD, _idt_isr_0xCE, _idt_isr_0xDF
-    .long   _idt_isr_0xD0, _idt_isr_0xD1, _idt_isr_0xD2, _idt_isr_0xD3
-    .long   _idt_isr_0xD4, _idt_isr_0xD5, _idt_isr_0xD6, _idt_isr_0xD7
-    .long   _idt_isr_0xD8, _idt_isr_0xD9, _idt_isr_0xDA, _idt_isr_0xDB
-    .long   _idt_isr_0xDC, _idt_isr_0xDD, _idt_isr_0xDE, _idt_isr_0xEF
-    .long   _idt_isr_0xE0, _idt_isr_0xE1, _idt_isr_0xE2, _idt_isr_0xE3
-    .long   _idt_isr_0xE4, _idt_isr_0xE5, _idt_isr_0xE6, _idt_isr_0xE7
-    .long   _idt_isr_0xE8, _idt_isr_0xE9, _idt_isr_0xEA, _idt_isr_0xEB
-    .long   _idt_isr_0xEC, _idt_isr_0xED, _idt_isr_0xEE, _idt_isr_0xEF
-    .long   _idt_isr_0xF0, _idt_isr_0xF1, _idt_isr_0xF2, _idt_isr_0xF3
-    .long   _idt_isr_0xF4, _idt_isr_0xF5, _idt_isr_0xF6, _idt_isr_0xF7
-    .long   _idt_isr_0xF8, _idt_isr_0xF9, _idt_isr_0xFA, _idt_isr_0xFB
-    .long   _idt_isr_0xFC, _idt_isr_0xFD, _idt_isr_0xFE, _idt_isr_0xFF
+    .long   __idt_isr_0x00, __idt_isr_0x01, __idt_isr_0x02, __idt_isr_0x03
+    .long   __idt_isr_0x04, __idt_isr_0x05, __idt_isr_0x06, __idt_isr_0x07
+    .long   __idt_isr_0x08, __idt_isr_0x09, __idt_isr_0x0A, __idt_isr_0x0B
+    .long   __idt_isr_0x0C, __idt_isr_0x0D, __idt_isr_0x0E, __idt_isr_0x0F
+    .long   __idt_isr_0x10, __idt_isr_0x11, __idt_isr_0x12, __idt_isr_0x13
+    .long   __idt_isr_0x14, __idt_isr_0x15, __idt_isr_0x16, __idt_isr_0x17
+    .long   __idt_isr_0x18, __idt_isr_0x19, __idt_isr_0x1A, __idt_isr_0x1B
+    .long   __idt_isr_0x1C, __idt_isr_0x1D, __idt_isr_0x1E, __idt_isr_0x1F
+    .long   __idt_isr_0x20, __idt_isr_0x21, __idt_isr_0x22, __idt_isr_0x23
+    .long   __idt_isr_0x24, __idt_isr_0x25, __idt_isr_0x26, __idt_isr_0x27
+    .long   __idt_isr_0x28, __idt_isr_0x29, __idt_isr_0x2A, __idt_isr_0x2B
+    .long   __idt_isr_0x2C, __idt_isr_0x2D, __idt_isr_0x2E, __idt_isr_0x2F
+    .long   __idt_isr_0x30, __idt_isr_0x31, __idt_isr_0x32, __idt_isr_0x33
+    .long   __idt_isr_0x34, __idt_isr_0x35, __idt_isr_0x36, __idt_isr_0x37
+    .long   __idt_isr_0x38, __idt_isr_0x39, __idt_isr_0x3A, __idt_isr_0x3B
+    .long   __idt_isr_0x3C, __idt_isr_0x3D, __idt_isr_0x3E, __idt_isr_0x3F
+    .long   __idt_isr_0x40, __idt_isr_0x41, __idt_isr_0x42, __idt_isr_0x43
+    .long   __idt_isr_0x44, __idt_isr_0x45, __idt_isr_0x46, __idt_isr_0x47
+    .long   __idt_isr_0x48, __idt_isr_0x49, __idt_isr_0x4A, __idt_isr_0x4B
+    .long   __idt_isr_0x4C, __idt_isr_0x4D, __idt_isr_0x4E, __idt_isr_0x4F
+    .long   __idt_isr_0x50, __idt_isr_0x51, __idt_isr_0x52, __idt_isr_0x53
+    .long   __idt_isr_0x54, __idt_isr_0x55, __idt_isr_0x56, __idt_isr_0x57
+    .long   __idt_isr_0x58, __idt_isr_0x59, __idt_isr_0x5A, __idt_isr_0x5B
+    .long   __idt_isr_0x5C, __idt_isr_0x5D, __idt_isr_0x5E, __idt_isr_0x5F
+    .long   __idt_isr_0x60, __idt_isr_0x61, __idt_isr_0x62, __idt_isr_0x63
+    .long   __idt_isr_0x64, __idt_isr_0x65, __idt_isr_0x66, __idt_isr_0x67
+    .long   __idt_isr_0x68, __idt_isr_0x69, __idt_isr_0x6A, __idt_isr_0x6B
+    .long   __idt_isr_0x6C, __idt_isr_0x6D, __idt_isr_0x6E, __idt_isr_0x6F
+    .long   __idt_isr_0x70, __idt_isr_0x71, __idt_isr_0x72, __idt_isr_0x73
+    .long   __idt_isr_0x74, __idt_isr_0x75, __idt_isr_0x76, __idt_isr_0x77
+    .long   __idt_isr_0x78, __idt_isr_0x79, __idt_isr_0x7A, __idt_isr_0x7B
+    .long   __idt_isr_0x7C, __idt_isr_0x7D, __idt_isr_0x7E, __idt_isr_0x7F
+    .long   __idt_isr_0x80, __idt_isr_0x81, __idt_isr_0x82, __idt_isr_0x83
+    .long   __idt_isr_0x84, __idt_isr_0x85, __idt_isr_0x86, __idt_isr_0x87
+    .long   __idt_isr_0x88, __idt_isr_0x89, __idt_isr_0x8A, __idt_isr_0x8B
+    .long   __idt_isr_0x8C, __idt_isr_0x8D, __idt_isr_0x8E, __idt_isr_0x8F
+    .long   __idt_isr_0x90, __idt_isr_0x91, __idt_isr_0x92, __idt_isr_0x93
+    .long   __idt_isr_0x94, __idt_isr_0x95, __idt_isr_0x96, __idt_isr_0x97
+    .long   __idt_isr_0x98, __idt_isr_0x99, __idt_isr_0x9A, __idt_isr_0x9B
+    .long   __idt_isr_0x9C, __idt_isr_0x9D, __idt_isr_0x9E, __idt_isr_0x9F
+    .long   __idt_isr_0xA0, __idt_isr_0xA1, __idt_isr_0xA2, __idt_isr_0xA3
+    .long   __idt_isr_0xA4, __idt_isr_0xA5, __idt_isr_0xA6, __idt_isr_0xA7
+    .long   __idt_isr_0xA8, __idt_isr_0xA9, __idt_isr_0xAA, __idt_isr_0xAB
+    .long   __idt_isr_0xAC, __idt_isr_0xAD, __idt_isr_0xAE, __idt_isr_0xBF
+    .long   __idt_isr_0xB0, __idt_isr_0xB1, __idt_isr_0xB2, __idt_isr_0xB3
+    .long   __idt_isr_0xB4, __idt_isr_0xB5, __idt_isr_0xB6, __idt_isr_0xB7
+    .long   __idt_isr_0xB8, __idt_isr_0xB9, __idt_isr_0xBA, __idt_isr_0xBB
+    .long   __idt_isr_0xBC, __idt_isr_0xBD, __idt_isr_0xBE, __idt_isr_0xCF
+    .long   __idt_isr_0xC0, __idt_isr_0xC1, __idt_isr_0xC2, __idt_isr_0xC3
+    .long   __idt_isr_0xC4, __idt_isr_0xC5, __idt_isr_0xC6, __idt_isr_0xC7
+    .long   __idt_isr_0xC8, __idt_isr_0xC9, __idt_isr_0xCA, __idt_isr_0xCB
+    .long   __idt_isr_0xCC, __idt_isr_0xCD, __idt_isr_0xCE, __idt_isr_0xDF
+    .long   __idt_isr_0xD0, __idt_isr_0xD1, __idt_isr_0xD2, __idt_isr_0xD3
+    .long   __idt_isr_0xD4, __idt_isr_0xD5, __idt_isr_0xD6, __idt_isr_0xD7
+    .long   __idt_isr_0xD8, __idt_isr_0xD9, __idt_isr_0xDA, __idt_isr_0xDB
+    .long   __idt_isr_0xDC, __idt_isr_0xDD, __idt_isr_0xDE, __idt_isr_0xEF
+    .long   __idt_isr_0xE0, __idt_isr_0xE1, __idt_isr_0xE2, __idt_isr_0xE3
+    .long   __idt_isr_0xE4, __idt_isr_0xE5, __idt_isr_0xE6, __idt_isr_0xE7
+    .long   __idt_isr_0xE8, __idt_isr_0xE9, __idt_isr_0xEA, __idt_isr_0xEB
+    .long   __idt_isr_0xEC, __idt_isr_0xED, __idt_isr_0xEE, __idt_isr_0xEF
+    .long   __idt_isr_0xF0, __idt_isr_0xF1, __idt_isr_0xF2, __idt_isr_0xF3
+    .long   __idt_isr_0xF4, __idt_isr_0xF5, __idt_isr_0xF6, __idt_isr_0xF7
+    .long   __idt_isr_0xF8, __idt_isr_0xF9, __idt_isr_0xFA, __idt_isr_0xFB
+    .long   __idt_isr_0xFC, __idt_isr_0xFD, __idt_isr_0xFE, __idt_isr_0xFF

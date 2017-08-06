@@ -12,7 +12,7 @@
     .arch i686
     .text
     .globl _start, main, con_init, con_putchar_at
-    .globl isr_init
+    .globl __isr_init
 
 _start:
     cli
@@ -36,7 +36,7 @@ _start:
     call    con_init
 
     // initialize interrupts
-    call    isr_init
+    call    __isr_init
     sti
 
     call    main

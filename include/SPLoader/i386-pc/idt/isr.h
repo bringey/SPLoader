@@ -67,15 +67,15 @@
 
 extern ISRHandler IDT_ISR_TABLE[];
 
-int isr_init(void);
+int __isr_init(void);
 
-int isr_install(int vector, ISRHandler isr, ISRHandler *oldIsr);
+int __isr_install(int vector, ISRHandler isr, ISRHandler *oldIsr);
 
-void isr_defaultExpectedHandler(int vector, int code);
+void __isr_defaultExpectedHandler(int vector, int code);
 
-void isr_defaultUnexpectedHandler(int vector, int code);
+void __isr_defaultUnexpectedHandler(int vector, int code);
 
-void isr_exceptionHandler(int vector, int code);
+void __isr_exceptionHandler(int vector, int code);
 
 #endif  // __ASM__
 
