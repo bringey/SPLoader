@@ -13,11 +13,11 @@
     .text
     .globl _start, main, con_init, con_putchar_at
     .globl __isr_init
+    .globl __nmi_enable
 
 _start:
     cli
-    movb    $0x0, %al               // re-enable NMIs
-    outb    $0x70
+    call    __nmi_enable                    // re-enable NMIs
 
     // setup stack and data segments
     xorl    %eax, %eax

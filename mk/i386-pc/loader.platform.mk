@@ -44,6 +44,7 @@ LOADER_ENTRY_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_ENTRY_OBJ)
 LOADER_ENTRY_DEP := $(LOADER_ENTRY_OBJ:.o=.d)
 
 LOADER_PLAT_OBJ = abort.o \
+                  nmi.o \
                   console/driver.o \
                   idt/isr.o \
                   idt/stubs.o \
