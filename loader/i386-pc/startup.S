@@ -17,7 +17,6 @@
 
 _start:
     cli
-    call    __nmi_enable                    // re-enable NMIs
 
     // setup stack and data segments
     xorl    %eax, %eax
@@ -31,6 +30,8 @@ _start:
     // reset stack, just in case it got trashed somehow
     movl    $LOADER_STACK_ADDRESS, %ebp
     movl    %ebp, %esp
+
+    call    __nmi_enable                    // re-enable NMIs
 
     // initialize console
     call    con_init
