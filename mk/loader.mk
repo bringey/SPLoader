@@ -14,7 +14,8 @@ LOADER_OBJ = main/main.o \
              main/menu.o \
              console/out.o \
              console/string.o \
-             kbd/parse.o
+             kbd/parse.o \
+             mem.o
 LOADER_OBJ := $(addprefix $(BUILD_DIR)/loader/,$(LOADER_OBJ))
 LOADER_DEP := $(LOADER_OBJ:.o=.d)
 

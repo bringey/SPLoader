@@ -28,6 +28,12 @@
 //
 #define E_ARGBOUNDS 3
 
+
+//
+// Unable to allocate memory, no memory available
+//
+#define E_NOMEM 100
+
 #ifndef __ASM__
 #endif
 
