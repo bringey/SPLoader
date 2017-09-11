@@ -11,6 +11,7 @@
 **     bootstrap.bin -> loader.bin -> kern.bin
 */
 
+#define __ASM__
 #include <SPLoader/i386-pc/stage0a/bootstrap.h>
 #include <SPLoader/MBR/MBR.h>
 #include <SPLoader/loader.h>
@@ -21,14 +22,10 @@ DAP_LOCATION = 0x8020 // location of the data address packet structure
 //
 // Macro for stopping execution with a code as an immediate/register/address
 //
-#define exit(code) \
-    movw code, die_code; \
-    jmp die
-
-//
-// Macro for stopping execution with a debug code (1 - 3)
-//
-#define debug_breakpoint(num) exit($E_BOOTSTRAP_DEBUG##num)
+.macro exit code
+    movw    \code, die_code
+    jmp     die
+.endm
 
     .arch i686
     .code16
@@ -62,7 +59,7 @@ begtext:
     int     $0x13                // it's safe to proceed
     jnc     diskok
 
-    exit($E_BOOTSTRAP_DISK)      // something went wrong; display code and stop
+    exit $E_BOOTSTRAP_DISK       // something went wrong; display code and stop
 
 diskok:
     movw    $0, %ax              // Reset the disk
@@ -77,7 +74,7 @@ diskok:
     jnc     lbasupport
 
     // BIOS does not support 0x13 extensions, die
-    exit($E_BOOTSTRAP_NOLBA)
+    exit $E_BOOTSTRAP_NOLBA
 /* 
 ** Ideally, we would use CHS addressing at this point, but CHS is gross.
 ** Pretty much every PC since the 90s support these extensions, so support
@@ -99,7 +96,7 @@ lbasupport:
     int     $0x13
     jnc     diskready
 
-    exit($E_BOOTSTRAP_DISK)      // failed to get drive parameters, die
+    exit $E_BOOTSTRAP_DISK         // failed to get drive parameters, die
 
 diskready:
 
@@ -112,7 +109,7 @@ diskready:
     orw     %ax, %ax
     jz      nextstage
 
-    exit(%ax)                    // error occured during load, die
+    exit %ax                       // error occured during load, die
 
 nextstage:
 
@@ -120,15 +117,6 @@ nextstage:
 ** image is loaded, now we transfer control to the loader, which will
 ** handle loading the kernel from the boot partition
 */
-    /*movw   $80, %cx
-    movw   $0x8400, %si
-dbg_loop:
-    movb   (%si), %al
-    incw   %si
-    call   dispChar
-    loop   dbg_loop
-
-    debug_breakpoint(3)*/
     jmp     LOADER16_ADDRESS
 
 /*
@@ -257,22 +245,6 @@ loadimage_exit:
     popw    %bx
     ret
 
-
-/*
-** Routine for calculating the number of sectors to read from an image size.
-** Drive Parameters must be read before calling this function.
-**
-** Arguments:
-**   AX: image size
-**
-** Returns:
-**   AX: sector count
-*/
-//sectorcount:
-//	ret
-
-
-
 /*
 ** Reads a specified number of sectors from a starting LBA of a drive
 ** If an error occurred, AX will be nonzero and CF will be set.
@@ -333,30 +305,10 @@ dispChar:
 ** Stops execution. Displays the error code stored in label die_code
 */
 die:
-    pushf                         // save register state
-    pushw   %ds                   // only needed for debugging
-    pushw   %es
-    pushw   %fs
-    pushw   %gs
-    pusha
-
-    movw    die_code, %ax         // load the error into AX (AH=type, AL=code)
-    movw    %ax, %bx
-    shrw    $8, %bx               // get the error type into bx
-    shlw    $1, %bx               // multiply by 2
-    movw    errortab(%bx), %si    // get the error string using bx as an index
-    call    dispMsg               // print the error type
-    movw    $str_errorSuffix, %si
-    call    dispMsg               // print ". Code: "
-    call    dispChar              // print error code
-
-    popa                          // restore registers, so we can inspect them
-    popw    %gs                   // with qemu/gdb once halted
-    popw    %fs
-    popw    %es
-    popw    %ds
-    popf
-
+    movw    $str_bootError, %si
+    call    dispMsg
+    movw    die_code, %ax
+    call    dispChar
 die_loop:
     hlt
     jmp     die_loop
@@ -392,15 +344,6 @@ dap_highlba        = dap+12
 
 dap = DAP_LOCATION
 
-/*	.align 4
-
-dap:
-    .byte 16
-    .byte 0
-    .word 0
-    .long 0
-    .long 0
-    .long 0*/
 
 /*
 ** Boot drive parameters
@@ -432,32 +375,10 @@ drive_parameters = DP_LOCATION
 drive:                           // the drive number we booted from
     .byte   0
 
-/*drive_parameters:
-    .word 0x1E
-    .word 0
-    .long 0
-    .long 0
-    .long 0
-    .quad 0
-    .word 0
-    .long 0*/
-
-/*
-** Error table
-** Array of strings describing the error type
-*/
-errortab:
-    .word str_bootError       // errortab[0] = boot error
-    .word str_debugError      // errortab[1] = debug error
-
 str_bootError:
-    .asciz "Boot error"
+    .asciz "Boot error. Code: "
 
-str_debugError:
-    .asciz "Debug breakpoint"
-
-str_errorSuffix:
-    .asciz ". Code: "
+endtext:
 
 
 /*
@@ -516,6 +437,9 @@ partition4:
 
 boot_sig:
     .word MBR_BOOTSIG
+
+
+BOOTSTRAP_SIZE = endtext - begtext
 
 /*
 ** The extra data at the end here is for testing the loadimage function
