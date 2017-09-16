@@ -14,7 +14,7 @@
 #define __ASM__
 #include <SPLoader/i386-pc/stage0a/bootstrap.h>
 #include <SPLoader/MBR/MBR.h>
-#include <SPLoader/loader.h>
+#include <SPLoader/i386-pc/loader.h>
 
 DP_LOCATION  = 0x8000 // location of the drive parameter structure
 DAP_LOCATION = 0x8020 // location of the data address packet structure

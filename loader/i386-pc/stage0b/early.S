@@ -10,7 +10,7 @@
 ** the GDT and IDT and entering protected mode.
 */
 
-#include <SPLoader/loader.h>
+#include <SPLoader/i386-pc/loader.h>
 
 
     .arch i686

@@ -7,7 +7,7 @@
 **
 */
 
-#include <SPLoader/loader.h>
+#include <SPLoader/i386-pc/loader.h>
 
     .arch i686
     .text
