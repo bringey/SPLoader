@@ -13,7 +13,7 @@
 
 #define __ASM__
 #include <SPLoader/i386-pc/stage0a/bootstrap.h>
-#include <SPLoader/MBR/MBR.h>
+#include <SPLoader/i386-pc/mbr.h>
 #include <SPLoader/i386-pc/loader.h>
 
 DP_LOCATION  = 0x8000 // location of the drive parameter structure

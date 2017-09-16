@@ -1,12 +1,12 @@
 /*
-** File: include/SPLoader/MBR/MBR.h
+** File: include/SPLoader/i386-pc/mbr.h
 **
 ** Author: Brennan Ringey
 **
 */
 
-#ifndef _SPLOADER_MBR_MBR_H
-#define _SPLOADER_MBR_MBR_H
+#ifndef _SPLOADER_I386_PC_MBR_H
+#define _SPLOADER_I386_PC_MBR_H
 
 //
 // MBR Structure

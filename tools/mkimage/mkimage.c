@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include <SPLoader/MBR/MBR.h>
+#include <SPLoader/i386-pc/mbr.h>
 #include <SPLoader/i386-pc/stage0a/bootstrap.h>
 
 
