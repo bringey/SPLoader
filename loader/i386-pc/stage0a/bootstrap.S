@@ -380,6 +380,13 @@ str_bootError:
 
 endtext:
 
+// ===========================================================================
+//                      END OF MBR BOOTSTRAP CODE
+// ===========================================================================
+
+// boot footer
+// contains the location of the stage 1 partition which is either the
+// post-MBR gap (BIOS/MBR) or a BIOS boot partition (BIOS/GPT)
 
 /*
 ** Location and size of the loader image (loader.bin)
@@ -398,57 +405,5 @@ loader_size:                     // size (in bytes) of the loader image
 loader16_size:
     .word   0
 
-// ===========================================================================
-//                      END OF MBR BOOTSTRAP CODE
-// ===========================================================================
-
-/*
-** Partition table entries
-** These are here to ensure that the size of the bootstrap code is less than or
-** equal to 446 bytes. If it isn't, the assembler will complain about setting
-** the location counter backwards.
-*/
-
-
-    .org MBR_PARTITION1
-partition1:
-    .fill 16, 1, 0
-
-    .org MBR_PARTITION2
-partition2:
-    .fill 16, 1, 0
-
-    .org MBR_PARTITION3
-partition3:
-    .fill 16, 1, 0
-
-    .org MBR_PARTITION4
-partition4:
-    .fill 16, 1, 0
-
-
-
-/*
-** End of the first sector of the boot program.  The last two bytes
-** of this sector must be AA55 in order for the disk to be recognized
-** by the BIOS as bootable.
-*/
-    .org MBR_BOOTSIG_LOCATION
-
-boot_sig:
-    .word MBR_BOOTSIG
-
-
-BOOTSTRAP_SIZE = endtext - begtext
-
-/*
-** The extra data at the end here is for testing the loadimage function
-** We can pretend that this data is the loader image, loader.bin
-*/
-
-//.fill 130 * 512, 1, 0xF0
-
-//.fill 0x200, 1, 0xFF
-//.fill 0x700, 1, 0xF0
-//.fill 0x400, 1, 0xF
-
+// there are two extra bytes right before the partition table for use if
+// needed (0x1BC-0x1BD)

@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 
+#include <SPLoader/MBR/MBR.h>
 #include <SPLoader/i386-pc/stage0a/bootstrap.h>
 
 
@@ -142,6 +143,7 @@ int main(int argc, char* argv[]) {
     }
 
     copyfile(&prog, bootstrap);
+
     uint16_t loader16_size = copyfile(&prog, loader16);
     uint16_t loader_size = copyfile(&prog, loader);
 
@@ -155,6 +157,10 @@ int main(int argc, char* argv[]) {
 
     fseek(prog.out, LOADER16_SIZE_LOCATION, SEEK_SET);
     fwrite(&loader16_size, sizeof(uint16_t), 1, prog.out);
+
+    uint16_t mbrsig = MBR_BOOTSIG;
+    fseek(prog.out, MBR_BOOTSIG_LOCATION, SEEK_SET);
+    fwrite(&mbrsig, sizeof(uint16_t), 1, prog.out);
 
     quit(&prog, EXIT_SUCCESS);
 
