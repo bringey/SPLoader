@@ -9,9 +9,15 @@
 
 ENTRY(early)
 
+MEMORY
+{
+    loader16 : ORIGIN = 0x400, LENGTH = 0x200
+}
+
+
 SECTIONS
 {
-    . = 0x200;
-    .text : { *(.text) }
-    . = 0x400;
+    .text : { 
+        *(.text)
+    } >loader16
 }
