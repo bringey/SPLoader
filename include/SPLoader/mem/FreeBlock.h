@@ -18,8 +18,8 @@ typedef struct FreeBlock_s FreeBlock;
 struct FreeBlock_s {
 
     void *next;         // next available memory location to allocate
-    void const *base;   // starting address of memory range
-    void const *limit;  // ending address of memory range
+    void *base;         // starting address of memory range
+    void *limit;        // ending address of memory range
 
 };
 

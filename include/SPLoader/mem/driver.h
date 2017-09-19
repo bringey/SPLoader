@@ -12,6 +12,9 @@
 
 #include <stddef.h>
 
+#undef MEM_CONT_END
+#define MEM_CONT_END ((size_t)-1)
+
 int _mem_bootstrap(FreeMap **map);
 
 size_t _mem_availableBlocks(void);
