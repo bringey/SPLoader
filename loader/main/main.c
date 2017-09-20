@@ -7,11 +7,18 @@
 **
 */
 
-#include <SPLoader/main/menu.h>
+#ifdef FE_MENU
+    #include <SPLoader/main/menu.h>
+    #include <SPLoader/kbd/kbd.h>
+#endif
 
-#include <SPLoader/console/out.h>
-#include <SPLoader/timer/timer.h>
-#include <SPLoader/kbd/kbd.h>
+#if defined(FE_MENU) || defined(FE_CONSOLE)
+    #include <SPLoader/console/out.h>
+#endif
+
+#if defined(FE_MENU) || defined(FE_TIMER)
+    #include <SPLoader/timer/timer.h>
+#endif
 
 #include <SPLoader/err.h>
 #include <SPLoader/abort.h>
@@ -19,27 +26,35 @@
 
 int main(void) {
 
-    con_clear();
+    #if defined (FE_MENU) || defined(FE_CONSOLE)
+        con_init();
+        con_clear();
+    #endif
+
 
     int error;
 
-    if ((error = timer_init()) != E_SUCCESS) {
-        abort("failed to initialize timer");
-    }
+    #if defined(FE_MENU) || defined(FE_TIMER)
 
-    if ((error = kbd_init()) != E_SUCCESS) {
-        abort("failed to initialized keyboard");
-    }
+        if ((error = timer_init()) != E_SUCCESS) {
+            abort("failed to initialize timer");
+        }
 
-    menu_init();
+    #endif
 
-    menu_main();
+    #ifdef FE_MENU
 
-    // KeyEvent evt;
-    // for (;;) {
-    //     kbd_waitForEvent(&evt);
-    //     con_printf("[KeyEvent] Key: %02x Flags: %02x\n", evt.key, evt.flags);
-    // }
+        if ((error = kbd_init()) != E_SUCCESS) {
+            abort("failed to initialized keyboard");
+        }
+
+        menu_init();
+
+        menu_main();
+
+    #endif
+
+    (void)error;
 
     return 0;
 }

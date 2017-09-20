@@ -1,4 +1,5 @@
 
+#ifdef FE_MENU
 
 #include <SPLoader/kbd/kbd.h>
 #include <SPLoader/kbd/parse.h>
@@ -202,3 +203,8 @@ void __kbd_isr(int vector, int code) {
 
     __outb(PIC_MASTER_CMD_PORT, PIC_EOI);
 }
+
+
+#else
+typedef int dummy;
+#endif // FE_MENU

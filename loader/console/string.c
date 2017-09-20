@@ -5,6 +5,8 @@
 **
 */
 
+#if defined(FE_MENU) || defined(FE_CONSOLE)
+
 #include <SPLoader/console/string.h>
 
 
@@ -85,3 +87,7 @@ unsigned con_strlen(char *str) {
     }
     return len;
 }
+
+#else
+typedef int dummy;
+#endif

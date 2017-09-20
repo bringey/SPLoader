@@ -5,6 +5,8 @@
 **
 */
 
+#if defined(FE_MENU) || defined(FE_TIMER)
+
 #include <SPLoader/timer/timer.h>
 #include <SPLoader/err.h>
 
@@ -90,3 +92,7 @@ void __timer_isr(int vector, int code) {
 
     __outb(PIC_MASTER_CMD_PORT, PIC_EOI);
 }
+
+#else
+typedef int dummy;
+#endif
