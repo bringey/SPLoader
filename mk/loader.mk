@@ -12,7 +12,7 @@ SUBDIR := loader
 
 LOADER_OBJ = main/main.o \
              main/menu.o \
-             console/out.o \
+             console.o \
              console/string.o \
              kbd/parse.o \
              mem.o

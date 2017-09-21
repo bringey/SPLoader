@@ -2,7 +2,7 @@
 #ifdef FE_MENU
 
 #include <SPLoader/main/menu.h>
-#include <SPLoader/console/out.h>
+#include <SPLoader/console.h>
 #include <SPLoader/kbd/kbd.h>
 #include <SPLoader/err.h>
 

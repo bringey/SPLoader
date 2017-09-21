@@ -7,7 +7,7 @@
 
 #include <SPLoader/abort.h>
 #include <SPLoader/err.h>
-#include <SPLoader/console/out.h>
+#include <SPLoader/console.h>
 
 #include <SPLoader/i386/regs.h>
 #include <SPLoader/i386-pc/loader.h>

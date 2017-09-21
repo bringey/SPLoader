@@ -13,7 +13,7 @@
 #endif
 
 #if defined(FE_MENU) || defined(FE_CONSOLE)
-    #include <SPLoader/console/out.h>
+    #include <SPLoader/console.h>
 #endif
 
 #if defined(FE_MENU) || defined(FE_TIMER)

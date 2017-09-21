@@ -8,7 +8,7 @@
 #if defined(FE_MENU) || defined(FE_CONSOLE)
 
 #include <SPLoader/err.h>
-#include <SPLoader/console/out.h>
+#include <SPLoader/console.h>
 #include <SPLoader/console/driver.h>
 #include <SPLoader/console/string.h>
 

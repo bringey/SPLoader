@@ -1,5 +1,5 @@
 
-#include <SPLoader/console/out.h>
+#include <SPLoader/console.h>
 #include <SPLoader/mem.h>
 #include <SPLoader/mem/driver.h>
 #include <SPLoader/mem/FreeBlock.h>

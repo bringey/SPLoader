@@ -12,7 +12,7 @@
 #include <SPLoader/i386/io.h>
 #include <SPLoader/abort.h>
 #include <SPLoader/err.h>
-#include <SPLoader/console/out.h>
+#include <SPLoader/console.h>
 
 #include <stddef.h>
 #include <stdint.h>

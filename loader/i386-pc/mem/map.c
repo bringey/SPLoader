@@ -6,7 +6,7 @@
 */
 
 #include <SPLoader/i386-pc/mem/map.h>
-#include <SPLoader/console/out.h>
+#include <SPLoader/console.h>
 
 static E820Map *MEMMAP = (E820Map*)MEMMAP_LOCATION;
 static E820Entry *TABLE = (E820Entry*)MEMMAP_TABLE;

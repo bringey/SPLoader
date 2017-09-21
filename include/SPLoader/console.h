@@ -1,13 +1,13 @@
 /*
-** File: include/SPLoader/console/out.h
+** File: include/SPLoader/console.h
 **
 ** Author: Brennan Ringey
 **
 ** Contains functions for console output.
 */
 
-#ifndef _SPLOADER_CONSOLE_OUT_H
-#define _SPLOADER_CONSOLE_OUT_H
+#ifndef _SPLOADER_CONSOLE_H
+#define _SPLOADER_CONSOLE_H
 
 #include <SPLoader/console/ConColor.h>
 #include <SPLoader/console/driver.h>
