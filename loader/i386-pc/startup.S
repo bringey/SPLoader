@@ -33,10 +33,6 @@ _start:
 
     call    __nmi_enable                    // re-enable NMIs
 
-    // initialize interrupts
-    call    __isr_init
-    sti
-
     call    main
 
 
