@@ -115,7 +115,7 @@ nextstage:
 ** image is loaded, now we transfer control to the loader, which will
 ** handle loading the kernel from the boot partition
 */
-    jmp     LOADER16_ADDRESS
+    jmp     $LOADER_SEGMENT, $0x0
 
 /*
 ** Loads the loader image located at the LBA stored in loader_lba
@@ -140,7 +140,7 @@ loadimage:
     movw    $16, dap_size                  // set the size to 16 (must be set)
     movw    $BOOT_SEGMENT, dap_buffer_segment  // setup transfer buffer
     movw    $0x200, dap_buffer_offset          // 07C0:0200 (0x7E00)
-    movw    $2, dap_sectors                    // set the sectors to read
+    movw    $1, dap_sectors                    // set the sectors to read
     movl    boot_lba, %ecx                     // ECX = boot partition LBA
     movl    %ecx, dap_lowlba
     call    readsectors                    // do the read
@@ -175,7 +175,7 @@ loadimage_sectors:
     movw    $LOADER_SEGMENT, dap_buffer_segment // setup transfer buffer
     movw    $0, dap_buffer_offset               // 1000:0000 (0x10000)
     movw    %ax, dap_sectors                    // set the sectors to read
-    addl    $2, %ecx                            // skip over the 2 sectors we
+    incl    %ecx                                // skip the header we just read
     movl    %ecx, dap_lowlba                    // read earlier
     call    readsectors                         // do the read
     testw   %ax, %ax

@@ -9,12 +9,6 @@
 #define _SPLOADER_I386_PC_LOADER_H
 
 //
-// Location where loader_early.bin gets loaded to
-//
-#define LOADER16_SEGMENT 0x7C0
-#define LOADER16_ADDRESS 0x400
-
-//
 // Where loader.bin gets loaded to
 //
 #define LOADER_ADDRESS 0x10000

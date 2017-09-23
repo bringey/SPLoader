@@ -28,7 +28,7 @@ typedef struct {
 
 
 void usage(void) {
-    fputs("usage: mkimage <image files...> -o <output_file>\n", stderr);
+    fputs("usage: mkimage <loader binary> -o <output_file>\n", stderr);
     exit(EXIT_FAILURE);
 }
 
@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
 
     char *outfileName = NULL;
     char *bootstrap = NULL;
-    char *loader16 = NULL;
+    //char *loader16 = NULL;
     char *loader = NULL;
 
     int c;
@@ -129,13 +129,13 @@ int main(int argc, char* argv[]) {
         usage();
     }
 
-    if (argc - optind != 2) {
+    if (argc - optind != 1) {
         fputs("invalid amount of loader binaries\n", stderr);
         usage();
     }
 
-    loader16 = argv[optind];
-    loader = argv[optind + 1];
+    //loader16 = argv[optind];
+    loader = argv[optind];
 
     prog.out = fopen(outfileName, "wb");
     if (prog.out == NULL) {
@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
     strcpy((char*)&header, "SPLOADER");
     fwrite(&header, sizeof(BootHeader), 1, prog.out);
 
-    uint16_t loader16_size = copyfile(&prog, loader16);
+    //uint16_t loader16_size = copyfile(&prog, loader16);
     uint16_t loader_size = copyfile(&prog, loader);
 
     // write LBA of boot partition (always 1)

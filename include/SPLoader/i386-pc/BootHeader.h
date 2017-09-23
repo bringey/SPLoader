@@ -25,12 +25,11 @@
 //     +0 +---------------+
 //        | header        |
 //     +1 +---------------+
-//        | loader16.bin  |
-//     +2 +---------------+
 //        | loader.bin    |
 //        | (size varies) |
+//        |               |
 //        +---------------+
-//        
+//
 //
 struct BootHeader_s {
     uint64_t signature;

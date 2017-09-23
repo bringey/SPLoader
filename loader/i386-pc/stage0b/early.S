@@ -16,8 +16,8 @@
     .arch i686
 
     .code16
-    .text
-    .globl early, begtext
+    .section .loader16, "ax"
+    .globl early, begtext, _start
 
     .globl a20_check, a20_enable, get_mem_map
     .globl die
@@ -26,6 +26,8 @@
 begtext:
 early:
     cli
+    movw    $LOADER_SEGMENT, %ax     // update data segment
+    movw    %ax, %ds
 
     movb    $0x80, %al               // disable NMIs
     outb    %al, $0x70
@@ -64,7 +66,7 @@ early_a20done:
 
     .byte 0x66 // 32-bit mode prefix
     .code32
-    ljmp    $LOADER_GDT_CODE32, $LOADER_ADDRESS
+    ljmp    $LOADER_GDT_CODE32, $_start
     .code16
 
 

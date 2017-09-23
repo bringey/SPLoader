@@ -33,11 +33,11 @@ LOADER_OBJ_LIST = $(LOADER_ENTRY_OBJ) \
 loader.bin: $(LOADER_BIN)
 
 
-$(LOADER_FINAL_OBJ): $(LOADER_OBJ_LIST) $(MARKER)
-	$(LD_V) $(LDFLAGS) -o $@ -e _start -Ttext 0x10000 $(LOADER_OBJ_LIST)
+$(LOADER_FINAL_OBJ): $(LOADER_OBJ_LIST) $(LOADER_LD_SCRIPT) $(MARKER)
+	$(LD_V) $(LDFLAGS) -o $@ -T $(LOADER_LD_SCRIPT) $(LOADER_OBJ_LIST)
 
-$(LOADER_BIN): $(LOADER_FINAL_OBJ) $(MARKER)
-	$(LD_V) $(LDFLAGS) -o $@ -s -e _start --oformat binary -Ttext 0x10000 $<
+$(LOADER_BIN): $(LOADER_FINAL_OBJ) $(LOADER_LD_SCRIPT) $(MARKER)
+	$(LD_V) $(LDFLAGS) -o $@ -T $(LOADER_LD_SCRIPT) -s --oformat binary $<
 
 
 -include $(LOADER_DEP)
