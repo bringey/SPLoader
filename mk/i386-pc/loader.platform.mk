@@ -26,10 +26,9 @@ LOADER_ENTRY_DEP := $(LOADER_ENTRY_OBJ:.o=.d)
 LOADER_PLAT_OBJ = stage0b/a20gate.o \
                   stage0b/memmap.o \
                   abort.o \
-                  nmi.o \
                   console/driver.o \
                   mem/driver.o \
-                  mem/map.o \
+                  nmi.o \
                   startup.o
 
 LOADER_PLAT_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_PLAT_OBJ))
