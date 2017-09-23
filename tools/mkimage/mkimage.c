@@ -13,7 +13,9 @@
 #include <string.h>
 #include <stdint.h>
 
+#include <SPLoader/i386-pc/mbr.h>
 #include <SPLoader/i386-pc/stage0a/bootstrap.h>
+#include <SPLoader/i386-pc/BootHeader.h>
 
 
 #define SECTOR_SIZE 512
@@ -26,7 +28,7 @@ typedef struct {
 
 
 void usage(void) {
-    fputs("usage: mkimage <image files...> -o <output_file>\n", stderr);
+    fputs("usage: mkimage <loader binary> -o <output_file>\n", stderr);
     exit(EXIT_FAILURE);
 }
 
@@ -88,7 +90,7 @@ int main(int argc, char* argv[]) {
 
     char *outfileName = NULL;
     char *bootstrap = NULL;
-    char *loader16 = NULL;
+    //char *loader16 = NULL;
     char *loader = NULL;
 
     int c;
@@ -127,13 +129,13 @@ int main(int argc, char* argv[]) {
         usage();
     }
 
-    if (argc - optind != 2) {
+    if (argc - optind != 1) {
         fputs("invalid amount of loader binaries\n", stderr);
         usage();
     }
 
-    loader16 = argv[optind];
-    loader = argv[optind + 1];
+    //loader16 = argv[optind];
+    loader = argv[optind];
 
     prog.out = fopen(outfileName, "wb");
     if (prog.out == NULL) {
@@ -142,19 +144,37 @@ int main(int argc, char* argv[]) {
     }
 
     copyfile(&prog, bootstrap);
-    uint16_t loader16_size = copyfile(&prog, loader16);
+
+    BootHeader header = {0};
+    strcpy((char*)&header, "SPLOADER");
+    fwrite(&header, sizeof(BootHeader), 1, prog.out);
+
+    //uint16_t loader16_size = copyfile(&prog, loader16);
     uint16_t loader_size = copyfile(&prog, loader);
 
-    uint32_t loader_lba = 1;
-    
-    fseek(prog.out, LOADER_LBA_LOCATION, SEEK_SET);
-    fwrite(&loader_lba, sizeof(uint32_t), 1, prog.out);
-    
-    fseek(prog.out, LOADER_SIZE_LOCATION, SEEK_SET);
+    // write LBA of boot partition (always 1)
+    uint32_t boot_lba = 1;
+    fseek(prog.out, BOOT_LBA_LOCATION, SEEK_SET);
+    fwrite(&boot_lba, sizeof(uint32_t), 1, prog.out);
+
+    // write loader.bin size in header
+    fseek(prog.out, 0x200 + BOOT_HEADER_LOADER_SIZE, SEEK_SET);
     fwrite(&loader_size, sizeof(uint16_t), 1, prog.out);
 
-    fseek(prog.out, LOADER16_SIZE_LOCATION, SEEK_SET);
-    fwrite(&loader16_size, sizeof(uint16_t), 1, prog.out);
+    // uint32_t loader_lba = 1;
+    
+    // fseek(prog.out, LOADER_LBA_LOCATION, SEEK_SET);
+    // fwrite(&loader_lba, sizeof(uint32_t), 1, prog.out);
+    
+    // fseek(prog.out, LOADER_SIZE_LOCATION, SEEK_SET);
+    // fwrite(&loader_size, sizeof(uint16_t), 1, prog.out);
+
+    // fseek(prog.out, LOADER16_SIZE_LOCATION, SEEK_SET);
+    // fwrite(&loader16_size, sizeof(uint16_t), 1, prog.out);
+
+    uint16_t mbrsig = MBR_BOOTSIG;
+    fseek(prog.out, MBR_BOOTSIG_LOCATION, SEEK_SET);
+    fwrite(&mbrsig, sizeof(uint16_t), 1, prog.out);
 
     quit(&prog, EXIT_SUCCESS);
 

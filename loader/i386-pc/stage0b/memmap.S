@@ -10,7 +10,7 @@
 
     .arch i686
     .code16
-    .text
+    .section .loader16, "ax"
     .globl get_mem_map
 
 get_mem_map:

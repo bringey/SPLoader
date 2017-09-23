@@ -9,7 +9,8 @@
 
     .arch i686
     .code16
-    .text
+
+    .section .loader16, "ax"
 
     .globl a20_check, a20_enable
 

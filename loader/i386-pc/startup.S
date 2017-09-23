@@ -7,11 +7,11 @@
 **
 */
 
-#include <SPLoader/loader.h>
+#include <SPLoader/i386-pc/loader.h>
 
     .arch i686
     .text
-    .globl _start, main, con_init, con_putchar_at
+    .globl _start, main, con_putchar_at
     .globl __isr_init
     .globl __nmi_enable
 
@@ -33,25 +33,20 @@ _start:
 
     call    __nmi_enable                    // re-enable NMIs
 
-    // initialize console
-    call    con_init
-
-    // initialize interrupts
-    call    __isr_init
-    sti
-
     call    main
 
 
     // returned from main! do nothing forever
     cli
 
+    #if defined(FE_MENU) || defined(FE_CONSOLE)
     // display a ! in the lower right corner of the console
     pushl   $'!'
     pushl   $24
     pushl   $79
     call    con_putchar_at
     addl    $0xC, %esp
+    #endif
 
 _end:
     hlt

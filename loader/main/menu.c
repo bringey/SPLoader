@@ -1,7 +1,8 @@
 
+#ifdef FE_MENU
 
 #include <SPLoader/main/menu.h>
-#include <SPLoader/console/out.h>
+#include <SPLoader/console.h>
 #include <SPLoader/kbd/kbd.h>
 #include <SPLoader/err.h>
 
@@ -148,3 +149,8 @@ void __menu_display(MenuContainer *container) {
 //     }
 
 // }
+
+#else
+typedef int dummy;
+#endif // FE_MENU
+

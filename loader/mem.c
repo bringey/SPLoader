@@ -1,4 +1,5 @@
 
+#include <SPLoader/console.h>
 #include <SPLoader/mem.h>
 #include <SPLoader/mem/driver.h>
 #include <SPLoader/mem/FreeBlock.h>
@@ -28,7 +29,7 @@ int mem_init(void) {
     FreeBlock block;
     size_t cont = MEM_CONT_START;
     while ((cont = _mem_nextBlock(cont, &block)) != MEM_CONT_END) {
-        if (overhead <= (uint32_t)(block.limit - block.base)) {
+        if (overhead <= (uint32_t)block.limit - (uint32_t)block.base) {
             homebase = (void*)block.base;
             break;
         }
@@ -110,7 +111,7 @@ void* __allocate(FreeBlock *block, size_t bytes) {
         // try the next one
         ptrdiff_t index = block - map->freelist;
         ++index;
-        if (index < map->blockCount) {
+        if ((size_t)index < map->blockCount) {
             result = __allocate(map->freelist + index, bytes);
         }
     } else {
@@ -119,7 +120,7 @@ void* __allocate(FreeBlock *block, size_t bytes) {
         if (bytes == space) {
             // this allocation completely fills up the block, modify nextblock
             ptrdiff_t index = block - map->freelist;
-            if (++index < map->blockCount) {
+            if ((size_t)(++index) < map->blockCount) {
                 map->nextblock = map->freelist + index;
             } else {
                 map->nextblock = NULL; // out of memory

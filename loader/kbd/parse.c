@@ -1,4 +1,6 @@
 
+#ifdef FE_MENU
+
 #include <SPLoader/kbd/Key.h>
 #include <SPLoader/kbd/parse.h>
 
@@ -200,3 +202,7 @@ int kbd_parse_set1(ScancodePacket *packet, KeyEvent *evt) {
 //     (void)packet; (void)evt;
 //     return KBD_PARSE_ERROR;
 // }
+
+#else
+typedef int dummy;
+#endif // FE_MENU

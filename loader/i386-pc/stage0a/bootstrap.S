@@ -11,24 +11,19 @@
 **     bootstrap.bin -> loader.bin -> kern.bin
 */
 
+#define __ASM__
 #include <SPLoader/i386-pc/stage0a/bootstrap.h>
-#include <SPLoader/MBR/MBR.h>
-#include <SPLoader/loader.h>
-
-DP_LOCATION  = 0x8000 // location of the drive parameter structure
-DAP_LOCATION = 0x8020 // location of the data address packet structure
+#include <SPLoader/i386-pc/mbr.h>
+#include <SPLoader/i386-pc/loader.h>
+#include <SPLoader/i386-pc/BootHeader.h>
 
 //
 // Macro for stopping execution with a code as an immediate/register/address
 //
-#define exit(code) \
-    movw code, die_code; \
-    jmp die
-
-//
-// Macro for stopping execution with a debug code (1 - 3)
-//
-#define debug_breakpoint(num) exit($E_BOOTSTRAP_DEBUG##num)
+.macro EXIT code
+    movw    \code, die_code
+    jmp     die
+.endm
 
     .arch i686
     .code16
@@ -62,7 +57,7 @@ begtext:
     int     $0x13                // it's safe to proceed
     jnc     diskok
 
-    exit($E_BOOTSTRAP_DISK)      // something went wrong; display code and stop
+    EXIT    $E_BOOTSTRAP_DISK       // something went wrong; display code and stop
 
 diskok:
     movw    $0, %ax              // Reset the disk
@@ -77,7 +72,7 @@ diskok:
     jnc     lbasupport
 
     // BIOS does not support 0x13 extensions, die
-    exit($E_BOOTSTRAP_NOLBA)
+    EXIT    $E_BOOTSTRAP_NOLBA
 /* 
 ** Ideally, we would use CHS addressing at this point, but CHS is gross.
 ** Pretty much every PC since the 90s support these extensions, so support
@@ -99,7 +94,7 @@ lbasupport:
     int     $0x13
     jnc     diskready
 
-    exit($E_BOOTSTRAP_DISK)      // failed to get drive parameters, die
+    EXIT    $E_BOOTSTRAP_DISK         // failed to get drive parameters, die
 
 diskready:
 
@@ -112,7 +107,7 @@ diskready:
     orw     %ax, %ax
     jz      nextstage
 
-    exit(%ax)                    // error occured during load, die
+    EXIT    %ax                       // error occured during load, die
 
 nextstage:
 
@@ -120,16 +115,7 @@ nextstage:
 ** image is loaded, now we transfer control to the loader, which will
 ** handle loading the kernel from the boot partition
 */
-    /*movw   $80, %cx
-    movw   $0x8400, %si
-dbg_loop:
-    movb   (%si), %al
-    incw   %si
-    call   dispChar
-    loop   dbg_loop
-
-    debug_breakpoint(3)*/
-    jmp     LOADER16_ADDRESS
+    jmp     $LOADER_SEGMENT, $0x0
 
 /*
 ** Loads the loader image located at the LBA stored in loader_lba
@@ -143,135 +129,83 @@ dbg_loop:
 **    AX=E_BOOTSTRAP_TOOBIG   - the loader image size > 127 sectors
 */
 loadimage:
-    pushw   %bx
+    pushw   %si
     pushw   %cx
     pushw   %dx
-    pushw   %si
-    pushw   %di
 
+    // read two sectors from boot_lba to 07C0:0200
+    // the first sector is the boot header
+    // the second contains loader16.bin
+    movw    $dap, %si
+    movw    $16, dap_size                  // set the size to 16 (must be set)
+    movw    $BOOT_SEGMENT, dap_buffer_segment  // setup transfer buffer
+    movw    $0x200, dap_buffer_offset          // 07C0:0200 (0x7E00)
+    movw    $1, dap_sectors                    // set the sectors to read
+    movl    boot_lba, %ecx                     // ECX = boot partition LBA
+    movl    %ecx, dap_lowlba
+    call    readsectors                    // do the read
+    testw   %ax, %ax                       // check for disk error
+    jnz     loadimage_diskerror
 
-    MAX_SECTORS_PER_TRANSFER = 127
+    // test the boot header located at 07C0:0200, make sure the signature is
+    // correct. If it isn't then the image is either corrupted, or isn't a
+    // sploader image.
+    movl    bh_sig, %eax
+    xorl    $BOOT_HEADER_SIGNATURE_LO, %eax // test the lower four bytes
+    jnz     loadimage_badheader             // if ZF is set = header matched
+    movl    bh_sig + 4, %eax
+    xorl    $BOOT_HEADER_SIGNATURE_HI, %eax // test the upper four bytes
+    jnz     loadimage_badheader
 
-    // determine the number of sectors we need to load
-    // sectors = ceil( (loader_size + loader16_size) / dp_bytes_per_sector )
-    xorw    %dx, %dx
-    movw    loader_size, %ax
-    addw    loader16_size, %ax
+    // read the loaderSize field in the header and determine how many sectors
+    // to load from the disk, %AX = ceil(bh_loaderSize / dp_bytes_per_sector)
+    movw    bh_loaderSize, %ax
     orw     %ax, %ax                       // check if the loader_size is zero
     jz      loadimage_toosmall             // if so exit
+    xorw    %dx, %dx
     divw    dp_bytes_per_sector            // ax = sectors to load
     orw     %dx, %dx
     jz      loadimage_sectors              // test if the remainder is zero
     incw    %ax                            // remainder not zero, round up
 
 loadimage_sectors:
-
     cmpw    $MAX_SECTORS_PER_TRANSFER, %ax
-    jg      loadimage_toobig               // test if the image is too big
+    jg      loadimage_toobig                    // test if the image is too big
 
-    // process:
-    // load the entire thing to 0x10000
-    // move loader16.bin to 0x7E00
-    // shift loader.bin so that it starts at 0x10000
-    // clear the mem after the move
+    movw    $LOADER_SEGMENT, dap_buffer_segment // setup transfer buffer
+    movw    $0, dap_buffer_offset               // 1000:0000 (0x10000)
+    movw    %ax, dap_sectors                    // set the sectors to read
+    incl    %ecx                                // skip the header we just read
+    movl    %ecx, dap_lowlba                    // read earlier
+    call    readsectors                         // do the read
+    testw   %ax, %ax
+    jnz     loadimage_diskerror
 
-    movw    $dap, %si                      // si = pointer to DAP struct
-    movw    $16, dap_size                  // set the size to 16 (must be set)
-    movw    $LOADER_SEGMENT, dap_buffer_segment  // setup transfer buffer
-    movw    $0, dap_buffer_offset                // 1000:0000 (0x10000)
-    movw    %ax, dap_sectors               // set the sectors to read
-    movl    loader_lba, %eax               // set the starting LBA
-    movl    %eax, dap_lowlba
-    xorl    %eax, %eax                     // clear the high order bits
-    call    readsectors                    // do the read
-    orw     %ax, %ax
-    jnz     loadimage_diskerror            // was read successful?
-
-    // move loader16.bin to 0x7E00
-    // CX = loader16_size
-    // DS:SI = 1000:0000
-    // ES:DI = 07C0:0200
-
-    movw    loader_size, %bx               // BX = loader_size (save for later)
-    movw    loader16_size, %cx             // CX = loader16_size
-    movw    %cx, %dx                       // DX = CX (save for later)
-
-    pushw   %ds                            // save segment regs
-    pushw   %es
-    movw    $BOOT_SEGMENT, %ax
-    movw    %ax, %es                       // ES = 0x07C0
-    movw    $LOADER_SEGMENT, %ax
-    movw    %ax, %ds                       // DS = 0x1000
-
-    xorw    %si, %si                       // SI = 0
-    movw    $LOADER16_ADDRESS, %di         // DI = 0x200
-    cld
-    rep movsb                              // copy
-
-    // shift loader.bin to 0x10000
-    // CX = loader_size
-    // DS:SI = 1000:(loader16_size)
-    // ES:DI = 1000:0000
-
-    movw    %ax, %es                       // AX still has LOADER_SEGMENT
-    movw    %bx, %cx                       // CX = loader_size
-    movw    %dx, %si                       // SI = loader16_size
-    xorw    %di, %di                       // DI = 0
-    rep movsb
-
-    // clear parts of loader.bin leftover from the shift
-    // CX = loader16_size
-    // AX = 0
-    // ES:DI = 1000:(loader_size)
-    movw    %dx, %cx                       // DX still has loader16_size
-    xorw    %ax, %ax                       // AX = 0
-    movw    %bx, %di                       // BX still has loader_size
-    rep stosb                              // clear mem
-
-
-    popw    %es                            // restore segment regs
-    popw    %ds
-
-    jmp     loadimage_success              // done!
+    // success! exit with %ax = 0
+    xorw    %ax, %ax
+    jmp     loadimage_exit
 
 loadimage_diskerror:
     movw    $E_BOOTSTRAP_DISK, %ax         // read error occurred
     jmp     loadimage_exit                 // error, AX=E_BOOTSTRAP_DISK
 
 loadimage_toosmall:
-    movw    $E_BOOTSTRAP_TOOSMALL, %ax     // image size is zero
+    movw    $E_BOOTSTRAP_TOOSMALL, %ax     // loader.bin size was zero
     jmp     loadimage_exit                 // error, AX=E_BOOTSTRAP_TOOSMALL
 
 loadimage_toobig:
-    movw    $E_BOOTSTRAP_TOOBIG, %ax       // image is too big ( > 127 sectors)
+    movw    $E_BOOTSTRAP_TOOBIG, %ax       // loader.bin size > 127 sectors
     jmp     loadimage_exit                 // error, AX=E_BOOTSTRAP_TOOBIG
 
-loadimage_success:
-    xorw    %ax, %ax                       // success, AX=0
+loadimage_badheader:
+    movw    $E_BOOTSTRAP_BADHEADER, %ax    // image header is invalid
+    jmp     loadimage_exit                 // error, AX=E_BOOTSTRAP_BADHEADER
 
 loadimage_exit:
-    popw    %di
-    popw    %si
-    popw    %dx
+    popw    %dx                            // we're done, clean it and beat it
     popw    %cx
-    popw    %bx
+    popw    %si
     ret
-
-
-/*
-** Routine for calculating the number of sectors to read from an image size.
-** Drive Parameters must be read before calling this function.
-**
-** Arguments:
-**   AX: image size
-**
-** Returns:
-**   AX: sector count
-*/
-//sectorcount:
-//	ret
-
-
 
 /*
 ** Reads a specified number of sectors from a starting LBA of a drive
@@ -333,30 +267,10 @@ dispChar:
 ** Stops execution. Displays the error code stored in label die_code
 */
 die:
-    pushf                         // save register state
-    pushw   %ds                   // only needed for debugging
-    pushw   %es
-    pushw   %fs
-    pushw   %gs
-    pusha
-
-    movw    die_code, %ax         // load the error into AX (AH=type, AL=code)
-    movw    %ax, %bx
-    shrw    $8, %bx               // get the error type into bx
-    shlw    $1, %bx               // multiply by 2
-    movw    errortab(%bx), %si    // get the error string using bx as an index
-    call    dispMsg               // print the error type
-    movw    $str_errorSuffix, %si
-    call    dispMsg               // print ". Code: "
-    call    dispChar              // print error code
-
-    popa                          // restore registers, so we can inspect them
-    popw    %gs                   // with qemu/gdb once halted
-    popw    %fs
-    popw    %es
-    popw    %ds
-    popf
-
+    movw    $str_bootError, %si
+    call    dispMsg
+    movw    die_code, %ax
+    call    dispChar
 die_loop:
     hlt
     jmp     die_loop
@@ -366,11 +280,28 @@ die_code:
 
 
 /*
-** DATA AREAS.
+** Some useful symbols
 */
 
+DP_LOCATION  = 0x8000 // location of the drive parameter structure
+DAP_LOCATION = 0x8020 // location of the data address packet structure
+BOOT_HEADER  = 0x200  // location of the BootHeader structure
+
+// some BIOS's limit the dap_sectors to 127
+MAX_SECTORS_PER_TRANSFER = 127
+
 /*
-** Data Address Packet
+** bh - Boot header
+**
+** See include/SPLoader/i386-pc/BootHeader.h for details
+*/
+
+bh_sig = BOOT_HEADER + BOOT_HEADER_SIGNATURE
+bh_flags = BOOT_HEADER + BOOT_HEADER_FLAGS
+bh_loaderSize = BOOT_HEADER + BOOT_HEADER_LOADER_SIZE
+
+/*
+** dap - Data Address Packet
 **
 ** Offset     Size    Description
 ** ===========================================================================
@@ -392,18 +323,9 @@ dap_highlba        = dap+12
 
 dap = DAP_LOCATION
 
-/*	.align 4
-
-dap:
-    .byte 16
-    .byte 0
-    .word 0
-    .long 0
-    .long 0
-    .long 0*/
 
 /*
-** Boot drive parameters
+** dp - Boot drive parameters
 **
 ** Offset     Size    Description
 ** ============================================================================
@@ -427,104 +349,25 @@ dp_edd               = drive_parameters+26
 
 drive_parameters = DP_LOCATION
 
-    //.align 4
-
 drive:                           // the drive number we booted from
     .byte   0
 
-/*drive_parameters:
-    .word 0x1E
-    .word 0
-    .long 0
-    .long 0
-    .long 0
-    .quad 0
-    .word 0
-    .long 0*/
-
-/*
-** Error table
-** Array of strings describing the error type
-*/
-errortab:
-    .word str_bootError       // errortab[0] = boot error
-    .word str_debugError      // errortab[1] = debug error
-
 str_bootError:
-    .asciz "Boot error"
+    .asciz "Boot error. Code: "
 
-str_debugError:
-    .asciz "Debug breakpoint"
-
-str_errorSuffix:
-    .asciz ". Code: "
-
-
-/*
-** Location and size of the loader image (loader.bin)
-** These are set when installing the loader to the boot medium
-*/
-    .org    LOADER_LBA_LOCATION
-loader_lba:                      // logical block address of the image
-    .long   0                    // lower 32 bits
-//	.long   0                    // upper 32 bits
-
-    .org    LOADER_SIZE_LOCATION
-loader_size:                     // size (in bytes) of the loader image
-    .word   0
-
-    .org    LOADER16_SIZE_LOCATION
-loader16_size:
-    .word   0
+endtext:
 
 // ===========================================================================
 //                      END OF MBR BOOTSTRAP CODE
 // ===========================================================================
 
-/*
-** Partition table entries
-** These are here to ensure that the size of the bootstrap code is less than or
-** equal to 446 bytes. If it isn't, the assembler will complain about setting
-** the location counter backwards.
-*/
+// boot footer
+// contains the location of the stage 1 partition which is either the
+// post-MBR gap (BIOS/MBR) or a BIOS boot partition (BIOS/GPT)
 
+    .org    BOOT_LBA_LOCATION
+boot_lba:
+    .long   0
 
-    .org MBR_PARTITION1
-partition1:
-    .fill 16, 1, 0
-
-    .org MBR_PARTITION2
-partition2:
-    .fill 16, 1, 0
-
-    .org MBR_PARTITION3
-partition3:
-    .fill 16, 1, 0
-
-    .org MBR_PARTITION4
-partition4:
-    .fill 16, 1, 0
-
-
-
-/*
-** End of the first sector of the boot program.  The last two bytes
-** of this sector must be AA55 in order for the disk to be recognized
-** by the BIOS as bootable.
-*/
-    .org MBR_BOOTSIG_LOCATION
-
-boot_sig:
-    .word MBR_BOOTSIG
-
-/*
-** The extra data at the end here is for testing the loadimage function
-** We can pretend that this data is the loader image, loader.bin
-*/
-
-//.fill 130 * 512, 1, 0xF0
-
-//.fill 0x200, 1, 0xFF
-//.fill 0x700, 1, 0xF0
-//.fill 0x400, 1, 0xF
-
+// there are two extra bytes right before the partition table for use if
+// needed (0x1BC-0x1BD)

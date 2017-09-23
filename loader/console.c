@@ -5,8 +5,10 @@
 **
 */
 
+#if defined(FE_MENU) || defined(FE_CONSOLE)
+
 #include <SPLoader/err.h>
-#include <SPLoader/console/out.h>
+#include <SPLoader/console.h>
 #include <SPLoader/console/driver.h>
 #include <SPLoader/console/string.h>
 
@@ -372,3 +374,7 @@ void __printf(PutcharOptions *opt, const char *fmt, va_list args) {
         }
     }
 }
+
+#else
+typedef int dummy;
+#endif

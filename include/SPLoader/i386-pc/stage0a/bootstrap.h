@@ -12,35 +12,22 @@
 #define BOOT_SEGMENT 0x07C0        // default BIOS addr to load boot sector
 #define BOOT_ADDRESS 0x7C00
 
-#define LOADER_LBA_LOCATION    0x1B4 // location of the loader LBA
-#define LOADER_SIZE_LOCATION   0x1B8 // location of the loader size
-#define LOADER16_SIZE_LOCATION 0x1BA // location of the loader16 size
-
-#define mkcode(type, char) (type << 8) | char
-
-// error types
-
-#define ET_BOOTSTRAP_BOOT  0
-#define ET_BOOTSTRAP_DEBUG 1
-
+#define BOOT_LBA_LOCATION 0x1B8
 
 // error codes
-//   byte 1: 0
-//   byte 0: error code character
 
-#define E_BOOTSTRAP_DEFAULT  mkcode(ET_BOOTSTRAP_BOOT, '0')
-#define E_BOOTSTRAP_DISK     mkcode(ET_BOOTSTRAP_BOOT, '1')
-#define E_BOOTSTRAP_NOLBA    mkcode(ET_BOOTSTRAP_BOOT, '2')
-#define E_BOOTSTRAP_TOOBIG   mkcode(ET_BOOTSTRAP_BOOT, '3')
-#define E_BOOTSTRAP_TOOSMALL mkcode(ET_BOOTSTRAP_BOOT, '4')
+#define E_BOOTSTRAP_DEFAULT   '0'
+#define E_BOOTSTRAP_DISK      '1'
+#define E_BOOTSTRAP_NOLBA     '2'
+#define E_BOOTSTRAP_TOOBIG    '3'
+#define E_BOOTSTRAP_TOOSMALL  '4'
+#define E_BOOTSTRAP_BADHEADER '5'
 
 // debug codes
-//   byte 1: 1
-//   byte 0: debug code character
 
-#define E_BOOTSTRAP_DEBUG1 mkcode(ET_BOOTSTRAP_DEBUG, 'A')
-#define E_BOOTSTRAP_DEBUG2 mkcode(ET_BOOTSTRAP_DEBUG, 'B')
-#define E_BOOTSTRAP_DEBUG3 mkcode(ET_BOOTSTRAP_DEBUG, 'C')
+#define E_BOOTSTRAP_DEBUG1   'X'
+#define E_BOOTSTRAP_DEBUG2   'Y'
+#define E_BOOTSTRAP_DEBUG3   'Z'
 
 #ifndef __ASM__
 #endif  // __ASM__

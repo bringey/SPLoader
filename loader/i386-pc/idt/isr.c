@@ -8,11 +8,11 @@
 #include <SPLoader/i386-pc/idt/isr.h>
 #include <SPLoader/i386-pc/idt/IDTGate.h>
 #include <SPLoader/i386-pc/pic.h>
-#include <SPLoader/loader.h>
+#include <SPLoader/i386-pc/loader.h>
 #include <SPLoader/i386/io.h>
 #include <SPLoader/abort.h>
 #include <SPLoader/err.h>
-#include <SPLoader/console/out.h>
+#include <SPLoader/console.h>
 
 #include <stddef.h>
 #include <stdint.h>
