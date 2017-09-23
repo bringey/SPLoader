@@ -13,6 +13,10 @@ include includes.default.mk
 # include includes.mk if it exists
 -include includes.mk
 
+VERSION := $(shell head -n 1 VERSION)
+
+DEFINES += -DVERSION="\"$(VERSION)\""
+
 PROJECTS := loader
 include $(addsuffix .mk,$(addprefix mk/,$(PROJECTS)))
 

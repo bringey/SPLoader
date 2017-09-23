@@ -41,7 +41,7 @@ WARNFLAGS := -Wall -Wextra
 
 CFLAGS = -std=gnu11 -ffreestanding $(WARNFLAGS) $(WERROR)
 
-CPPFLAGS = -I$(INC_DIR) $(USER_DEFINES)
+CPPFLAGS = -I$(INC_DIR) $(USER_DEFINES) $(DEFINES)
 
 ASFLAGS =
 
