@@ -14,6 +14,7 @@
     .globl _start, main, con_putchar_at
     .globl __isr_init
     .globl __nmi_enable
+    .globl __int32_init
 
 _start:
     cli
@@ -32,6 +33,8 @@ _start:
     movl    %ebp, %esp
 
     call    __nmi_enable                    // re-enable NMIs
+
+    call    __int32_init
 
     call    main
 

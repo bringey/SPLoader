@@ -29,6 +29,7 @@ LOADER_PLAT_OBJ = stage0b/a20gate.o \
                   console/driver.o \
                   mem/driver.o \
                   nmi.o \
+                  realmode.o \
                   startup.o
 
 LOADER_PLAT_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(LOADER_PLAT_OBJ))
