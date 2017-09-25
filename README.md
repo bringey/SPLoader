@@ -36,8 +36,10 @@ coding conventions/style and how to submit pull requests.
 
 ## Versioning
 
-TBD - this project is under development, this section will be updated once the
-project is somewhat usable.
+This project uses Semantic Versioning v2.0.0.
+
+Currently, the project is in development phase (major version 0). See the
+[CONTRIBUTING](CONTRIBUTING) file for details on tagging new versions.
 
 ## Authors
 
@@ -45,8 +47,8 @@ project is somewhat usable.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - See the
-[LICENSE](LICENSE) file for more details
+This project is licensed under the MIT License - See the [LICENSE](LICENSE) file
+for more details.
 
 ## Acknowledgments
 
