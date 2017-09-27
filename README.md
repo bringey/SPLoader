@@ -31,15 +31,15 @@ qemu-system-i386 -drive file=build/usb.img,format=raw
 
 ## Contributing
 
-Read the [CONTRIBUTING](CONTRIBUTING) file for details on the build system,
-coding conventions/style and how to submit pull requests.
+Read the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on the build
+system, coding conventions/style and how to submit pull requests.
 
 ## Versioning
 
 This project uses Semantic Versioning v2.0.0.
 
 Currently, the project is in development phase (major version 0). See the
-[CONTRIBUTING](CONTRIBUTING) file for details on tagging new versions.
+[CONTRIBUTING.md](CONTRIBUTING.md) file for details on tagging new versions.
 
 ## Authors
 
