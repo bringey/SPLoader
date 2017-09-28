@@ -57,7 +57,7 @@ underscores (ie `MY_CONSTANT_VARIABLE`).
 
 #### Whitespace
 
-All files (except Makefiles) must use 4-space tabs for indentation. Unix style
+All files (except Makefiles) must use 4-space tabs for indentation. Linux style
 newlines ('\n') are to be used in all files. NO TABS!
 
 ### Organization
