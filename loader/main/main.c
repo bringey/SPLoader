@@ -9,11 +9,13 @@
 
 #include <SPLoader/console.h>
 #include <SPLoader/err.h>
-#include <SPLoader/abort.h>
+#include <SPLoader/mem.h>
 #include <SPLoader/version.h>
 
-
 int main(void) {
+
+    // initialize the memory manager
+    mem_init();
 
     con_init();
     con_clear();
