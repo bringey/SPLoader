@@ -10,7 +10,7 @@ SUBDIR := loader
 -include $(PLATFORM_MAKEFILE)
 
 
-LOADER_OBJ = main/main.o \
+LOADER_OBJ = main.o \
              console.o \
              console/string.o \
              mem.o \
