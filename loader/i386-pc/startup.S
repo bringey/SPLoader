@@ -12,8 +12,6 @@
     .arch i686
     .text
     .globl _start, main, con_putchar_at
-    .globl __isr_init
-    .globl __nmi_enable
     .globl __int32_init
 
 _start:
@@ -31,8 +29,6 @@ _start:
     // reset stack, just in case it got trashed somehow
     movl    $LOADER_STACK_ADDRESS, %ebp
     movl    %ebp, %esp
-
-    call    __nmi_enable                    // re-enable NMIs
 
     call    __int32_init
 

@@ -1,5 +1,5 @@
 /*
-** File: loader/i386-pc/idt/isr.c
+** File: core/i386-pc/idt/isr.c
 **
 ** Author: Brennan Ringey
 **

@@ -1,5 +1,5 @@
 /*
-** File: loader/i386-pc/timer/timer.c
+** File: core/i386-pc/timer/timer.c
 **
 ** Author: Brennan Ringey
 **

@@ -1,5 +1,5 @@
 /*
-** File: loader/i386-pc/idt/stubs.S
+** File: core/i386-pc/idt/stubs.S
 **
 ** Author: Brennan Ringey
 **
