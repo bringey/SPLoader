@@ -8,8 +8,6 @@
 #ifndef _SPLOADER_TIMER_TIMER_H
 #define _SPLOADER_TIMER_TIMER_H
 
-#error "DEPRECATED! do not use"
-
 #include <SPLoader/timer/TimerCallback.h>
 
 #ifndef __ASM__

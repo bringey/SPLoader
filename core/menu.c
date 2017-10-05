@@ -19,7 +19,7 @@ static unsigned BLACK_ON_WHITE;
 static unsigned WHITE_ON_BLACK;
 
 static const char TITLE[] = "SPLoader";
-static const char VERSION[] = SPLOADER_VERSION;
+//static const char VERSION[] = SPLOADER_VERSION;
 
 typedef struct MenuItem_s {
     char name[72];

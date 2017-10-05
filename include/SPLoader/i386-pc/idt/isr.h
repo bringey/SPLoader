@@ -8,8 +8,6 @@
 #ifndef _SPLOADER_I386_PC_IDT_ISR_H
 #define _SPLOADER_I386_PC_IDT_ISR_H
 
-#error "DEPRECATED! do not use"
-
 #include <SPLoader/i386-pc/idt/ISRHandler.h>
 
 //

@@ -8,8 +8,6 @@
 #ifndef _SPLOADER_MAIN_MENU_H
 #define _SPLOADER_MAIN_MENU_H
 
-#error "DEPRECATED do not use!"
-
 #ifndef __ASM__
 
 int menu_init(void);

@@ -17,7 +17,7 @@ VERSION := $(shell head -n 1 VERSION)
 
 DEFINES += -DVERSION="\"$(VERSION)\""
 
-PROJECTS := loader
+PROJECTS := loader core
 include $(addsuffix .mk,$(addprefix mk/,$(PROJECTS)))
 
 # Pattern Rules
