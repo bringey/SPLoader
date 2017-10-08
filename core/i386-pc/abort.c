@@ -1,5 +1,5 @@
 /*
-** File: loader/i386-pc/abort.c
+** File: core/i386-pc/abort.c
 **
 ** Author: Brennan Ringey
 **

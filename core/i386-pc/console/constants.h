@@ -1,5 +1,5 @@
 /*
-** File: loader/i386-pc/console/constants.h
+** File: core/i386-pc/console/constants.h
 **
 ** Author: Brennan Ringey
 **
@@ -8,8 +8,8 @@
 **
 */
 
-#ifndef _LOADER_I386_PC_CONSOLE_CONSTANTS_PH
-#define _LOADER_I386_PC_CONSOLE_CONSTANTS_PH
+#ifndef _CORE_I386_PC_CONSOLE_CONSTANTS_PH
+#define _CORE_I386_PC_CONSOLE_CONSTANTS_PH
 
 #define VGA_BUFFER 0xB8000
 #define VGA_WIDTH 80

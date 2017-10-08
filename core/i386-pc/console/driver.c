@@ -1,5 +1,5 @@
 /*
-** File: loader/i386-pc/console/driver.c
+** File: core/i386-pc/console/driver.c
 **
 ** Author: Brennan Ringey
 **

@@ -1,5 +1,5 @@
 /*
-** File: loader/console/out.c
+** File: core/console.c
 **
 ** Author: Brennan Ringey
 **

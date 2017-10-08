@@ -7,8 +7,12 @@ SUBDIR := core
 
 -include $(PLATFORM_MAKEFILE)
 
-CORE_OBJ = kbd/parse.o \
-           menu.o
+CORE_OBJ = console/string.o \
+           kbd/parse.o \
+           console.o \
+           mem.o \
+           menu.o \
+           version.o
 
 CORE_OBJ := $(addprefix $(BUILD_DIR)/core/,$(CORE_OBJ))
 CORE_DEP := $(CORE_OBJ:.o=.d)
@@ -31,8 +35,8 @@ core.final.o: $(CORE_FINAL_OBJ)
 
 core.elf: $(CORE_ELF)
 
-$(CORE_FINAL_OBJ): $(CORE_OBJ_LIST) $(LOADER_FINAL_OBJ) $(MARKER)
-	$(LD_V) $(LDFLAGS) -o $@ -r -R $(LOADER_FINAL_OBJ) $(CORE_OBJ_LIST)
+$(CORE_FINAL_OBJ): $(CORE_OBJ_LIST) $(MARKER)
+	$(LD_V) $(LDFLAGS) -o $@ -r $(CORE_OBJ_LIST)
 
 $(CORE_ELF): $(CORE_FINAL_OBJ) $(MARKER)
 	$(OBJCOPY_V) -R .comment -R .eh_frame -g $(CORE_FINAL_OBJ) $@

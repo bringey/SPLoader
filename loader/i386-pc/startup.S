@@ -11,7 +11,7 @@
 
     .arch i686
     .text
-    .globl _start, main, con_putchar_at
+    .globl _start, main
     .globl __int32_init
 
 _start:
@@ -38,7 +38,7 @@ _start:
     // returned from main! do nothing forever
     cli
 
-    #if defined(FE_MENU) || defined(FE_CONSOLE)
+    #if 0
     // display a ! in the lower right corner of the console
     pushl   $'!'
     pushl   $24

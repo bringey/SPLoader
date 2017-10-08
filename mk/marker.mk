@@ -11,7 +11,7 @@ MARKER = $$(@D)/$(MARKER_FILE)
 
 
 %/$(MARKER_FILE):
-	@echo "    MKDIR $(dir $@)"
+	@echo "    MKDIR   $(dir $@)"
 	@mkdir -p $(dir $@)
 	@touch $@
 
