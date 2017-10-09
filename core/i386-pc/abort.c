@@ -10,7 +10,8 @@
 #include <SPLoader/console.h>
 
 #include <SPLoader/i386/regs.h>
-#include <SPLoader/i386-pc/loader.h>
+
+#include <loader/i386-pc/loader.h>
 
 #include <stddef.h>
 

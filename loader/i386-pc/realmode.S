@@ -1,8 +1,8 @@
 
 #define __ASM__
-#include <SPLoader/i386-pc/loader.h>
-#include <SPLoader/i386-pc/realmode.h>
-#include <SPLoader/i386-pc/Regs32.h>
+#include <loader/i386-pc/loader.h>
+#include <loader/i386-pc/realmode.h>
+#include <loader/i386-pc/Regs32.h>
 
 #define RELOC(label) ((label - __int32_reloc) + INT32_LOCATION)
 
