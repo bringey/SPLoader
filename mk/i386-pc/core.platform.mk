@@ -1,8 +1,7 @@
 # mk/i386-pc/core.platform.mk
 # Platform-specific makefile for the core module
 
-CORE_PLAT_OBJ = console/driver.o \
-                idt/isr.o \
+CORE_PLAT_OBJ = idt/isr.o \
                 idt/stubs.o \
                 kbd/kbd.o \
                 mem/driver.o \

@@ -1,5 +1,5 @@
 /*
-** File: core/i386-pc/console/driver.c
+** File: loader/i386-pc/console/driver.c
 **
 ** Author: Brennan Ringey
 **
@@ -9,8 +9,6 @@
 ** for the i386-pc platform.
 **
 */
-
-#if defined(FE_MENU) || defined(FE_CONSOLE)
 
 #include <SPLoader/console/driver.h>
 #include <SPLoader/err.h>
@@ -211,7 +209,3 @@ unsigned _con_width(void) {
 unsigned _con_height(void) {
     return VGA_HEIGHT;
 }
-
-#else
-typedef int dummy;
-#endif

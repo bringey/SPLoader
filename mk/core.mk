@@ -7,9 +7,7 @@ SUBDIR := core
 
 -include $(PLATFORM_MAKEFILE)
 
-CORE_OBJ = console/string.o \
-           kbd/parse.o \
-           console.o \
+CORE_OBJ = kbd/parse.o \
            mem.o \
            menu.o \
            version.o

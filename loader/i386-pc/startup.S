@@ -13,6 +13,7 @@
     .text
     .globl _start, main
     .globl __int32_init
+    .globl con_init
 
 _start:
     cli
@@ -29,6 +30,8 @@ _start:
     // reset stack, just in case it got trashed somehow
     movl    $LOADER_STACK_ADDRESS, %ebp
     movl    %ebp, %esp
+
+    call    con_init
 
     call    __int32_init
 

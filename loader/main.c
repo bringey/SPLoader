@@ -20,5 +20,8 @@
 //
 int main(void) {
 
+    con_clear();
+
+    con_puts("TEST");
     return 0;
 }

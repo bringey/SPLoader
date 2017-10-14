@@ -1,6 +1,10 @@
 
 # Changelog
 
+## v0.0.4 2017-10-13
+
+Moved more stuff from loader to core, reorganized header files.
+
 ## v0.0.3 2017-10-05
 
 Added core project to source tree. Moved deprecated modules from loader to core
