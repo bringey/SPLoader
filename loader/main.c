@@ -7,6 +7,10 @@
 **
 */
 
+#include <SPLoader/console.h>
+
+#include <loader/disk.h>
+
 
 //
 // Stage 1 main routine
@@ -22,6 +26,11 @@ int main(void) {
 
     con_clear();
 
-    con_puts("TEST");
+    con_puts("Initializing disk driver\n");
+    disk_init();
+    con_printf("Block size: %d\n", disk_blockSize());
+    con_printf("Disk Buffer located at 0x%08x\n", disk_buffer());
+
+
     return 0;
 }
