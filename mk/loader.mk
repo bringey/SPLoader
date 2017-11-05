@@ -10,9 +10,7 @@ SUBDIR := loader
 -include $(PLATFORM_MAKEFILE)
 
 
-LOADER_OBJ = console.o \
-             console/string.o \
-             main.o
+LOADER_OBJ = main.o
 
 LOADER_OBJ := $(addprefix $(BUILD_DIR)/loader/,$(LOADER_OBJ))
 LOADER_DEP := $(LOADER_OBJ:.o=.d)
@@ -26,7 +24,8 @@ LOADER_BIN := $(addprefix $(BUILD_DIR)/,$(LOADER_BIN))
 LOADER_OBJ_LIST = $(LOADER_ENTRY_OBJ) \
                   $(LOADER_ARCH_OBJ) \
                   $(LOADER_PLAT_OBJ) \
-                  $(LOADER_OBJ)
+                  $(LOADER_OBJ) \
+                  $(LIBCORE_LIB)
 
 .PHONY: loader.bin
 

@@ -25,7 +25,8 @@ CORE_ELF := $(addprefix $(BUILD_DIR)/core/,$(CORE_ELF))
 CORE_OBJ_LIST = $(CORE_ENTRY_OBJ) \
                 $(CORE_ARCH_OBJ) \
                 $(CORE_PLAT_OBJ) \
-                $(CORE_OBJ)
+                $(CORE_OBJ) \
+                $(LIBCORE_LIB)
 
 .PHONY: core.final.o core.elf
 

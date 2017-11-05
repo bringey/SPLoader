@@ -6,7 +6,10 @@
 
 INC_DIR := include
 
+# project-specific build directory
 OUT_DIR = $(BUILD_DIR)/$(SUBDIR)
+OUT_ARCH_DIR = $(OUT_DIR)/$(ISA)
+OUT_PLAT_DIR = $(OUT_DIR)/$(ISA)-$(PLATFORM)
 
 ISADIR      = $(SUBDIR)/$(ISA)
 PLATFORMDIR = $(SUBDIR)/$(ISA)-$(PLATFORM)
