@@ -22,7 +22,7 @@
 #define calcIndex(col, row) ((row * VGA_WIDTH) + col)
 
 
-int _con_clearRegion(unsigned rowStart, unsigned rowEnd) {
+int _spl_con_clearRegion(unsigned rowStart, unsigned rowEnd) {
     if (rowEnd <= rowStart) {
         return E_ARGBOUNDS;
     }
@@ -49,15 +49,15 @@ int _con_clearRegion(unsigned rowStart, unsigned rowEnd) {
 }
 
 
-unsigned _con_color(ConColor fg, ConColor bg) {
+unsigned _spl_con_color(ConColor fg, ConColor bg) {
     return (unsigned)(((uint16_t)bg << 12) | ((uint16_t)fg << 8));
 }
 
-unsigned _con_index(unsigned x, unsigned y) {
+unsigned _spl_con_index(unsigned x, unsigned y) {
     return (y * VGA_WIDTH) + x;
 }
 
-int _con_put(unsigned index, unsigned color, char ch) {
+int _spl_con_put(unsigned index, unsigned color, char ch) {
     if (index >= (VGA_WIDTH * VGA_HEIGHT)) {
         return E_ARGBOUNDS;
     }
@@ -67,7 +67,7 @@ int _con_put(unsigned index, unsigned color, char ch) {
     return E_SUCCESS;
 }
 
-int _con_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines) {
+int _spl_con_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines) {
 
     // if lines is zero, we don't need to do anything
 
@@ -77,7 +77,7 @@ int _con_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines) {
         // if the lines is greater than the height, just clear it
         // otherwise, copy it line by line
         if (lines >= windowHeight) {
-            _con_clearRegion(lineStart, lineEnd);
+            _spl_con_clearRegion(lineStart, lineEnd);
         } else {
 
             uint16_t *windowStart = (uint16_t*)VGA_BUFFER + (lineStart * VGA_WIDTH);
@@ -143,7 +143,7 @@ int _con_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines) {
 //     return E_SUCCESS;
 // }
 
-int _con_updateCursor(unsigned index) {
+int _spl_con_updateCursor(unsigned index) {
 
     //unsigned cursor = calcIndex(x, y);
 
@@ -202,10 +202,10 @@ int _con_updateCursor(unsigned index) {
 
 // properties
 
-unsigned _con_width(void) {
+unsigned _spl_con_width(void) {
     return VGA_WIDTH;
 }
 
-unsigned _con_height(void) {
+unsigned _spl_con_height(void) {
     return VGA_HEIGHT;
 }

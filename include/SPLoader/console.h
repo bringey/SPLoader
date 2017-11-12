@@ -17,39 +17,39 @@
 
 #ifndef __ASM__
 
-int con_clear(void);
+int spl_con_clear(void);
 
-int con_clearWindow(void);
+int spl_con_clearWindow(void);
 
-#define con_color(fg, bg) _con_color(fg, bg)
+#define spl_con_color(fg, bg) _spl_con_color(fg, bg)
 
-int con_init(void);
+int spl_con_init(void);
 
-int con_putchar(char ch);
+int spl_con_putchar(char ch);
 
-int con_putchar_at(unsigned x, unsigned y, char ch);
+int spl_con_putchar_at(unsigned x, unsigned y, char ch);
 
-int con_puts(const char *str);
+int spl_con_puts(const char *str);
 
-int con_puts_at(unsigned x, unsigned y, const char *str);
+int spl_con_puts_at(unsigned x, unsigned y, const char *str);
 
-int con_printf(const char *fmt, ...);
+int spl_con_printf(const char *fmt, ...);
 
-int con_printf_at(unsigned x, unsigned y, const char *fmt, ...);
+int spl_con_printf_at(unsigned x, unsigned y, const char *fmt, ...);
 
-#define con_resetColor() con_setColor(CON_DEFAULT_FG, CON_DEFAULT_BG)
+#define spl_con_resetColor() spl_con_setColor(CON_DEFAULT_FG, CON_DEFAULT_BG)
 
-int con_scroll(unsigned lines);
+int spl_con_scroll(unsigned lines);
 
-int con_setColor(unsigned color);
+int spl_con_setColor(unsigned color);
 
-int con_setCursor(unsigned x, unsigned y);
+int spl_con_setCursor(unsigned x, unsigned y);
 
-int con_setWindow(unsigned minY, unsigned maxY);
+int spl_con_setWindow(unsigned minY, unsigned maxY);
 
-#define con_width() _con_width()
+#define spl_con_width() _spl_con_width()
 
-#define con_height() _con_height()
+#define spl_con_height() _spl_con_height()
 
 #endif  //__ASM__
 

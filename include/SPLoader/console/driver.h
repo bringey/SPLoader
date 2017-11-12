@@ -22,33 +22,33 @@
 ** rowStart to rowEnd will be cleared. rowEnd must be greater than
 ** rowStart.
 */
-int _con_clearRegion(unsigned rowStart, unsigned rowEnd);
+int _spl_con_clearRegion(unsigned rowStart, unsigned rowEnd);
 
 /*
 ** @brief calculates a color value for the given ConColor
 **
 */
-unsigned _con_color(ConColor fg, ConColor bg);
+unsigned _spl_con_color(ConColor fg, ConColor bg);
 
 /*
 ** @brief Calculates an index in the console buffer for the given coordinates
 */
-unsigned _con_index(unsigned x, unsigned y);
+unsigned _spl_con_index(unsigned x, unsigned y);
 
 /*
 ** @brief Puts a character at the given row and column 
 */
-int _con_put(unsigned index, unsigned color, char ch);
+int _spl_con_put(unsigned index, unsigned color, char ch);
 
-int _con_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines);
+int _spl_con_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines);
 
-int _con_updateCursor(unsigned index);
+int _spl_con_updateCursor(unsigned index);
 
 // driver properties
 
-unsigned _con_height(void);
+unsigned _spl_con_height(void);
 
-unsigned _con_width(void);
+unsigned _spl_con_width(void);
 
 
 #endif  // __ASM__

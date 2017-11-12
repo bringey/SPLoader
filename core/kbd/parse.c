@@ -90,7 +90,7 @@ static uint8_t _SCANCODE_SET1_PAUSE[] = {
     0xE1, 0x1D, 0x45, 0xE1, 0x9D, 0xC5
 };
 
-int kbd_parse_set1(ScancodePacket *packet, KeyEvent *evt) {
+int spl_kbd_parse_set1(ScancodePacket *packet, KeyEvent *evt) {
     // set 1 has three possible scancode lengths
     // 1 - <c>                           - make
     //     (0x80 | <c>)                  - break

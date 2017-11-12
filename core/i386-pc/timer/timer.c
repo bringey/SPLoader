@@ -29,7 +29,7 @@ static unsigned _tickTotal;
 static unsigned _ticks;
 static TimerCallback _callback;
 
-int timer_init(void) {
+int spl_timer_init(void) {
     _timer_enabled = false;
     _tickTotal = 0;
     _ticks = 0;
@@ -48,7 +48,7 @@ int timer_init(void) {
 }
 
 
-int timer_start(TimerCallback callback) {
+int spl_timer_start(TimerCallback callback) {
     if (callback == NULL) {
         return E_ARGNULL;
     }
@@ -67,7 +67,7 @@ int timer_start(TimerCallback callback) {
     return E_SUCCESS;
 }
 
-int timer_stop(void) {
+int spl_timer_stop(void) {
     _timer_enabled = false;
 
     // stop PIT timer 0 by setting it to one-shot mode

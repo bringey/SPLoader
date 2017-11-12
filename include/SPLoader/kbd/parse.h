@@ -12,7 +12,7 @@
 #include <SPLoader/kbd/ScancodePacket.h>
 #include <SPLoader/kbd/KeyEvent.h>
 
-int kbd_parse_set1(ScancodePacket *packet, KeyEvent *evt);
+int spl_kbd_parse_set1(ScancodePacket *packet, KeyEvent *evt);
 
 // int kbd_parse_set3(ScancodePacket *packet, KeyEvent *evt);
 

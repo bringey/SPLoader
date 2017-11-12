@@ -7,13 +7,13 @@
 
 #include <stddef.h>
 
-int mem_init(void);
+int spl_mem_init(void);
 
-void mem_dump(void);
+void spl_mem_dump(void);
 
-void* mem_malloc(size_t bytes);
+void* spl_mem_malloc(size_t bytes);
 
-void* mem_calloc(size_t bytes);
+void* spl_mem_calloc(size_t bytes);
 
 // mem_free not implemented (not needed)
 // int mem_free(void *ptr);

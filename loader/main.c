@@ -24,12 +24,12 @@
 //
 int main(void) {
 
-    con_clear();
+    spl_con_clear();
 
-    con_puts("Initializing disk driver\n");
+    spl_con_puts("Initializing disk driver\n");
     disk_init();
-    con_printf("Block size: %d\n", disk_blockSize());
-    con_printf("Disk Buffer located at 0x%08x\n", disk_buffer());
+    spl_con_printf("Block size: %d\n", disk_blockSize());
+    spl_con_printf("Disk Buffer located at 0x%08x\n", disk_buffer());
 
 
     return 0;

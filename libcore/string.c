@@ -12,7 +12,7 @@
 
 static char HEXDIGITS[] = "0123456789ABCDEF";
 
-static char* con_cvtdec0(char *buf, int value) {
+static char* spl_con_cvtdec0(char *buf, int value) {
     int quotient = value / 10;
     if (quotient < 0) {
         quotient = 214748364;
@@ -20,26 +20,26 @@ static char* con_cvtdec0(char *buf, int value) {
     }
 
     if (quotient != 0) {
-        buf = con_cvtdec0(buf, quotient);
+        buf = spl_con_cvtdec0(buf, quotient);
     }
     *buf++ = value % 10 + '0';
     return buf;
 }
 
-int con_cvtdec(char *buf, int value) {
+int spl_con_cvtdec(char *buf, int value) {
     char *bp = buf;
     if (value < 0) {
         *bp++ = '-';
         value = -value;
     }
 
-    bp = con_cvtdec0(bp, value);
+    bp = spl_con_cvtdec0(bp, value);
     *bp = '\0';
 
     return bp - buf;
 }
 
-int con_cvthex(char *buf, int value) {
+int spl_con_cvthex(char *buf, int value) {
 
     int chars_stored = 0;
     char *bp = buf;
@@ -59,7 +59,7 @@ int con_cvthex(char *buf, int value) {
     return bp - buf;
 }
 
-int con_cvtoct(char *buf, int value) {
+int spl_con_cvtoct(char *buf, int value) {
     int chars_stored = 0;
     char *bp = buf;
     
@@ -80,7 +80,7 @@ int con_cvtoct(char *buf, int value) {
     return bp - buf;
 }
 
-unsigned con_strlen(char *str) {
+unsigned spl_con_strlen(char *str) {
     unsigned len = 0;
     while (*str++ != '\0') {
         ++len;

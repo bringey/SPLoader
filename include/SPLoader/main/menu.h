@@ -10,9 +10,9 @@
 
 #ifndef __ASM__
 
-int menu_init(void);
+int spl_menu_init(void);
 
-int menu_main(void);
+int spl_menu_main(void);
 
 
 #endif  // __ASM__

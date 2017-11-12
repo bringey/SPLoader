@@ -33,18 +33,18 @@ static ScancodePacket _packet;
 static ScancodeParseFn _parseFn;
 
 
-int kbd_init(void) {
+int spl_kbd_init(void) {
     //_scancodeBufIndex = 0;
     _eventFlag = false;
     _packet.length = 0;
-    _parseFn = kbd_parse_set1;
+    _parseFn = spl_kbd_parse_set1;
     _flags = 0;
     __isr_install(INT_VEC_KEYBOARD, __kbd_isr, NULL);
 
     return E_SUCCESS;
 }
 
-int kbd_waitForEvent(KeyEvent *evt) {
+int spl_kbd_waitForEvent(KeyEvent *evt) {
     if (evt == NULL) {
         return E_ARGNULL;
     }

@@ -12,11 +12,11 @@
 
 #ifndef __ASM__
 
-int timer_init(void);
+int spl_timer_init(void);
 
-int timer_start(TimerCallback callback);
+int spl_timer_start(TimerCallback callback);
 
-int timer_stop(void);
+int spl_timer_stop(void);
 
 #endif  // __ASM__
 

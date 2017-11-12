@@ -11,12 +11,12 @@
 #ifndef __ASM__
 
 #ifdef DEBUG_FILENAMES
-#define abort(reason) _abort(__FILE__, __LINE__, reason)
+#define spl_abort(reason) _spl_abort(__FILE__, __LINE__, reason)
 #else
-#define abort(reason) _abort(reason)
+#define spl_abort(reason) _spl_abort(reason)
 #endif
 
-void _abort(
+void _spl_abort(
     #ifdef DEBUG_FILENAMES
         const char *file,
         unsigned line,

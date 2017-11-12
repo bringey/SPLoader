@@ -12,9 +12,9 @@
 
 #include <SPLoader/kbd/KeyEvent.h>
 
-int kbd_init(void);
+int spl_kbd_init(void);
 
-int kbd_waitForEvent(KeyEvent *evt);
+int spl_kbd_waitForEvent(KeyEvent *evt);
 
 #endif  // __ASM__
 

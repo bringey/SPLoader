@@ -41,45 +41,45 @@ static void __padstr(PutcharOptions *opt,
                      bool leftadjust,
                      int padchar);
 
-int con_clear(void) {
+int spl_con_clear(void) {
     curX = 0;
     curY = scrollMinY;
-    curIndex = _con_index(curX, curY);
-    _con_clearRegion(0, HEIGHT); // clear the entire screen
-    _con_updateCursor(curIndex);
+    curIndex = _spl_con_index(curX, curY);
+    _spl_con_clearRegion(0, HEIGHT); // clear the entire screen
+    _spl_con_updateCursor(curIndex);
 
     return E_SUCCESS;
 }
 
-int con_clearWindow(void) {
+int spl_con_clearWindow(void) {
     curX = 0;
     curY = scrollMinY;
-    curIndex = _con_index(curX, curY); // clear the window
-    _con_clearRegion(scrollMinY, scrollMaxY);
-    _con_updateCursor(curIndex);
+    curIndex = _spl_con_index(curX, curY); // clear the window
+    _spl_con_clearRegion(scrollMinY, scrollMaxY);
+    _spl_con_updateCursor(curIndex);
 
     return E_SUCCESS;
 }
 
-int con_init(void) {
+int spl_con_init(void) {
 
     curX = 0;
     curY = 0;
-    curIndex = _con_index(0, 0);
-    curColor = _con_color(CON_DEFAULT_FG, CON_DEFAULT_BG);
+    curIndex = _spl_con_index(0, 0);
+    curColor = _spl_con_color(CON_DEFAULT_FG, CON_DEFAULT_BG);
 
-    WIDTH = _con_width();
-    HEIGHT = _con_height();
+    WIDTH = _spl_con_width();
+    HEIGHT = _spl_con_height();
 
     scrollMinY = 0;
     scrollMaxY = HEIGHT;
 
-    _con_updateCursor(curIndex);
+    _spl_con_updateCursor(curIndex);
 
     return E_SUCCESS;
 }
 
-int con_putchar(char ch) {
+int spl_con_putchar(char ch) {
 
     PutcharOptions opt = {
         .useCursor = true
@@ -89,7 +89,7 @@ int con_putchar(char ch) {
     return E_SUCCESS;
 }
 
-int con_putchar_at(unsigned x, unsigned y, char ch) {
+int spl_con_putchar_at(unsigned x, unsigned y, char ch) {
     if (x >= WIDTH || y >= HEIGHT) {
         return E_ARGBOUNDS;
     }
@@ -98,14 +98,14 @@ int con_putchar_at(unsigned x, unsigned y, char ch) {
         .useCursor = false,
         .x = x,
         .y = y,
-        .index = _con_index(x, y)
+        .index = _spl_con_index(x, y)
     };
     __putchar(&opt, ch);
 
     return E_SUCCESS;
 }
 
-int con_puts(const char *str) {
+int spl_con_puts(const char *str) {
 
     PutcharOptions opt = {
         .useCursor = true
@@ -115,7 +115,7 @@ int con_puts(const char *str) {
     return E_SUCCESS;
 }
 
-int con_puts_at(unsigned x, unsigned y, const char *str) {
+int spl_con_puts_at(unsigned x, unsigned y, const char *str) {
     if (x >= WIDTH || y >= HEIGHT) {
         return E_ARGBOUNDS;
     }
@@ -124,14 +124,14 @@ int con_puts_at(unsigned x, unsigned y, const char *str) {
         .useCursor = false,
         .x = x,
         .y = y,
-        .index = _con_index(x, y)
+        .index = _spl_con_index(x, y)
     };
     __puts(&opt, str);
 
     return E_SUCCESS;
 }
 
-int con_printf(const char *fmt, ...) {
+int spl_con_printf(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
@@ -144,7 +144,7 @@ int con_printf(const char *fmt, ...) {
     return E_SUCCESS;
 }
 
-int con_printf_at(unsigned x, unsigned y, const char *fmt, ...) {
+int spl_con_printf_at(unsigned x, unsigned y, const char *fmt, ...) {
     if (x >= WIDTH || y >= HEIGHT) {
         return E_ARGBOUNDS;
     }
@@ -156,7 +156,7 @@ int con_printf_at(unsigned x, unsigned y, const char *fmt, ...) {
         .useCursor = false,
         .x = x,
         .y = y,
-        .index = _con_index(x, y)
+        .index = _spl_con_index(x, y)
     };
     __printf(&opt, fmt, args);
 
@@ -164,29 +164,29 @@ int con_printf_at(unsigned x, unsigned y, const char *fmt, ...) {
     return E_SUCCESS;
 }
 
-int con_scroll(unsigned lines) {
-    return _con_scroll(scrollMinY, scrollMaxY, lines);
+int spl_con_scroll(unsigned lines) {
+    return _spl_con_scroll(scrollMinY, scrollMaxY, lines);
 }
 
-int con_setColor(unsigned color) {
+int spl_con_setColor(unsigned color) {
     curColor = color;
     return E_SUCCESS;
 }
 
-int con_setCursor(unsigned x, unsigned y) {
+int spl_con_setCursor(unsigned x, unsigned y) {
     if (x >= WIDTH || y >= HEIGHT) {
         return E_ARGBOUNDS;
     }
 
     curX = x;
     curY = y;
-    curIndex = _con_index(x, y);
-    _con_updateCursor(curIndex);
+    curIndex = _spl_con_index(x, y);
+    _spl_con_updateCursor(curIndex);
 
     return E_SUCCESS;
 }
 
-int con_setWindow(unsigned minY, unsigned maxY) {
+int spl_con_setWindow(unsigned minY, unsigned maxY) {
     if (minY >= maxY || maxY > HEIGHT) {
         return E_ARGBOUNDS;
     }
@@ -195,8 +195,8 @@ int con_setWindow(unsigned minY, unsigned maxY) {
     scrollMaxY = maxY;
     curX = 0;
     curY = minY;
-    curIndex = _con_index(0, minY);
-    _con_updateCursor(curIndex);
+    curIndex = _spl_con_index(0, minY);
+    _spl_con_updateCursor(curIndex);
 
     return E_SUCCESS;
 }
@@ -214,7 +214,7 @@ void __putchar(PutcharOptions *opt, char ch) {
     if (useCursor) {
         // scroll if needed
         if (curY == scrollMaxY) {
-            _con_scroll(scrollMinY, scrollMaxY, 1);
+            _spl_con_scroll(scrollMinY, scrollMaxY, 1);
             --curY;
             curIndex -= WIDTH;
         }
@@ -230,17 +230,17 @@ void __putchar(PutcharOptions *opt, char ch) {
     switch (ch) {
         case '\n':
             for (; x != WIDTH; ++x, ++index) {
-                _con_put(index, curColor, ' ');
+                _spl_con_put(index, curColor, ' ');
             }
             x = 0;
             ++y;
             break;
         case '\r':
             x = 0;
-            index = _con_index(x, y);
+            index = _spl_con_index(x, y);
             break;
         default:
-            _con_put(index, curColor, ch);
+            _spl_con_put(index, curColor, ch);
             ++index;
             if (++x == WIDTH) {
                 x = 0;
@@ -253,7 +253,7 @@ void __putchar(PutcharOptions *opt, char ch) {
         curX = x;
         curY = y;
         curIndex = index;
-        _con_updateCursor(index);
+        _spl_con_updateCursor(index);
     } else {
         opt->x = x;
         opt->y = y;
@@ -343,18 +343,18 @@ void __printf(PutcharOptions *opt, const char *fmt, va_list args) {
                     len = 1;
                     break;
                 case 'd':       // decimal integer
-                    len = con_cvtdec(buf, (int)va_arg(args, int));
+                    len = spl_con_cvtdec(buf, (int)va_arg(args, int));
                     break;
                 case 'o':       // octal integer
-                    len = con_cvtoct(buf, (unsigned)va_arg(args, unsigned));
+                    len = spl_con_cvtoct(buf, (unsigned)va_arg(args, unsigned));
                     break;
                 case 's':       // string
                     str = (char*)va_arg(args, char*);
-                    len = con_strlen(str);
+                    len = spl_con_strlen(str);
                     break;
                 case 'x':       // hexadecimal integer (lowercase)
                 case 'X':       // hexadecimal integer (uppercase)
-                    len = con_cvthex(buf, (unsigned)va_arg(args, unsigned));
+                    len = spl_con_cvthex(buf, (unsigned)va_arg(args, unsigned));
                     break;
                 default:
                     typeValid = false;

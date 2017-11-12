@@ -15,11 +15,11 @@
 #undef MEM_CONT_END
 #define MEM_CONT_END ((size_t)-1)
 
-int _mem_bootstrap(FreeMap **map);
+int _spl_mem_bootstrap(FreeMap **map);
 
-size_t _mem_availableBlocks(void);
+size_t _spl_mem_availableBlocks(void);
 
-size_t _mem_nextBlock(size_t cont, FreeBlock *block);
+size_t _spl_mem_nextBlock(size_t cont, FreeBlock *block);
 
 #endif  // __ASM__
 
