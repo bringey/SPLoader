@@ -9,6 +9,11 @@
 #define _SPLOADER_ERR_H
 
 //
+// unknown error
+//
+#define E_UNSPECIFIED -1
+
+//
 // Success, no error
 //
 #define E_SUCCESS 0
@@ -27,6 +32,11 @@
 // A passed argument is out of bounds
 //
 #define E_ARGBOUNDS 3
+
+//
+// An assertion check has failed
+//
+#define E_ASSERT 4
 
 
 //

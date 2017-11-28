@@ -10,19 +10,26 @@
 
 #ifndef __ASM__
 
+#include <stdnoreturn.h>
+
 #ifdef DEBUG_FILENAMES
-#define spl_abort(reason) _spl_abort(__FILE__, __LINE__, reason)
+#define spl_error(errno, msg) _spl_error(__FILE__, __LINE__, errno, msg)
 #else
-#define spl_abort(reason) _spl_abort(reason)
+#define spl_error(errno, msg) _spl_error(errno, msg)
 #endif
 
-void _spl_abort(
+#define spl_abort() _spl_abort()
+
+noreturn void _spl_error(
     #ifdef DEBUG_FILENAMES
         const char *file,
         unsigned line,
     #endif
-        const char *reason
+        int errno,
+        const char *msg
 );
+
+noreturn void _spl_abort(void);
 
 #endif  // __ASM__
 

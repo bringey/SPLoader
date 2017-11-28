@@ -116,13 +116,13 @@ void __isr_defaultExpectedHandler(int vector, int code) {
             __outb(PIC_SLAVE_CMD_PORT, PIC_EOI);
         }
     } else {
-        spl_abort("Unexpected 'expected' interrupt");
+        spl_error(E_UNSPECIFIED, "Unexpected 'expected' interrupt");
     }
 }
 
 void __isr_defaultUnexpectedHandler(int vector, int code) {
     spl_con_printf("vector = 0x%02x, code = 0x%02x\n", vector, code);
-    spl_abort("Unexpected interrupt");
+    spl_error(E_UNSPECIFIED, "Unexpected interrupt");
 }
 
 void __isr_exceptionHandler(int vector, int code) {
@@ -194,5 +194,5 @@ void __isr_exceptionHandler(int vector, int code) {
             break;
     }
     spl_con_printf("Exception %02x, Code: %x (%s)\n", vector, code, name);
-    spl_abort("Exception");
+    spl_abort();
 }
