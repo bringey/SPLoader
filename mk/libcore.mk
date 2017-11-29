@@ -7,7 +7,8 @@ SUBDIR := libcore
 
 -include $(PLATFORM_MAKEFILE)
 
-LIBCORE_OBJ = console.o \
+LIBCORE_OBJ = abort.o \
+              console.o \
               string.o
 
 LIBCORE_OBJ := $(addprefix $(OUT_DIR)/,$(LIBCORE_OBJ))

@@ -25,9 +25,9 @@
 // asserts are the same as check, but checks will always exist in compiled
 // output. Use assert for debugging, use check for sanity
 #ifdef NDEBUG
-#define spl_assert(condition) spl_checke(condition, E_ASSERT)
-#else
 #define spl_assert(condition)
+#else
+#define spl_assert(condition) spl_checke(condition, E_ASSERT)
 #endif
 
 

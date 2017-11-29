@@ -13,14 +13,14 @@
 #include <stdnoreturn.h>
 
 #ifdef DEBUG_FILENAMES
-#define spl_error(errno, msg) _spl_error(__FILE__, __LINE__, errno, msg)
+#define spl_error(errno, msg) spl_error_(__FILE__, __LINE__, errno, msg)
 #else
-#define spl_error(errno, msg) _spl_error(errno, msg)
+#define spl_error(errno, msg) spl_error_(errno, msg)
 #endif
 
 #define spl_abort() _spl_abort()
 
-noreturn void _spl_error(
+noreturn void spl_error_(
     #ifdef DEBUG_FILENAMES
         const char *file,
         unsigned line,

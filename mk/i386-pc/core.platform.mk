@@ -6,7 +6,6 @@ CORE_PLAT_OBJ = idt/isr.o \
                 kbd/kbd.o \
                 mem/driver.o \
                 timer/timer.o \
-                abort.o \
                 io.o \
                 nmi.o
 
