@@ -39,8 +39,8 @@ $(BUILD_DIR)/%.nl: $(BUILD_DIR)/%.o $(MARKER)
 
 # TARGETS
 
-$(BUILD_DIR)/usb.img: $(BIOS_BOOTSTRAP_BIN) $(LOADER_BIN)
-	tools/mkimage/mkimage -o $@ -b $(BIOS_BOOTSTRAP_BIN) $(LOADER_BIN)
+$(BUILD_DIR)/usb.img: $(BIOS_BOOTSTRAP_BIN) $(LOADER_BIN) $(MKIMAGE)
+	$(MKIMAGE) -o $@ -b $(BIOS_BOOTSTRAP_BIN) $(LOADER_BIN)
 
 $(MKIMAGE):
 	$(MAKE) -C $(MKIMAGE_DIR)
