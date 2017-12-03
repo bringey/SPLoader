@@ -15,27 +15,34 @@ void spl_error_(
         const char *file, 
         unsigned line,
     #endif
-        int errno,
         const char *msg
 ) {
-    // print "[ERROR] [(<errno>)] <msg>"
-    // errno is not printed if errno == E_UNSPECIFIED
-    spl_con_puts("[ERROR] ");
-
-    #ifndef NDEBUG
-        if (errno == E_ASSERT) {
-            msg = "assertion has failed";
-        }
-    #endif
-
-    if (errno != E_UNSPECIFIED) {
-        spl_con_printf("(%d) ", errno);
-    }
-    spl_con_printf("%s\n", msg);
-
+    spl_con_printf("[ERROR] %s\n", msg);
     #ifdef DEBUG_FILENAMES
         spl_con_printf("[ERROR] at %s:%d\n", file, line);
     #endif
 
     _spl_abort();
+}
+
+void spl_except_(
+    #ifdef DEBUG_FILENAMES
+        const char *file, 
+        unsigned line,
+    #endif
+        int errno
+) {
+
+    const char *errname = "Unknown errno";
+    if (errno >= 0 && (unsigned)errno < ERR_COUNT) {
+        errname = ERR_NAMES[errno];
+    }
+
+    spl_con_printf("[ERROR] %s (%d)\n", errname, errno);
+    #ifdef DEBUG_FILENAMES
+    spl_con_printf("[ERROR] at %s:%d\n", file, line);
+    #endif
+
+    _spl_abort();
+
 }
