@@ -10,6 +10,7 @@ SUBDIR := libcore
 LIBCORE_OBJ = abort.o \
               console.o \
               err.o \
+              printf.o \
               string.o
 
 LIBCORE_OBJ := $(addprefix $(OUT_DIR)/,$(LIBCORE_OBJ))

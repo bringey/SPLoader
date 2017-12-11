@@ -9,6 +9,7 @@
 #include <SPLoader/console.h>
 #include <SPLoader/console/driver.h>
 #include <SPLoader/console/string.h>
+#include <SPLoader/string.h>
 
 #include <stdarg.h>
 #include <stdint.h>
@@ -350,7 +351,7 @@ void __printf(PutcharOptions *opt, const char *fmt, va_list args) {
                     break;
                 case 's':       // string
                     str = (char*)va_arg(args, char*);
-                    len = spl_con_strlen(str);
+                    len = spl_strlen(str);
                     break;
                 case 'x':       // hexadecimal integer (lowercase)
                 case 'X':       // hexadecimal integer (uppercase)

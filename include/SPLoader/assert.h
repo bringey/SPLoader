@@ -8,19 +8,6 @@
 
 #ifndef __ASM__
 
-// // check with errno, error message
-// #define spl_checkem(condition, err, msg) \
-//     if (!(condition)) spl_error(err, msg)
-
-// // check with errno
-// #define spl_checke(condition, err) spl_checkem(condition, err, NULL)
-
-// // check with error message
-// #define spl_checkm(condition, msg) spl_checkem(condition, E_UNSPECIFIED, msg)
-
-// // check with no message and no errno
-// #define spl_check(condition) spl_checkem(condition, E_UNSPECIFIED, NULL)
-
 #define spl_checke(condition, errno) \
     if (!(condition)) spl_except(errno)
 
