@@ -8,7 +8,7 @@
 #include <SPLoader/err.h>
 #include <SPLoader/console.h>
 #include <SPLoader/console/driver.h>
-#include <SPLoader/console/string.h>
+#include <SPLoader/printf.h>
 #include <SPLoader/string.h>
 
 #include <stdarg.h>
@@ -31,16 +31,7 @@ typedef struct PutcharOptions_s {
 } PutcharOptions;
 
 
-static void __putchar(PutcharOptions *opt, char ch);
-static void __puts(PutcharOptions *opt, const char *str);
-static void __printf(PutcharOptions *opt, const char *fmt, va_list args);
-static void __pad(PutcharOptions *opt, int extra, char padchar);
-static void __padstr(PutcharOptions *opt,
-                     char *str,
-                     unsigned len,
-                     unsigned width,
-                     bool leftadjust,
-                     int padchar);
+static int __putchar(void *opt, char ch);
 
 int spl_con_clear(void) {
     curX = 0;
@@ -111,7 +102,7 @@ int spl_con_puts(const char *str) {
     PutcharOptions opt = {
         .useCursor = true
     };
-    __puts(&opt, str);
+    spl_puts(__putchar, &opt, str);
 
     return E_SUCCESS;
 }
@@ -127,7 +118,7 @@ int spl_con_puts_at(unsigned x, unsigned y, const char *str) {
         .y = y,
         .index = _spl_con_index(x, y)
     };
-    __puts(&opt, str);
+    spl_puts(__putchar, &opt, str);
 
     return E_SUCCESS;
 }
@@ -139,7 +130,7 @@ int spl_con_printf(const char *fmt, ...) {
     PutcharOptions opt = {
         .useCursor = true
     };
-    __printf(&opt, fmt, args);
+    spl_vprintf(__putchar, &opt, fmt, args);
 
     va_end(args);
     return E_SUCCESS;
@@ -159,7 +150,7 @@ int spl_con_printf_at(unsigned x, unsigned y, const char *fmt, ...) {
         .y = y,
         .index = _spl_con_index(x, y)
     };
-    __printf(&opt, fmt, args);
+    spl_vprintf(__putchar, &opt, fmt, args);
 
     va_end(args);
     return E_SUCCESS;
@@ -207,8 +198,9 @@ int spl_con_setWindow(unsigned minY, unsigned maxY) {
 // ============================================================================
 
 
-void __putchar(PutcharOptions *opt, char ch) {
+int __putchar(void *data, char ch) {
 
+    PutcharOptions *opt = (PutcharOptions*)data;
     bool useCursor = opt->useCursor;
 
     unsigned x, y, index;
@@ -260,116 +252,6 @@ void __putchar(PutcharOptions *opt, char ch) {
         opt->y = y;
         opt->index = index;
     }
-}
 
-void __puts(PutcharOptions *opt, const char *str) {
-    char ch;
-    while ((ch = *str++) != '\0') {
-        __putchar(opt, ch);
-    }
-}
-
-void __pad(PutcharOptions *opt, int extra, char padchar) {
-    for (; extra > 0; --extra) {
-        __putchar(opt, padchar);
-    }
-}
-
-void __padstr(PutcharOptions *opt, char *str, unsigned len, unsigned width, bool leftadjust, int padchar) {
-    int extra = width - len;
-
-    // pad if needed for right-adjust
-    if (extra > 0 && !leftadjust) {
-        __pad(opt, extra, padchar);
-    }
-    
-    // print the string
-    __puts(opt, str);
-
-    // pad if needed for left-adjust
-    if (extra > 0 && leftadjust) {
-        __pad(opt, extra, padchar);
-    }
-}
-
-
-
-#define PRINTF_BUF_SIZE 80
-
-void __printf(PutcharOptions *opt, const char *fmt, va_list args) {
-
-    bool leftadjust, typeValid;
-    char buf[PRINTF_BUF_SIZE];
-    char *str;
-    unsigned width, len;
-    char padchar;
-
-    char ch;
-    while ((ch = *fmt++) != '\0') {
-        if (ch == '%') {
-            // defaults
-            // right-adjusted, space-padded, no width constraint
-            leftadjust = false;
-            padchar = ' ';
-            width = 0;
-            str = buf;
-            typeValid = true;
-            ch = *fmt++; // get next part of fmt and consume it
-            if (ch == '-') {
-                leftadjust = true; // left alignment
-                ch = *fmt++;
-            }
-            if (ch == '0') {
-                padchar = '0';  // pad with zeros instead of spaces
-                ch = *fmt++;
-            }
-
-            if (ch == '*') {
-                // get the width from args
-                width = (unsigned)va_arg(args, unsigned);
-                ch = *fmt++;
-            } else {
-                // get the width if specified
-                while ( ch >= '0' && ch <= '9') {
-                    width *= 10;
-                    width += ch - '0';
-                    ch = *fmt++;
-                }
-            }
-
-            switch (ch) {
-                case 'c':       // character
-                    buf[0] = (char)va_arg(args, int);
-                    buf[1] = '\0';
-                    len = 1;
-                    break;
-                case 'd':       // decimal integer
-                    len = spl_con_cvtdec(buf, (int)va_arg(args, int));
-                    break;
-                case 'o':       // octal integer
-                    len = spl_con_cvtoct(buf, (unsigned)va_arg(args, unsigned));
-                    break;
-                case 's':       // string
-                    str = (char*)va_arg(args, char*);
-                    len = spl_strlen(str);
-                    break;
-                case 'x':       // hexadecimal integer (lowercase)
-                case 'X':       // hexadecimal integer (uppercase)
-                    len = spl_con_cvthex(buf, (unsigned)va_arg(args, unsigned));
-                    break;
-                default:
-                    typeValid = false;
-                    break;
-            }
-
-            if (typeValid) {
-                __padstr(opt, str, len, width, leftadjust, padchar);
-            }
-
-
-
-        } else {
-            __putchar(opt, ch);
-        }
-    }
+    return 0;
 }
