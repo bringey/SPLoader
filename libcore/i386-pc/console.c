@@ -1,5 +1,5 @@
 /*
-** File: loader/i386-pc/console/driver.c
+** File: loader/i386-pc/console.c
 **
 ** Author: Brennan Ringey
 **
@@ -10,13 +10,22 @@
 **
 */
 
-#include <SPLoader/console/driver.h>
+#include <SPLoader/console.h>
 #include <SPLoader/err.h>
 
 #include <stddef.h>
 #include <stdint.h>
 
-#include "constants.h"
+
+#define VGA_BUFFER 0xB8000
+#define VGA_WIDTH 80
+#define VGA_HEIGHT 25
+
+// no blink, black background, white foreground
+#define VGA_DEFAULT_COLOR (0xF << 8)
+
+// black background, gray foreground, ASCII space
+#define VGA_NULLCELL (VGA_DEFAULT_COLOR | ' ')
 
 
 #define calcIndex(col, row) ((row * VGA_WIDTH) + col)

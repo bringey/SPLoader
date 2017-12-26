@@ -2,7 +2,7 @@
 # Platform-specific makefile for libcore project
 
 LIBCORE_PLAT_OBJ = abort.o \
-                   console/driver.o
+                   console.o
 
 
 LIBCORE_PLAT_OBJ := $(addprefix $(OUT_PLAT_DIR)/,$(LIBCORE_PLAT_OBJ))

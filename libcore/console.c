@@ -1,5 +1,5 @@
 /*
-** File: loader/console.c
+** File: libcore/console.c
 **
 ** Author: Brennan Ringey
 **
@@ -7,7 +7,6 @@
 
 #include <SPLoader/err.h>
 #include <SPLoader/console.h>
-#include <SPLoader/console/driver.h>
 #include <SPLoader/printf.h>
 #include <SPLoader/string.h>
 
