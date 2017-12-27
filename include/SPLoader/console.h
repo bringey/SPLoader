@@ -58,7 +58,13 @@ int spl_con_printf(const char *fmt, ...);
 
 int spl_con_printf_at(unsigned x, unsigned y, const char *fmt, ...);
 
+#define spl_con_resetColor() spl_con_setColor(CON_DEFAULT_FG, CON_DEFAULT_BG)
+
 int spl_con_scroll(unsigned lines);
+
+int spl_con_setColor(unsigned color);
+
+int spl_con_setCursor(unsigned x, unsigned y);
 
 int spl_con_setWindow(unsigned minY, unsigned maxY);
 
@@ -96,13 +102,7 @@ unsigned _spl_con_index(unsigned x, unsigned y);
 */
 int _spl_con_put(unsigned index, unsigned color, char ch);
 
-#define spl_con_resetColor() spl_con_setColor(CON_DEFAULT_FG, CON_DEFAULT_BG)
-
 int _spl_con_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines);
-
-int spl_con_setColor(unsigned color);
-
-int spl_con_setCursor(unsigned x, unsigned y);
 
 int _spl_con_updateCursor(unsigned index);
 
