@@ -9,9 +9,15 @@ CORE_PLAT_OBJ = idt/isr.o \
                 io.o \
                 nmi.o
 
+CORE_LIB_PLAT_OBJ = abort.o \
+                    console.o
+
 CORE_PLAT_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(CORE_PLAT_OBJ))
 CORE_PLAT_DEP := $(CORE_PLAT_OBJ:.o=.d)
 
+CORE_LIB_PLAT_OBJ := $(addprefix $(BUILD_DIR)/$(PLATFORMDIR)/,$(CORE_LIB_PLAT_OBJ))
+CORE_LIB_PLAT_DEP := $(CORE_LIB_PLAT_OBJ:.o=.d)
 
 
--include $(CORE_PLAT_DEP)
+
+-include $(CORE_PLAT_DEP) $(CORE_LIB_PLAT_DEP)

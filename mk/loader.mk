@@ -29,7 +29,7 @@ LOADER_OBJ_LIST = $(LOADER_ENTRY_OBJ) \
                   $(LOADER_ARCH_OBJ) \
                   $(LOADER_PLAT_OBJ) \
                   $(LOADER_OBJ) \
-                  $(LIBCORE_LIB)
+                  $(CORE_LIB)
 
 .PHONY: loader.bin
 

@@ -66,7 +66,7 @@ VERSION := $(shell head -n 1 VERSION)
 
 DEFINES += -DVERSION="\"$(VERSION)\""
 
-PROJECTS := libcore loader core
+PROJECTS := loader core
 
 # generate project pattern rules
 $(foreach proj,$(PROJECTS),$(eval $(call GENERATE_RULES,$(proj))))

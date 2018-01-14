@@ -1,5 +1,0 @@
-
-# libcore project
-
-This directory contains source code for the minimal core library. This static
-library is used by the loader and core projects.
