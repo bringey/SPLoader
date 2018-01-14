@@ -6,6 +6,10 @@
 
 INC_DIR := include
 
+# Source directory
+
+SRC_DIR := src
+
 # project-specific build directory
 OUT_DIR = $(BUILD_DIR)/$(SUBDIR)
 OUT_ARCH_DIR = $(OUT_DIR)/$(ISA)

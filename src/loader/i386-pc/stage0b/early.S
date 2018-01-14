@@ -1,5 +1,5 @@
 /*
-** File: loader/i386-pc/stage0b/early.S
+** File: src/loader/i386-pc/stage0b/early.S
 **
 ** Author: Brennan Ringey
 **

@@ -1,5 +1,5 @@
 /*
-** File: loader/console/string.c
+** File: src/core/string.c
 **
 ** Author: Brennan Ringey
 **

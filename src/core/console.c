@@ -1,5 +1,5 @@
 /*
-** File: libcore/console.c
+** File: src/core/console.c
 **
 ** Author: Brennan Ringey
 **

@@ -17,7 +17,7 @@ define GENERATE_RULES =
 #
 # .c to .o rule
 #
-$$(BUILD_DIR)/$(1)/%.o: $(1)/%.c $$(MARKER)
+$$(BUILD_DIR)/$(1)/%.o: $$(SRC_DIR)/$(1)/%.c $$(MARKER)
 	$$(CC_V) -MD $$($(1)_CPPFLAGS) $$($(1)_CFLAGS) -o $$@ -c $$<
 
 #
@@ -25,7 +25,7 @@ $$(BUILD_DIR)/$(1)/%.o: $(1)/%.c $$(MARKER)
 # This pattern rule first preprocesses the .S file using cpp, then
 # assembles the preprocessed .s file to the target .o file
 #
-$$(BUILD_DIR)/$(1)/%.o: $(1)/%.S $$(MARKER)
+$$(BUILD_DIR)/$(1)/%.o: $$(SRC_DIR)/$(1)/%.S $$(MARKER)
 	@$$(CPP) -MD -MT $$@ $$($(1)_CPPFLAGS) -o $$(BUILD_DIR)/$(1)/$$*.s $$<
 	$$(AS_V) $$($(1)_ASFLAGS) -o $$@ $$(BUILD_DIR)/$(1)/$$*.s -a=$$(BUILD_DIR)/$(1)/$$*.lst
 

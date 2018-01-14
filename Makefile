@@ -29,10 +29,9 @@
 # is not tracked by git and contains developer-specific configuration.
 #
 # Cleaning
-# There are three rules for cleaning a build:
+# There are two rules for cleaning a build:
 #   1. clean: Removes compiled files from ALL projects
 #   2. <project>-clean: Removes compiled files for a specified project
-#   3. purge: Delete the build directory
 #
 # Cleaning is used for forcing a rebuild. Rebuilding is necessary if any
 # compilation flags are added/removed. This makefile will not rebuild
@@ -66,7 +65,7 @@ VERSION := $(shell head -n 1 VERSION)
 
 DEFINES += -DVERSION="\"$(VERSION)\""
 
-PROJECTS := loader core
+PROJECTS := core loader
 
 # generate project pattern rules
 $(foreach proj,$(PROJECTS),$(eval $(call GENERATE_RULES,$(proj))))
@@ -113,6 +112,3 @@ $(CLEAN_TARGETS): %-clean:
 
 clean:
 	find $(BUILD_DIR) $(CLEAN_ARGS)
-
-purge:
-	$(RM) -r $(BUILD_DIR)
