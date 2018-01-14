@@ -9,6 +9,10 @@ SUBDIR := loader
 # Platform-specific makefile
 -include $(PLATFORM_MAKEFILE)
 
+loader_CFLAGS   ?= $(CFLAGS)
+loader_CPPFLAGS ?= $(CPPFLAGS)
+loader_ASFLAGS  ?= $(ASFLAGS)
+
 
 LOADER_OBJ = main.o
 

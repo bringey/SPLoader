@@ -59,9 +59,4 @@ LDFLAGS =
 # DEBUG_KBD_PARSE: scancodes are printed as they are received, as well as
 #                  the result of the scancode buffer
 #
-# Feature enable flags (FE):
-# FE_MENU:    Menu shown to user at boot, includes E_TIMER, E_CONSOLE
-# FE_TIMER:   allows for a boot delay
-# FE_CONSOLE: logging facilities during boot
-#
-USER_DEFINES = -DFE_MENU
+USER_DEFINES =

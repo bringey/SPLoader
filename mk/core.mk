@@ -7,6 +7,10 @@ SUBDIR := core
 
 -include $(PLATFORM_MAKEFILE)
 
+core_CFLAGS   := $(CFLAGS)
+core_CPPFLAGS := $(CPPFLAGS)
+core_ASFLAGS  := $(ASFLAGS)
+
 CORE_OBJ = kbd/parse.o \
            mem.o \
            menu.o \

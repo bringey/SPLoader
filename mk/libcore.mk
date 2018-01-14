@@ -7,6 +7,10 @@ SUBDIR := libcore
 
 -include $(PLATFORM_MAKEFILE)
 
+libcore_CFLAGS   := $(CFLAGS)
+libcore_CPPFLAGS := $(CPPFLAGS)
+libcore_ASFLAGS  := $(ASFLAGS)
+
 LIBCORE_OBJ = abort.o \
               console.o \
               err.o \
