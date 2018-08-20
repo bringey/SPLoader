@@ -51,8 +51,6 @@ include mk/verbose.mk
 
 include mk/constants.mk
 
-include mk/rules.mk
-
 # -----------------------------------------------------------------------------
 
 # include the default configuration (i686-elf)
@@ -65,13 +63,60 @@ VERSION := $(shell head -n 1 VERSION)
 
 DEFINES += -DVERSION="\"$(VERSION)\""
 
-PROJECTS := core loader
+# Pattern rules
 
-# generate project pattern rules
-$(foreach proj,$(PROJECTS),$(eval $(call GENERATE_RULES,$(proj))))
+#
+# .c to .o rule
+#
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(MARKER)
+	$(CC_V) -MD $(CPPFLAGS) $(CFLAGS) -o $@ -c $<
+
+#
+# .S to .o rule
+# This pattern rule first preprocesses the .S file using cpp, then
+# assembles the preprocessed .s file to the target .o file
+#
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.S $(MARKER)
+	@$(CPP) -MD -MT $@ $(CPPFLAGS) -o $(BUILD_DIR)/$*.s $<
+	$(AS_V) $(ASFLAGS) -o $@ $(BUILD_DIR)/$*.s -a=$(BUILD_DIR)/$*.lst
+
+# Architecture-specific makefile
+-include $(ISA_MAKEFILE)
+
+# Platform-specific makefile
+-include $(PLATFORM_MAKEFILE)
+
+LOADER_OBJ = main.o
+
+LOADER_OBJ := $(addprefix $(BUILD_DIR)/,$(LOADER_OBJ))
+LOADER_DEP := $(LOADER_OBJ:.o=.d)
+
+LOADER_FINAL_OBJ = loader.final.o
+LOADER_FINAL_OBJ := $(addprefix $(BUILD_DIR)/,$(LOADER_FINAL_OBJ))
+
+LOADER_BIN = loader.bin
+LOADER_BIN := $(addprefix $(BUILD_DIR)/,$(LOADER_BIN))
+
+LOADER_OBJ_LIST = $(LOADER_ENTRY_OBJ) \
+                  $(LOADER_ARCH_OBJ) \
+                  $(LOADER_PLAT_OBJ) \
+                  $(LOADER_OBJ) \
+                  $(CORE_LIB)
+
+.PHONY: loader.bin
+
+loader.bin: $(LOADER_BIN)
 
 
-include $(addsuffix .mk,$(addprefix mk/,$(PROJECTS)))
+$(LOADER_FINAL_OBJ): $(LOADER_OBJ_LIST) $(LOADER_LD_SCRIPT) $(MARKER)
+	$(LD_V) $(LDFLAGS) -o $@ -T $(LOADER_LD_SCRIPT) $(LOADER_OBJ_LIST)
+
+$(LOADER_BIN): $(LOADER_FINAL_OBJ) $(LOADER_LD_SCRIPT) $(MARKER)
+	$(LD_V) $(LDFLAGS) -o $@ -T $(LOADER_LD_SCRIPT) -s --oformat binary $<
+
+
+-include $(LOADER_DEP)
+
 
 # Pattern Rules
 
