@@ -86,7 +86,12 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.S $(MARKER)
 # Platform-specific makefile
 -include $(PLATFORM_MAKEFILE)
 
-LOADER_OBJ = main.o
+LOADER_OBJ = abort.o \
+             console.o \
+             err.o \
+             main.o \
+             printf.o \
+             string.o
 
 LOADER_OBJ := $(addprefix $(BUILD_DIR)/,$(LOADER_OBJ))
 LOADER_DEP := $(LOADER_OBJ:.o=.d)
@@ -100,8 +105,7 @@ LOADER_BIN := $(addprefix $(BUILD_DIR)/,$(LOADER_BIN))
 LOADER_OBJ_LIST = $(LOADER_ENTRY_OBJ) \
                   $(LOADER_ARCH_OBJ) \
                   $(LOADER_PLAT_OBJ) \
-                  $(LOADER_OBJ) \
-                  $(CORE_LIB)
+                  $(LOADER_OBJ)
 
 .PHONY: loader.bin
 

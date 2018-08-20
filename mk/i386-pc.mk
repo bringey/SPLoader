@@ -25,6 +25,8 @@ LOADER_ENTRY_DEP := $(LOADER_ENTRY_OBJ:.o=.d)
 
 LOADER_PLAT_OBJ = stage0b/a20gate.o \
                   stage0b/memmap.o \
+                  abort.o \
+                  console.o \
                   disk.o \
                   realmode.o \
                   startup.o
