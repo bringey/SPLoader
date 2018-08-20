@@ -3,21 +3,7 @@
 #
 # This makefile is the only makefile to be used when building. It contains all
 # the targets from each project as well as maintainence rules for cleaning,
-# documentation, and packing. Rules shared between projects are to be defined
-# here or in mk/rules.mk (if you need project-specific variables).
-#
-# This build system uses projects as an organizational unit. Projects are
-# individual parts that each have their own targets and dependencies. Each
-# project has its own makefile, stored in mk/<project>.mk. Every project
-# makefile gets included by this makefile. When adding a new project, add the
-# project makefile to the mk folder and add the project's name to the PROJECTS
-# variable.
-#
-# The build system avoids recursive make by including all makefiles into this
-# one. When writing project makefiles, take care in naming variables. Since
-# every makefile gets included here there is only a global scope for variable
-# names. It is suggested that project variable names are prefixed by the
-# project name (ie LOADER_CFLAGS, CORE_CPPFLAGS, etc).
+# documentation, and packing.
 #
 # The default target creates a bootable usb image for testing purposes via
 # qemu or real hardware. This will likely change in the future
@@ -141,23 +127,11 @@ $(BUILD_DIR)/usb.img: $(BIOS_BOOTSTRAP_BIN) $(LOADER_BIN) $(MKIMAGE)
 $(MKIMAGE):
 	$(MAKE) -C $(MKIMAGE_DIR)
 
-.PHONY: all clean $(CLEAN_TARGETS)
+.PHONY: all clean
 
 
 #
 # Clean
 #
-
-CLEAN_ARGS = -type f \
-             -name "*.o" -delete -o \
-             -name "*.d" -delete -o \
-             -name "*.s" -delete -o \
-             -name "*.lst" -delete -o \
-             -name "*.bin" -delete
-CLEAN_TARGETS := $(addsuffix -clean,$(PROJECTS))
-
-$(CLEAN_TARGETS): %-clean:
-	find $(BUILD_DIR)/$* $(CLEAN_ARGS)
-
 clean:
-	find $(BUILD_DIR) $(CLEAN_ARGS)
+	rm -r $(BUILD_DIR)/*
