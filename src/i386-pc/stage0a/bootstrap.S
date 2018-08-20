@@ -13,7 +13,7 @@
 
 #define __ASM__
 #include <loader/i386-pc/stage0a/bootstrap.h>
-#include <SPLoader/i386-pc/mbr.h>
+#include <i386-pc/mbr.h>
 #include <loader/i386-pc/loader.h>
 #include <loader/i386-pc/BootHeader.h>
 

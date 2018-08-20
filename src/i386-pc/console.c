@@ -10,8 +10,8 @@
 **
 */
 
-#include <SPLoader/console.h>
-#include <SPLoader/err.h>
+#include <console.h>
+#include <err.h>
 
 #include <stddef.h>
 #include <stdint.h>

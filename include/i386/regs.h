@@ -82,7 +82,7 @@
 
 #ifndef __ASM__
 
-#include <SPLoader/inline.h>
+#include <inline.h>
 
 // the following functions are inline since they only require 1 or 2
 // instructions.

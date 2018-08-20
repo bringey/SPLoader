@@ -1,8 +1,8 @@
 
 #include <loader/disk.h>
 
-#include <SPLoader/i386/regs.h>
-#include <SPLoader/err.h>
+#include <i386/regs.h>
+#include <err.h>
 
 #include <loader/i386-pc/realmode.h>
 

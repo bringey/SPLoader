@@ -5,9 +5,9 @@
 **
 */
 
-#include <SPLoader/assert.h>
-#include <SPLoader/err.h>
-#include <SPLoader/string.h>
+#include <assert.h>
+#include <err.h>
+#include <string.h>
 
 
 static int __ultostr(unsigned long u, unsigned base, char *buf);

@@ -4,7 +4,7 @@
 
 #ifndef __ASM__
 
-#include <SPLoader/mem/FreeBlock.h>
+#include <mem/FreeBlock.h>
 
 #include <stddef.h>
 

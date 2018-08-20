@@ -6,7 +6,7 @@
 */
 
 #define __ASM__
-#include <SPLoader/i386-pc/mem/map.h>
+#include <i386-pc/mem/map.h>
 
     .arch i686
     .code16

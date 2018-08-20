@@ -2,8 +2,8 @@
 #ifndef _SPLOADER_ASSERT_H
 #define _SPLOADER_ASSERT_H
 
-#include <SPLoader/abort.h>
-#include <SPLoader/err.h>
+#include <abort.h>
+#include <err.h>
 #include <stddef.h>
 
 #ifndef __ASM__

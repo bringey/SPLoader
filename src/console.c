@@ -5,10 +5,10 @@
 **
 */
 
-#include <SPLoader/err.h>
-#include <SPLoader/console.h>
-#include <SPLoader/printf.h>
-#include <SPLoader/string.h>
+#include <err.h>
+#include <console.h>
+#include <printf.h>
+#include <string.h>
 
 #include <stdarg.h>
 #include <stdint.h>

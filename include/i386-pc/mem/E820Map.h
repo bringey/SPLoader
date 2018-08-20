@@ -8,7 +8,7 @@
 #ifndef _SPLOADER_I386_PC_MEM_E820MAP_H
 #define _SPLOADER_I386_PC_MEM_E820MAP_H
 
-#include <SPLoader/i386-pc/mem/E820Entry.h>
+#include <i386-pc/mem/E820Entry.h>
 
 #ifndef __ASM__
 

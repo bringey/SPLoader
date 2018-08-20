@@ -7,7 +7,7 @@
 **
 */
 
-#include <SPLoader/console.h>
+#include <console.h>
 
 #include <loader/disk.h>
 

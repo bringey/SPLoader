@@ -5,11 +5,11 @@
 **
 */
 
-#include <SPLoader/abort.h>
-#include <SPLoader/err.h>
-#include <SPLoader/console.h>
+#include <abort.h>
+#include <err.h>
+#include <console.h>
 
-#include <SPLoader/i386/regs.h>
+#include <i386/regs.h>
 
 #include <loader/i386-pc/loader.h>
 

@@ -5,7 +5,7 @@
 **
 */
 
-#include <SPLoader/err.h>
+#include <err.h>
 
 const char *ERR_NAMES[] = {
     ERR_FOREACH(ERR_STR)

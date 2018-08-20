@@ -8,7 +8,7 @@
 
 #ifndef __ASM__
 
-#include <SPLoader/mem/FreeMap.h>
+#include <mem/FreeMap.h>
 
 #include <stddef.h>
 

@@ -1,8 +1,8 @@
 
-#include <SPLoader/assert.h>
-#include <SPLoader/err.h>
-#include <SPLoader/printf.h>
-#include <SPLoader/string.h>
+#include <assert.h>
+#include <err.h>
+#include <printf.h>
+#include <string.h>
 
 #include <stdarg.h>
 #include <stdbool.h>

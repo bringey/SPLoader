@@ -5,9 +5,9 @@
 **
 */
 
-#include <SPLoader/abort.h>
-#include <SPLoader/err.h>
-#include <SPLoader/console.h>
+#include <abort.h>
+#include <err.h>
+#include <console.h>
 
 
 void spl_error_(
