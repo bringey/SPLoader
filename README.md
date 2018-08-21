@@ -11,7 +11,8 @@ SPLoader aims to add additional features while remaining minimal as possible.
 
 In order to build SPLoader, you will need a cross-compiler setup. The default
 configuration will build for the i386-pc platform, which requires binutils and
-gcc for the i686-elf target. GCC 7.1.0 and Binutils 2.29 are recommended.
+gcc for the i686-elf target. Latest stable versions for GCC and binutils are
+recommended.
 
 ### Building
 
@@ -43,7 +44,7 @@ Currently, the project is in development phase (major version 0). See the
 
 ## Authors
 
- * Brennan Ringey - Project lead - [pedgeon](https://github.com/pedgeon)
+ * Brennan Ringey - Project lead - [bringey](https://github.com/bringey)
 
 ## License
 
