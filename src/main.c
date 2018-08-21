@@ -1,5 +1,5 @@
 /*
-** File: src/loader/main.c
+** File: src/main.c
 **
 ** Author: Brennan Ringey
 **

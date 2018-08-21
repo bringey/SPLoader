@@ -1,5 +1,5 @@
 /*
-** File: src/loader/i386-pc/stage0a/bootstrap.S
+** File: src/i386-pc/stage0a/bootstrap.S
 **
 ** Author: Brennan Ringey
 **

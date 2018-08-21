@@ -1,5 +1,5 @@
 /*
-** File: src/loader/i386-pc/early/memmap.S
+** File: src/i386-pc/early/memmap.S
 **
 ** Contains routines for getting the system memory map
 **

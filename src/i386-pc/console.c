@@ -1,5 +1,5 @@
 /*
-** File: src/core/i386-pc/console.c
+** File: src/i386-pc/console.c
 **
 ** Author: Brennan Ringey
 **

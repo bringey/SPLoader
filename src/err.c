@@ -1,5 +1,5 @@
 /*
-** File: src/core/err.c
+** File: src/err.c
 **
 ** Author: Brennan Ringey
 **

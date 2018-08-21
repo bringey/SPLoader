@@ -1,5 +1,5 @@
 /*
-** File: src/loader/i386-pc/startup.S
+** File: src/i386-pc/startup.S
 **
 ** Author: Brennan Ringey
 **
