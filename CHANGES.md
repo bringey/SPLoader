@@ -1,6 +1,14 @@
 
 # Changelog
 
+## v0.0.5 2018-08-23
+
+Moved core and loader projects into "src" directory
+Added library target for core project (libcore)
+Per-project CFLAGS, CPPFLAGS, etc for build system
+Fixed Makefile failing to build usb.img on newly cloned repo
+General purpose printf functions
+
 ## v0.0.4 2017-10-13
 
 Moved more stuff from loader to core, reorganized header files.
