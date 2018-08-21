@@ -6,14 +6,21 @@
 
 INC_DIR := include
 
-OUT_DIR = $(BUILD_DIR)/$(SUBDIR)
+# Source directory
 
-ISADIR      = $(SUBDIR)/$(ISA)
-PLATFORMDIR = $(SUBDIR)/$(ISA)-$(PLATFORM)
+SRC_DIR := src
+
+# project-specific build directory
+#OUT_DIR = $(BUILD_DIR)/
+#OUT_ARCH_DIR = $(OUT_DIR)/$(ISA)
+#OUT_PLAT_DIR = $(OUT_DIR)/$(ISA)-$(PLATFORM)
+
+ISADIR      = $(ISA)
+PLATFORMDIR = $(ISA)-$(PLATFORM)
 
 
-ISA_MAKEFILE      = mk/$(ISA)/$(SUBDIR).arch.mk
-PLATFORM_MAKEFILE = mk/$(ISA)-$(PLATFORM)/$(SUBDIR).platform.mk
+ISA_MAKEFILE      = mk/$(ISA)..mk
+PLATFORM_MAKEFILE = mk/$(ISA)-$(PLATFORM).mk
 
 MKIMAGE_DIR := tools/mkimage
 MKIMAGE := $(MKIMAGE_DIR)/mkimage

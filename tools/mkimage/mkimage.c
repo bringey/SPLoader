@@ -13,9 +13,9 @@
 #include <string.h>
 #include <stdint.h>
 
-#include <SPLoader/i386-pc/mbr.h>
-#include <SPLoader/i386-pc/stage0a/bootstrap.h>
-#include <SPLoader/i386-pc/BootHeader.h>
+#include <i386-pc/mbr.h>
+#include <loader/i386-pc/stage0a/bootstrap.h>
+#include <loader/i386-pc/BootHeader.h>
 
 
 #define SECTOR_SIZE 512
