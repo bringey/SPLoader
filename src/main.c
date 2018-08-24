@@ -9,7 +9,7 @@
 
 #include <console.h>
 
-#include <loader/disk.h>
+#include <disk.h>
 
 
 //

@@ -11,7 +11,7 @@
 
 #include <i386/regs.h>
 
-#include <loader/i386-pc/loader.h>
+#include <i386-pc/loader.h>
 
 #include <stddef.h>
 

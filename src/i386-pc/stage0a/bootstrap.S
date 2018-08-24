@@ -12,10 +12,10 @@
 */
 
 #define __ASM__
-#include <loader/i386-pc/stage0a/bootstrap.h>
+#include <i386-pc/stage0a/bootstrap.h>
 #include <i386-pc/mbr.h>
-#include <loader/i386-pc/loader.h>
-#include <loader/i386-pc/BootHeader.h>
+#include <i386-pc/loader.h>
+#include <i386-pc/BootHeader.h>
 
 //
 // Macro for stopping execution with a code as an immediate/register/address

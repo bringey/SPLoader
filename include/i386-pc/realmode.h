@@ -6,7 +6,7 @@
 
 #ifndef __ASM__
 
-#include <loader/i386-pc/Regs32.h>
+#include <i386-pc/Regs32.h>
 
 
 void __int32_init(void);
