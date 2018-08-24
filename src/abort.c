@@ -1,7 +1,9 @@
 /*
 ** File: src/abort.c
 **
-** Author: Brennan Ringey
+** Author: bringey
+**
+** Implementations for functions defined in include/abort.h
 **
 */
 
@@ -17,7 +19,7 @@ void spl_error_(
     #endif
         const char *msg
 ) {
-    spl_con_printf("[ERROR] %s\n", msg);
+    spl_con_printf("Error occurred: %s\n", msg);
     #ifdef DEBUG_FILENAMES
         spl_con_printf("[ERROR] at %s:%d\n", file, line);
     #endif
@@ -33,14 +35,9 @@ void spl_except_(
         int errno
 ) {
 
-    const char *errname = "Unknown errno";
-    if (errno >= 0 && (unsigned)errno < ERR_COUNT) {
-        errname = ERR_NAMES[errno];
-    }
-
-    spl_con_printf("[ERROR] %s (%d)\n", errname, errno);
+    spl_con_printf("Error occurred. Code: %d\n", errno);
     #ifdef DEBUG_FILENAMES
-    spl_con_printf("[ERROR] at %s:%d\n", file, line);
+    spl_con_printf("%s:%d\n", file, line);
     #endif
 
     _spl_abort();

@@ -74,7 +74,6 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.S $(MARKER)
 
 LOADER_OBJ = abort.o \
              console.o \
-             err.o \
              main.o \
              printf.o \
              string.o

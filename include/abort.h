@@ -1,7 +1,11 @@
 /*
 ** File: include/SPLoader/abort.h
 **
-** Author: Brennan Ringey
+** Author: bringey
+**
+** Functions for aborting the boot process. Aborts occur when an unrecoverable
+** error occurs or when a check/assertion failed. A message is printed to the
+** user via console and the system is halted.
 **
 */
 
@@ -34,8 +38,7 @@ noreturn void spl_error_(
 );
 
 //
-// Exception occurred, print exception name and abort. errno must be defined in
-// SPLoader/err.h
+// Exception occurred, print errno and abort.
 //
 noreturn void spl_except_(
     #ifdef DEBUG_FILENAMES
