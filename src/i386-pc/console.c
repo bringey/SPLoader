@@ -1,7 +1,7 @@
 /*
 ** File: src/i386-pc/console.c
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 ** i386-pc console driver
 **
@@ -31,15 +31,11 @@
 #define calcIndex(col, row) ((row * VGA_WIDTH) + col)
 
 
-int _spl_con_clearRegion(unsigned rowStart, unsigned rowEnd) {
-    if (rowEnd <= rowStart) {
-        return E_ARGBOUNDS;
-    }
-
+int _spl_con_clear(void) {
     // rep stosw
     // %eax: VGA_NULLCELL
-    // %ecx: (rowEnd - rowStart) * VGA_WIDTH
-    // %edi: VGA_BUFFER + (rowStart * VGA_WIDTH)
+    // %ecx: VGA_HEIGHT * VGA_WIDTH (all cells)
+    // %edi: VGA_BUFFER
 
     asm volatile(
         "movl   %0, %%eax;"
@@ -49,8 +45,8 @@ int _spl_con_clearRegion(unsigned rowStart, unsigned rowEnd) {
         "rep stosw;"
         :
         : "i"(VGA_NULLCELL),
-          "mr"((rowEnd - rowStart) * VGA_WIDTH),
-          "mr"(VGA_BUFFER + (rowStart * VGA_WIDTH))
+          "i"(VGA_HEIGHT * VGA_WIDTH),
+          "i"(VGA_BUFFER)
         : "%eax", "%ecx", "%edi"
     );
 
@@ -58,41 +54,36 @@ int _spl_con_clearRegion(unsigned rowStart, unsigned rowEnd) {
 }
 
 
-unsigned _spl_con_color(ConColor fg, ConColor bg) {
-    return (unsigned)(((uint16_t)bg << 12) | ((uint16_t)fg << 8));
-}
-
 unsigned _spl_con_index(unsigned x, unsigned y) {
     return (y * VGA_WIDTH) + x;
 }
 
-int _spl_con_put(unsigned index, unsigned color, char ch) {
+int _spl_con_put(unsigned index, char ch) {
     if (index >= (VGA_WIDTH * VGA_HEIGHT)) {
         return E_ARGBOUNDS;
     }
 
-    ((uint16_t*)(VGA_BUFFER))[index] = (uint16_t)(color | ((unsigned char)ch));
+    ((uint16_t*)(VGA_BUFFER))[index] = (uint16_t)(VGA_DEFAULT_COLOR | ((unsigned char)ch));
 
     return E_SUCCESS;
 }
 
-int _spl_con_scroll(unsigned lineStart, unsigned lineEnd, unsigned lines) {
+int _spl_con_scroll(unsigned lines) {
 
     // if lines is zero, we don't need to do anything
 
     if (lines) {
 
-        unsigned windowHeight = lineEnd - lineStart;
         // if the lines is greater than the height, just clear it
         // otherwise, copy it line by line
-        if (lines >= windowHeight) {
-            _spl_con_clearRegion(lineStart, lineEnd);
+        if (lines >= VGA_HEIGHT) {
+            _spl_con_clear();
         } else {
 
-            uint16_t *windowStart = (uint16_t*)VGA_BUFFER + (lineStart * VGA_WIDTH);
+            uint16_t *windowStart = (uint16_t*)VGA_BUFFER;
 
             // size, in cells, of the scrolling region
-            unsigned scrollLength = VGA_WIDTH * (windowHeight - lines);
+            unsigned scrollLength = VGA_WIDTH * (VGA_HEIGHT - lines);
             // size, in cells, of the blank region (empty rows created after
             // the scroll)
             unsigned windowLength = VGA_WIDTH * lines;
