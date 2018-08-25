@@ -37,8 +37,5 @@ int main(void) {
     spl_con_puts("disk ");
     disk_init();
 
-    spl_con_putchar('\n');
-    spl_mem_dump();
-
     return 0;
 }
