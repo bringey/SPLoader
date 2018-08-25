@@ -8,7 +8,7 @@
 #ifndef _I386_PC_IDT_ISR_H
 #define _I386_PC_IDT_ISR_H
 
-#include <SPLoader/i386-pc/idt/ISRHandler.h>
+#include <i386-pc/idt/ISRHandler.h>
 
 //
 // Exception vectors (0x00-0x1F)

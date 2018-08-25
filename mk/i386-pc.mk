@@ -28,6 +28,7 @@ LOADER_PLAT_OBJ = stage0b/a20gate.o \
                   abort.o \
                   console.o \
                   disk.o \
+                  io.o \
                   realmode.o \
                   startup.o
 
