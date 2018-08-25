@@ -10,6 +10,7 @@
 #include <console.h>
 
 #include <disk.h>
+#include <mem.h>
 
 
 //
@@ -26,11 +27,18 @@ int main(void) {
 
     spl_con_clear();
 
-    spl_con_puts("Initializing disk driver\n");
-    disk_init();
-    spl_con_printf("Block size: %d\n", disk_blockSize());
-    spl_con_printf("Disk Buffer located at 0x%08x\n", disk_buffer());
+    // replace v0.1.0 with proper version string in header
+    spl_con_printf("SPLoader (%s)\n", "v0.1.0");
+    spl_con_puts("Initializing: ");
 
+    spl_con_puts("mem ");
+    spl_mem_init();
+
+    spl_con_puts("disk ");
+    disk_init();
+
+    spl_con_putchar('\n');
+    spl_mem_dump();
 
     return 0;
 }
