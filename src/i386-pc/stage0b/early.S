@@ -1,7 +1,7 @@
 /*
 ** File: src/i386-pc/stage0b/early.S
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 ** Description: Entry point for the loader16 image
 **

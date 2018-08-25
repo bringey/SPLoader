@@ -1,12 +1,12 @@
 /*
 ** File: include/SPLoader/i386-pc/loader.h
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 */
 
-#ifndef _SPLOADER_I386_PC_LOADER_H
-#define _SPLOADER_I386_PC_LOADER_H
+#ifndef _I386_PC_LOADER_H
+#define _I386_PC_LOADER_H
 
 //
 // Where loader.bin gets loaded to

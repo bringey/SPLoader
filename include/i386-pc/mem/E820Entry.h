@@ -1,12 +1,12 @@
 /*
 ** File: include/SPLoader/i386-pc/mem/E820Entry.h
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 */
 
-#ifndef _SPLOADER_I386_PC_MEM_E820ENTRY_H
-#define _SPLOADER_I386_PC_MEM_E820ENTRY_H
+#ifndef _I386_PC_MEM_E820ENTRY_H
+#define _I386_PC_MEM_E820ENTRY_H
 
 #ifndef __ASM__
 

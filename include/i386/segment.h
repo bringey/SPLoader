@@ -1,13 +1,13 @@
 /*
-** File: include/SPLoader/i386/segment.h
+** File: include/i386/segment.h
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 **
 */
 
-#ifndef _SPLOADER_I386_SEGMENT_H
-#define _SPLOADER_I386_SEGMENT_H
+#ifndef _I386_SEGMENT_H
+#define _I386_SEGMENT_H
 
 /*
 ** Memory management

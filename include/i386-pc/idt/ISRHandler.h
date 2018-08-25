@@ -1,12 +1,12 @@
 /*
 ** File: include/SPLoader/idt/ISRHandler.h
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 */
 
-#ifndef _SPLOADER_I386_PC_IDT_ISRHANDLER_H
-#define _SPLOADER_I386_PC_IDT_ISRHANDLER_H
+#ifndef _I386_PC_IDT_ISRHANDLER_H
+#define _I386_PC_IDT_ISRHANDLER_H
 
 #ifndef __ASM__
 

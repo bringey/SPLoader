@@ -1,12 +1,12 @@
 /*
 ** File: include/SPLoader/i386-pc/pit.h
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 */
 
-#ifndef _SPLOADER_I386_PC_PIT_H
-#define _SPLOADER_I386_PC_PIT_H
+#ifndef _I386_PC_PIT_H
+#define _I386_PC_PIT_H
 
 /*
 ** Intel 8254 Programmable Interval Timer

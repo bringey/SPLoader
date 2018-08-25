@@ -1,6 +1,6 @@
 
-#ifndef _SPLOADER_MEM_FREEMAP_H
-#define _SPLOADER_MEM_FREEMAP_H
+#ifndef _MEM_FREEMAP_H
+#define _MEM_FREEMAP_H
 
 #ifndef __ASM__
 

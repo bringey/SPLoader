@@ -9,8 +9,8 @@
 **
 */
 
-#ifndef _SPLOADER_ABORT_H
-#define _SPLOADER_ABORT_H
+#ifndef _ABORT_H
+#define _ABORT_H
 
 #ifndef __ASM__
 

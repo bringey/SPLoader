@@ -1,7 +1,7 @@
 /*
 ** File: src/i386-pc/stage0b/a20gate.S
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 ** Description: Contains routines for enabline the A20 gate
 **

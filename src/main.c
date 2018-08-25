@@ -1,7 +1,7 @@
 /*
 ** File: src/main.c
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 ** Contains the main function for the loader
 **

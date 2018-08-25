@@ -1,7 +1,7 @@
 /*
 ** File: src/i386-pc/abort.c
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 */
 

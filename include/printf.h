@@ -1,6 +1,6 @@
 
-#ifndef _SPLOADER_PRINTF_H
-#define _SPLOADER_PRINTF_H
+#ifndef _PRINTF_H
+#define _PRINTF_H
 
 
 #ifndef __ASM__

@@ -1,7 +1,7 @@
 /*
 ** File: src/printf.c
 **
-** Author: Brennan Ringey
+** Author: bringey
 */
 
 #include <assert.h>

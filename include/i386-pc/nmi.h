@@ -1,6 +1,6 @@
 
-#ifndef _SPLOADER_I386_PC_NMI_H
-#define _SPLOADER_I386_PC_NMI_H
+#ifndef _I386_PC_NMI_H
+#define _I386_PC_NMI_H
 
 #define NMI_CTRL_PORT_A 0x92
 #define NMI_CTRL_PORT_B 0x61

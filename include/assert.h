@@ -1,6 +1,6 @@
 
-#ifndef _SPLOADER_ASSERT_H
-#define _SPLOADER_ASSERT_H
+#ifndef _ASSERT_H
+#define _ASSERT_H
 
 #include <abort.h>
 #include <err.h>

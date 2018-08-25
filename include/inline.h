@@ -1,6 +1,6 @@
 
-#ifndef _SPLOADER_INLINE_H
-#define _SPLOADER_INLINE_H
+#ifndef _INLINE_H
+#define _INLINE_H
 
 #ifndef __ASM__
 

@@ -1,13 +1,13 @@
 /*
 ** File: include/SPLoader/i386-pc/stage0a/bootstrap.h
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 ** Description:	Error codes and locations for the MBR bootstrap
 */
 
-#ifndef	_SPLOADER_I386_PC_STAGE0A_BOOTSTRAP_H
-#define	_SPLOADER_I386_PC_STAGE0A_BOOTSTRAP_H
+#ifndef	_I386_PC_STAGE0A_BOOTSTRAP_H
+#define	_I386_PC_STAGE0A_BOOTSTRAP_H
 
 #define BOOT_SEGMENT 0x07C0        // default BIOS addr to load boot sector
 #define BOOT_ADDRESS 0x7C00

@@ -1,6 +1,6 @@
 
-#ifndef _SPLOADER_MEM_H
-#define _SPLOADER_MEM_H
+#ifndef _MEM_H
+#define _MEM_H
 
 
 #ifndef __ASM__

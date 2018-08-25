@@ -1,6 +1,6 @@
 
-#ifndef _SPLOADER_I386_REGS32_H
-#define _SPLOADER_I386_REGS32_H
+#ifndef _I386_REGS32_H
+#define _I386_REGS32_H
 
 // size in bytes of Regs32 struct
 #define REGS32_SIZE 44

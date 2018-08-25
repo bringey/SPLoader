@@ -1,6 +1,6 @@
 
-#ifndef _SPLOADER_MEM_DRIVER_H
-#define _SPLOADER_MEM_DRIVER_H
+#ifndef _MEM_DRIVER_H
+#define _MEM_DRIVER_H
 
 #define MEM_CONT_START 0
 #define MEM_CONT_END -1

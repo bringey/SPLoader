@@ -6,8 +6,8 @@
 ** Contains functions for console output.
 */
 
-#ifndef _SPLOADER_CONSOLE_H
-#define _SPLOADER_CONSOLE_H
+#ifndef _CONSOLE_H
+#define _CONSOLE_H
 
 #ifndef __ASM__
 

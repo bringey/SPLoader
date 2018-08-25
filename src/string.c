@@ -1,7 +1,7 @@
 /*
 ** File: src/string.c
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 */
 

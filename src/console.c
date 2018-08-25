@@ -1,7 +1,7 @@
 /*
 ** File: src/console.c
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 */
 

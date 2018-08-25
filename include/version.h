@@ -1,6 +1,6 @@
 
-#ifndef _SPLOADER_VERSION_H
-#define _SPLOADER_VERSION_H
+#ifndef _VERSION_H
+#define _VERSION_H
 
 #ifndef VERSION
 #define VERSION "0.0.0"

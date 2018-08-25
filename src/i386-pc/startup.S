@@ -1,7 +1,7 @@
 /*
 ** File: src/i386-pc/startup.S
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 ** Main entry point for loader.bin
 **

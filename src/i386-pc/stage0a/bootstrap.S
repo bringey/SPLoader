@@ -1,7 +1,7 @@
 /*
 ** File: src/i386-pc/stage0a/bootstrap.S
 **
-** Author: Brennan Ringey
+** Author: bringey
 **
 ** Assembly source for the BIOS bootstrap binary for the loader. This
 ** binary is installed to the MBR and is responsible for loading the loader
