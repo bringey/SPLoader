@@ -1,3 +1,8 @@
+/*
+** File: src/i386-pc/realmode.S
+**
+** Author: bringey
+*/
 
 #define __ASM__
 #include <i386-pc/loader.h>

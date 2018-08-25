@@ -1,5 +1,5 @@
 /*
-** File: include/SPLoader/i386-pc/mbr.h
+** File: include/i386-pc/mbr.h
 **
 ** Author: bringey
 **

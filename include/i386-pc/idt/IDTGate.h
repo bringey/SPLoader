@@ -1,5 +1,5 @@
 /*
-** File: include/SPLoader/i386-pc/idt/IDTGate.h
+** File: include/i386-pc/idt/IDTGate.h
 **
 ** Author: bringey
 **

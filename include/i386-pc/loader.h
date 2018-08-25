@@ -1,5 +1,5 @@
 /*
-** File: include/SPLoader/i386-pc/loader.h
+** File: include/i386-pc/loader.h
 **
 ** Author: bringey
 **

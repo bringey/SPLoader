@@ -1,3 +1,8 @@
+/*
+** File: include/assert.h
+**
+** Author: bringey
+*/
 
 #ifndef _ASSERT_H
 #define _ASSERT_H

@@ -1,5 +1,5 @@
 /*
-** File: include/SPLoader/i386-pc/mem/E820Entry.h
+** File: include/i386-pc/mem/E820Entry.h
 **
 ** Author: bringey
 **

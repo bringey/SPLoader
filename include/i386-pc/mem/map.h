@@ -1,5 +1,5 @@
 /*
-** File: include/SPLoader/i386-pc/mem/map.h
+** File: include/i386-pc/mem/map.h
 **
 ** Author: bringey
 **

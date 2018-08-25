@@ -1,5 +1,5 @@
 /*
-** File: src/core/i386/io.S
+** File: src/i386/io.S
 **
 ** Author: Brennan Ringey
 **

@@ -1,3 +1,8 @@
+/*
+** File: include/i386-pc/nmi.h
+**
+** Author: bringey
+*/
 
 #ifndef _I386_PC_NMI_H
 #define _I386_PC_NMI_H

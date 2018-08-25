@@ -1,5 +1,5 @@
 /*
-** File: include/SPLoader/idt/ISRHandler.h
+** File: include/i386-pc/idt/ISRHandler.h
 **
 ** Author: bringey
 **

@@ -1,5 +1,5 @@
 /*
-** File: include/SPLoader/i386-pc/stage0a/bootstrap.h
+** File: include/i386-pc/stage0a/bootstrap.h
 **
 ** Author: bringey
 **

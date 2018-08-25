@@ -1,3 +1,8 @@
+/*
+** File: include/i386-pc/BootHeader.h
+**
+** Author: bringey
+*/
 
 #ifndef _I386_PC_BOOTHEADER_H
 #define _I386_PC_BOOTHEADER_H

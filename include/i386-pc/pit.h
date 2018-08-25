@@ -1,5 +1,5 @@
 /*
-** File: include/SPLoader/i386-pc/pit.h
+** File: include/i386-pc/pit.h
 **
 ** Author: bringey
 **

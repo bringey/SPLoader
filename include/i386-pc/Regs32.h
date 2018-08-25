@@ -1,3 +1,8 @@
+/*
+** File: include/i386-pc/Regs32.h
+**
+** Author: bringey
+*/
 
 #ifndef _I386_REGS32_H
 #define _I386_REGS32_H
