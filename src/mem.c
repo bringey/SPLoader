@@ -17,9 +17,9 @@ static FreeMap *map;
 #define TEMP_MAP_LENGTH 100
 
 
-int spl_mem_init(void) {
+int mem_init(void) {
 
-    size_t blockCount = _spl_mem_availableBlocks();
+    size_t blockCount = _mem_availableBlocks();
     if (blockCount == 0) {
         return E_NOMEM;
     }
@@ -30,7 +30,7 @@ int spl_mem_init(void) {
     void *homebase = NULL;
     FreeBlock block;
     size_t cont = MEM_CONT_START;
-    while ((cont = _spl_mem_nextBlock(cont, &block)) != MEM_CONT_END) {
+    while ((cont = _mem_nextBlock(cont, &block)) != MEM_CONT_END) {
         if (overhead <= (uint32_t)block.limit - (uint32_t)block.base) {
             homebase = (void*)block.base;
             break;
@@ -46,14 +46,14 @@ int spl_mem_init(void) {
     map->nextblock = map->freelist;
     map->blockCount = blockCount;
 
-    // spl_con_printf("freemap: %08x\n", map);
-    // spl_con_printf("freelist: %08x\n", map->freelist);
+    // con_printf("freemap: %08x\n", map);
+    // con_printf("freelist: %08x\n", map->freelist);
 
     // populate the freelist
 
     FreeBlock *freelistIter = map->freelist;
     cont = MEM_CONT_START;
-    while ((cont = _spl_mem_nextBlock(cont, &block)) != MEM_CONT_END) {
+    while ((cont = _mem_nextBlock(cont, &block)) != MEM_CONT_END) {
         if (block.base == homebase) {
             block.base = (void*)((uint32_t)block.base + overhead);
             block.next = block.base;
@@ -76,21 +76,21 @@ int spl_mem_init(void) {
     return E_SUCCESS;
 }
 
-void spl_mem_dump(void) {
+void mem_dump(void) {
 
-    spl_con_printf("[FreeMap] %08x: freelist: %08x nextblock: %08x blocks: %d\n",
+    con_printf("[FreeMap] %08x: freelist: %08x nextblock: %08x blocks: %d\n",
                map, map->freelist, map->nextblock, map->blockCount);
     
     FreeBlock *block = map->freelist;
     for (unsigned i = 0; i != map->blockCount; ++i) {
-        spl_con_printf("[FreeBlock] %08x: (%08x-%08x) next: %08x\n",
+        con_printf("[FreeBlock] %08x: (%08x-%08x) next: %08x\n",
                    block, block->base, block->limit, block->next);
         ++block;
     }
 
 }
 
-void* spl_mem_malloc(size_t bytes) {
+void* mem_malloc(size_t bytes) {
     if (bytes == 0) {
         return NULL;
     }

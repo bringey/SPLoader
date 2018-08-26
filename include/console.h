@@ -12,19 +12,19 @@
 #ifndef __ASM__
 
 
-int spl_con_clear(void);
+int con_clear(void);
 
-int spl_con_init(void);
+int con_init(void);
 
-int spl_con_putchar(char ch);
+int con_putchar(char ch);
 
-int spl_con_puts(const char *str);
+int con_puts(const char *str);
 
-int spl_con_printf(const char *fmt, ...);
+int con_printf(const char *fmt, ...);
 
-#define spl_con_width() _spl_con_width()
+#define con_width() _con_width()
 
-#define spl_con_height() _spl_con_height()
+#define con_height() _con_height()
 
 
 //
@@ -38,27 +38,27 @@ int spl_con_printf(const char *fmt, ...);
 ** rowStart to rowEnd will be cleared. rowEnd must be greater than
 ** rowStart.
 */
-int _spl_con_clear(void);
+int _con_clear(void);
 
 /*
 ** @brief Calculates an index in the console buffer for the given coordinates
 */
-unsigned _spl_con_index(unsigned x, unsigned y);
+unsigned _con_index(unsigned x, unsigned y);
 
 /*
 ** @brief Puts a character at the given row and column 
 */
-int _spl_con_put(unsigned index, char ch);
+int _con_put(unsigned index, char ch);
 
-int _spl_con_scroll(unsigned lines);
+int _con_scroll(unsigned lines);
 
-int _spl_con_updateCursor(unsigned index);
+int _con_updateCursor(unsigned index);
 
 // driver properties
 
-unsigned _spl_con_height(void);
+unsigned _con_height(void);
 
-unsigned _spl_con_width(void);
+unsigned _con_width(void);
 
 
 #endif  //__ASM__

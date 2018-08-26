@@ -25,16 +25,16 @@
 //
 int main(void) {
 
-    spl_con_clear();
+    con_clear();
 
     // replace v0.1.0 with proper version string in header
-    spl_con_printf("SPLoader (%s)\n", "v0.1.0");
-    spl_con_puts("Initializing: ");
+    con_printf("SPLoader (%s)\n", "v0.1.0");
+    con_puts("Initializing: ");
 
-    spl_con_puts("mem ");
-    spl_mem_init();
+    con_puts("mem ");
+    mem_init();
 
-    spl_con_puts("disk ");
+    con_puts("disk ");
     disk_init();
 
     return 0;

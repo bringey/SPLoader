@@ -17,8 +17,8 @@
 
 static int __vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args);
 
-int spl_puts(PutcharFn putcharFn, void *opt, const char *str) {
-    spl_asserte(putcharFn != NULL && str != NULL, E_ARGNULL);
+int puts(PutcharFn putcharFn, void *opt, const char *str) {
+    asserte(putcharFn != NULL && str != NULL, E_ARGNULL);
 
     char ch;
     while ((ch = *str++) != '\0') {
@@ -29,8 +29,8 @@ int spl_puts(PutcharFn putcharFn, void *opt, const char *str) {
 }
 
 
-int spl_printf(PutcharFn putcharFn, void *opt, const char *fmt, ...) {
-    spl_asserte(putcharFn != NULL && fmt != NULL, E_ARGNULL);
+int printf(PutcharFn putcharFn, void *opt, const char *fmt, ...) {
+    asserte(putcharFn != NULL && fmt != NULL, E_ARGNULL);
 
     va_list args;
     va_start(args, fmt);
@@ -40,8 +40,8 @@ int spl_printf(PutcharFn putcharFn, void *opt, const char *fmt, ...) {
     return result;
 }
 
-int spl_vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args) {
-    spl_asserte(putcharFn != NULL && fmt != NULL, E_ARGNULL);
+int vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args) {
+    asserte(putcharFn != NULL && fmt != NULL, E_ARGNULL);
 
     return __vprintf(putcharFn, opt, fmt, args);
 }
@@ -96,19 +96,19 @@ int __vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args) {
                     len = 1;
                     break;
                 case 'd':       // decimal integer
-                    //len = spl_con_cvtdec(buf, (int)va_arg(args, int));
-                    len = spl_ltostr((int)va_arg(args, int), 10, buf);
+                    //len = con_cvtdec(buf, (int)va_arg(args, int));
+                    len = ltostr((int)va_arg(args, int), 10, buf);
                     break;
                 case 'o':       // octal integer
-                    len = spl_ultostr((unsigned)va_arg(args, unsigned), 8, buf);
+                    len = ultostr((unsigned)va_arg(args, unsigned), 8, buf);
                     break;
                 case 's':       // string
                     str = (char*)va_arg(args, char*);
-                    len = spl_strlen(str);
+                    len = strlen(str);
                     break;
                 case 'x':       // hexadecimal integer (lowercase)
                 case 'X':       // hexadecimal integer (uppercase)
-                    len = spl_ultostr((unsigned)va_arg(args, unsigned), 16, buf);
+                    len = ultostr((unsigned)va_arg(args, unsigned), 16, buf);
                     break;
                 default:
                     typeValid = false;
@@ -124,7 +124,7 @@ int __vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args) {
                     }
                 }
 
-                spl_puts(putcharFn, opt, str);
+                puts(putcharFn, opt, str);
 
                 // pad if needed for left-adjust
                 if (extra > 0 && leftadjust) {

@@ -105,7 +105,7 @@ int __isr_install(int vector, ISRHandler isr, ISRHandler *oldIsr) {
 void __isr_defaultExpectedHandler(int vector, int code) {
     (void)code;
 
-    //spl_con_printf("[INT] %02x %02x ", vector, code);
+    //con_printf("[INT] %02x %02x ", vector, code);
 
     // default handler that does nothing
     // just tell the PIC that we're done
@@ -116,16 +116,16 @@ void __isr_defaultExpectedHandler(int vector, int code) {
             __outb(PIC_SLAVE_CMD_PORT, PIC_EOI);
         }
     } else {
-        spl_error("Unexpected 'expected' interrupt");
+        error("Unexpected 'expected' interrupt");
     }
 }
 
 void __isr_defaultUnexpectedHandler(int vector, int code) {
-    spl_con_printf("vector = 0x%02x, code = 0x%02x\n", vector, code);
-    spl_error("Unexpected interrupt");
+    con_printf("vector = 0x%02x, code = 0x%02x\n", vector, code);
+    error("Unexpected interrupt");
 }
 
 void __isr_exceptionHandler(int vector, int code) {
-    spl_con_printf("Exception %02x, Code: %x\n", vector, code);
-    spl_abort();
+    con_printf("Exception %02x, Code: %x\n", vector, code);
+    abort();
 }

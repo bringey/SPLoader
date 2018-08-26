@@ -17,19 +17,19 @@
 #include <stdnoreturn.h>
 
 #ifdef DEBUG_FILENAMES
-#define spl_except(errno) spl_except_(__FILE__, __LINE__, errno)
-#define spl_error(msg) spl_error_(__FILE__, __LINE__, msg)
+#define except(errno) except_(__FILE__, __LINE__, errno)
+#define error(msg) error_(__FILE__, __LINE__, msg)
 #else
-#define spl_except(errno) spl_except_(errno)
-#define spl_error(msg) spl_error_(msg)
+#define except(errno) except_(errno)
+#define error(msg) error_(msg)
 #endif
 
-#define spl_abort() _spl_abort()
+#define abort() _abort()
 
 //
 // Error occurred, print error message and abort
 //
-noreturn void spl_error_(
+noreturn void error_(
     #ifdef DEBUG_FILENAMES
         const char *file,
         unsigned line,
@@ -40,7 +40,7 @@ noreturn void spl_error_(
 //
 // Exception occurred, print errno and abort.
 //
-noreturn void spl_except_(
+noreturn void except_(
     #ifdef DEBUG_FILENAMES
         const char *file,
         unsigned line,
@@ -48,7 +48,7 @@ noreturn void spl_except_(
         int errno
 );
 
-noreturn void _spl_abort(void);
+noreturn void _abort(void);
 
 #endif  // __ASM__
 

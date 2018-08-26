@@ -12,8 +12,8 @@
 
 static int __ultostr(unsigned long u, unsigned base, char *buf);
 
-int spl_ltostr(long i, unsigned base, char *buf) {
-    spl_checke(buf != NULL, E_ARGNULL);
+int ltostr(long i, unsigned base, char *buf) {
+    checke(buf != NULL, E_ARGNULL);
 
     unsigned long value;
 
@@ -29,21 +29,21 @@ int spl_ltostr(long i, unsigned base, char *buf) {
     return __ultostr(value, base, buf);
 }
 
-int spl_ultostr(unsigned long u, unsigned base, char *buf) {
-    spl_checke(buf != NULL, E_ARGNULL);
+int ultostr(unsigned long u, unsigned base, char *buf) {
+    checke(buf != NULL, E_ARGNULL);
     return __ultostr(u, base, buf);
 }
 
-int spl_strlower(char *str) {
-    spl_checke(str != NULL, E_ARGNULL);
+int strlower(char *str) {
+    checke(str != NULL, E_ARGNULL);
 
     char ch;
     while ((ch = *str) != '\0') {
         // test if ch is lowercase [a-z]
-        if (spl_isupper(ch)) {
+        if (isupper(ch)) {
             // convert ch to uppercase and store it in the string
             // fyi ('a' - 'A') => 32
-            *str = spl_tolower(ch);
+            *str = tolower(ch);
         }
         ++str;
     }
@@ -51,16 +51,16 @@ int spl_strlower(char *str) {
     return E_SUCCESS;
 }
 
-int spl_strupper(char *str) {
-    spl_checke(str != NULL, E_ARGNULL);
+int strupper(char *str) {
+    checke(str != NULL, E_ARGNULL);
 
     char ch;
     while ((ch = *str) != '\0') {
         // test if ch is lowercase [a-z]
-        if (spl_islower(ch)) {
+        if (islower(ch)) {
             // convert ch to uppercase and store it in the string
             // fyi ('a' - 'A') => 32
-            *str = spl_toupper(ch);
+            *str = toupper(ch);
         }
         ++str;
     }
@@ -69,7 +69,7 @@ int spl_strupper(char *str) {
     return E_SUCCESS;
 }
 
-size_t spl_strlen(const char *str) {
+size_t strlen(const char *str) {
     unsigned len = 0;
     while (*str++ != '\0') {
         ++len;

@@ -14,13 +14,13 @@
 
 #include <stddef.h>
 
-int spl_mem_init(void);
+int mem_init(void);
 
-void spl_mem_dump(void);
+void mem_dump(void);
 
-void* spl_mem_malloc(size_t bytes);
+void* mem_malloc(size_t bytes);
 
-void* spl_mem_calloc(size_t bytes);
+void* mem_calloc(size_t bytes);
 
 // mem_free not implemented (not needed)
 // int mem_free(void *ptr);
@@ -59,11 +59,11 @@ typedef struct FreeMap_s {
 #undef MEM_CONT_END
 #define MEM_CONT_END ((size_t)-1)
 
-int _spl_mem_bootstrap(FreeMap **map);
+int _mem_bootstrap(FreeMap **map);
 
-size_t _spl_mem_availableBlocks(void);
+size_t _mem_availableBlocks(void);
 
-size_t _spl_mem_nextBlock(size_t cont, FreeBlock *block);
+size_t _mem_nextBlock(size_t cont, FreeBlock *block);
 
 
 #endif  // __ASM__

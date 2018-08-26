@@ -22,49 +22,49 @@ static unsigned WIDTH, HEIGHT;
 
 static int __putchar(void *opt, char ch);
 
-int spl_con_clear(void) {
+int con_clear(void) {
     curX = 0;
     curY = 0;
-    curIndex = _spl_con_index(curX, curY);
-    _spl_con_clear();
-    _spl_con_updateCursor(curIndex);
+    curIndex = _con_index(curX, curY);
+    _con_clear();
+    _con_updateCursor(curIndex);
 
     return E_SUCCESS;
 }
 
-int spl_con_init(void) {
+int con_init(void) {
 
     curX = 0;
     curY = 0;
-    curIndex = _spl_con_index(0, 0);
+    curIndex = _con_index(0, 0);
 
-    WIDTH = _spl_con_width();
-    HEIGHT = _spl_con_height();
+    WIDTH = _con_width();
+    HEIGHT = _con_height();
 
-    _spl_con_updateCursor(curIndex);
+    _con_updateCursor(curIndex);
 
     return E_SUCCESS;
 }
 
-int spl_con_putchar(char ch) {
+int con_putchar(char ch) {
 
     __putchar(NULL, ch);
 
     return E_SUCCESS;
 }
 
-int spl_con_puts(const char *str) {
+int con_puts(const char *str) {
 
-    spl_puts(__putchar, NULL, str);
+    puts(__putchar, NULL, str);
 
     return E_SUCCESS;
 }
 
-int spl_con_printf(const char *fmt, ...) {
+int con_printf(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-    spl_vprintf(__putchar, NULL, fmt, args);
+    vprintf(__putchar, NULL, fmt, args);
 
     va_end(args);
     return E_SUCCESS;
@@ -81,14 +81,14 @@ int __putchar(void *data, char ch) {
 
     // scroll if needed
     if (curY == HEIGHT) {
-        _spl_con_scroll(1);
+        _con_scroll(1);
         --curY;
     }
 
     switch (ch) {
         case '\n':
             for (; curX != WIDTH; ++curX, ++curIndex) {
-                _spl_con_put(curIndex, ' ');
+                _con_put(curIndex, ' ');
             }
             curX = 0;
             ++curY;
@@ -96,10 +96,10 @@ int __putchar(void *data, char ch) {
         case '\r':
             // carriage-return: move cursor back to start of line
             curX = 0;
-            curIndex = _spl_con_index(curX, curY);
+            curIndex = _con_index(curX, curY);
             break;
         default:
-            _spl_con_put(curIndex, ch);
+            _con_put(curIndex, ch);
             ++curIndex;
             if (++curX == WIDTH) {
                 curX = 0;
@@ -113,7 +113,7 @@ int __putchar(void *data, char ch) {
         curIndex -= WIDTH;
     }
 
-    _spl_con_updateCursor(curIndex);
+    _con_updateCursor(curIndex);
 
     return 0;
 }

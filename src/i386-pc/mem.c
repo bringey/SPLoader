@@ -10,7 +10,7 @@
 static E820Map *BIOS_MAP = (E820Map*)MEMMAP_LOCATION;
 
 
-size_t _spl_mem_availableBlocks(void) {
+size_t _mem_availableBlocks(void) {
     size_t count = 0;
     E820Entry *entry = (E820Entry*)MEMMAP_TABLE;
 
@@ -27,7 +27,7 @@ size_t _spl_mem_availableBlocks(void) {
 }
 
 
-size_t _spl_mem_nextBlock(size_t cont, FreeBlock *block) {
+size_t _mem_nextBlock(size_t cont, FreeBlock *block) {
     // the continuation value for the i386-pc driver is an index in the E820
     // map. The next index is returned.
 
