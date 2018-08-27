@@ -45,16 +45,17 @@ include includes.default.mk
 # include includes.mk if it exists
 -include includes.mk
 
-VERSION := $(shell head -n 1 VERSION)
+BUILD_SYSTEM := Makefile $(wildcard *.mk) $(wildcard mk/*.mk)
 
-DEFINES += -DVERSION="\"$(VERSION)\""
+
+VERSION := $(shell head -n 1 VERSION)
 
 # Pattern rules
 
 #
 # .c to .o rule
 #
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(MARKER)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(BUILD_SYSTEM) $(MARKER)
 	$(CC_V) -MD $(CPPFLAGS) $(CFLAGS) -o $@ -c $<
 
 #
@@ -62,7 +63,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(MARKER)
 # This pattern rule first preprocesses the .S file using cpp, then
 # assembles the preprocessed .s file to the target .o file
 #
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.S $(MARKER)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.S $(BUILD_SYSTEM) $(MARKER)
 	@$(CPP) -MD -MT $@ $(CPPFLAGS) -o $(BUILD_DIR)/$*.s $<
 	$(AS_V) $(ASFLAGS) -o $@ $(BUILD_DIR)/$*.s -a=$(BUILD_DIR)/$*.lst
 
@@ -77,7 +78,8 @@ LOADER_OBJ = abort.o \
              main.o \
              mem.o \
              printf.o \
-             string.o
+             string.o \
+             version.o
 
 LOADER_OBJ := $(addprefix $(BUILD_DIR)/,$(LOADER_OBJ))
 LOADER_DEP := $(LOADER_OBJ:.o=.d)
@@ -97,6 +99,7 @@ LOADER_OBJ_LIST = $(LOADER_ENTRY_OBJ) \
 
 loader.bin: $(LOADER_BIN)
 
+$(BUILD_DIR)/version.o: DEFINES += -DVERSION=\"$(VERSION)\"
 
 $(LOADER_FINAL_OBJ): $(LOADER_OBJ_LIST) $(LOADER_LD_SCRIPT) $(MARKER)
 	$(LD_V) $(LDFLAGS) -o $@ -T $(LOADER_LD_SCRIPT) $(LOADER_OBJ_LIST)
@@ -133,5 +136,16 @@ $(MKIMAGE):
 #
 # Clean
 #
+
+allclean: clean clean-tools
+
+#
+# cleans build directory
+# all files and subdirectories (excluding .gitignore) will be deleted
+# so take caution when overriding BUILD_DIR
+#
 clean:
-	rm -r $(BUILD_DIR)/*
+	find $(BUILD_DIR) -maxdepth 1 -mindepth 1 ! -name '.gitignore' -exec rm -r {} +
+
+clean-tools:
+	$(MAKE) -C $(MKIMAGE_DIR) clean

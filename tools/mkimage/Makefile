@@ -7,3 +7,9 @@ LDFLAGS  :=
 
 mkimage: mkimage.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(LIBS) $(LDFLAGS)
+
+
+clean:
+	rm -f mkimage
+
+.PHONY: clean

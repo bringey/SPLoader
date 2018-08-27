@@ -11,6 +11,7 @@
 
 #include <disk.h>
 #include <mem.h>
+#include <version.h>
 
 
 //
@@ -27,8 +28,7 @@ int main(void) {
 
     con_clear();
 
-    // replace v0.1.0 with proper version string in header
-    con_printf("SPLoader (%s)\n", "v0.1.0");
+    con_printf("SPLoader (v%s)\n", VERSION_STR);
     con_puts("Initializing: ");
 
     con_puts("mem ");
