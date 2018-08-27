@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include <i386-pc/mbr.h>
+#include <disk/mbr.h>
 #include <i386-pc/stage0a/bootstrap.h>
 #include <i386-pc/BootHeader.h>
 
