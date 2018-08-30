@@ -45,6 +45,9 @@ include includes.default.mk
 # include includes.mk if it exists
 -include includes.mk
 
+all: build/usb.img
+
+
 BUILD_SYSTEM := Makefile $(wildcard *.mk) $(wildcard mk/*.mk)
 
 
@@ -74,7 +77,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.S $(BUILD_SYSTEM) $(MARKER)
 -include $(PLATFORM_MAKEFILE)
 
 LOADER_OBJ = abort.o \
+             blocklist.o \
              console.o \
+             disk/mbr.o \
              main.o \
              mem.o \
              printf.o \
