@@ -29,6 +29,8 @@ int ltostr(long i, unsigned base, char *buf);
 int ultostr(unsigned long i, unsigned base, char *buf);
 
 
+void* memcpy(void *dest, const void *source, size_t num);
+
 //
 // Convert all lowercase characters in str to uppercase
 //

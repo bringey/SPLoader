@@ -33,7 +33,7 @@ int main(void) {
 
     con_puts("mem ");
     mem_init();
-
+    
     con_puts("disk ");
     disk_init();
 

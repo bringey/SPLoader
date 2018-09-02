@@ -24,6 +24,8 @@
 #define BUFFER_OFFSET 0x0
 #define BUFFER 0x20000
 
+#define MAX_BLOCKS_PER_TRANSFER 127
+
 struct BiosDap_s {
     uint16_t size;
     uint16_t sectors;
@@ -50,8 +52,17 @@ typedef struct BiosDap_s BiosDap;
 
 
 
-int _disk_init(void) {
-    // using BIOS, no disk init needed
+int _disk_init(Disk *disk) {
+
+    disk->blocksize = BIOS_DP->bytesPerSector;
+    disk->totalBlocks = BIOS_DP->sectors;
+    // Some BIOSes limit the max sectors to read to 127
+    // 127 * 512 (typical sector size) = 0xFE00 (about one segment)
+    // since we use the the segment 2000:0000 for the buffer, we will follow
+    // this limit
+    disk->maxBlocksPerRead = MAX_BLOCKS_PER_TRANSFER;
+    disk->buffer = (uint8_t*)BUFFER;
+
     return E_SUCCESS;
 }
 
@@ -60,11 +71,6 @@ int _disk_read(uint32_t start, uint32_t blocks) {
 
     BiosDap *dap = BIOS_DAP;
     dap->size = BIOS_DAP_SIZE;
-
-    // do max 127 sectors per transfer
-    if (blocks > 127) {
-        // to-do
-    }
 
     dap->sectors = blocks;
     dap->bufferOffset = BUFFER_OFFSET;
@@ -83,13 +89,4 @@ int _disk_read(uint32_t start, uint32_t blocks) {
     } else {
         return E_SUCCESS;
     }
-}
-
-
-uint32_t _disk_blockSize(void) {
-    return BIOS_DP->bytesPerSector;
-}
-
-uint8_t* _disk_buffer(void) {
-    return (uint8_t*)BUFFER;
 }

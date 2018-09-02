@@ -9,6 +9,8 @@
 #include <err.h>
 #include <string.h>
 
+#include <stdint.h>
+
 
 static int __ultostr(unsigned long u, unsigned base, char *buf);
 
@@ -32,6 +34,16 @@ int ltostr(long i, unsigned base, char *buf) {
 int ultostr(unsigned long u, unsigned base, char *buf) {
     checke(buf != NULL, E_ARGNULL);
     return __ultostr(u, base, buf);
+}
+
+void* memcpy(void *dest, const void *source, size_t num) {
+    uint8_t *dbuf = (uint8_t*)dest;
+    uint8_t *sbuf = (uint8_t*)source;
+    for (size_t i = 0; i != num; ++i) {
+        dbuf[i] = sbuf[i];
+    }
+
+    return dest;
 }
 
 int strlower(char *str) {

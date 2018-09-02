@@ -4,35 +4,42 @@
 ** Author: bringey
 */
 
-#ifndef _LOADER_DISK_H
-#define _LOADER_DISK_H
+#ifndef _DISK_H
+#define _DISK_H
 
 #ifndef __ASM__
 
+#include <stddef.h>
 #include <stdint.h>
 
-#define disk_init() _disk_init()
-#define disk_blockSize() _disk_blockSize()
-#define disk_read(start, blocks) _disk_read(start, blocks)
-#define disk_buffer() _disk_buffer()
+typedef struct Disk_s {
+
+    uint32_t totalBlocks;
+    uint32_t blocksize;
+    uint32_t maxBlocksPerRead;
+    uint8_t *buffer;
+
+} Disk;
+
+
+int disk_init(void);
+
+int disk_read(uint8_t *buf, uint32_t start, uint32_t blocks);
+
+int disk_dump(void);
 
 //
-// Initialize basic disk driver
+// Initialize system disk driver, a disk structure is given to be set with
+// the properties of the driver.
 //
-int _disk_init(void);
+int _disk_init(Disk *disk);
 
 //
 // Read from disk. The blocks from start block to start + blocks will be read
-// into buffer.
+// into the internal buffer.
 //
 int _disk_read(uint32_t start, uint32_t blocks);
 
-//
-// Gets the block size (in bytes) of the disk driver
-//
-uint32_t _disk_blockSize(void);
-
-uint8_t* _disk_buffer(void);
 
 #endif
 

@@ -42,4 +42,25 @@
 //
 #define E_NOMEM 5
 
+//
+// Disk Errors (100-200)
+//
+
+// generic read error
+#define E_DISK_READ 100
+
+
+
+//
+// MBR errors
+//
+
+// MBR contains an invalid signature (signature != 0xAA55)
+#define E_MBR_SIGNATURE 100
+
+//
+// MBR partitions overlap
+//
+#define E_MBR_OVERLAP 101
+
 #endif 

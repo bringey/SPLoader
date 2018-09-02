@@ -79,6 +79,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.S $(BUILD_SYSTEM) $(MARKER)
 LOADER_OBJ = abort.o \
              blocklist.o \
              console.o \
+             disk.o \
              disk/mbr.o \
              main.o \
              mem.o \
