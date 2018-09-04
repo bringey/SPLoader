@@ -14,6 +14,8 @@
 #define BOOT_HEADER_FLAGS       0x8
 #define BOOT_HEADER_LOADER_SIZE 0xC
 
+#define BOOT_HEADER_FLAG_FBP    0x1  // find boot partition disable
+
 #ifndef __ASM__
 
 #include <stdint.h>

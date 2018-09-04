@@ -54,6 +54,8 @@ typedef struct BiosDap_s BiosDap;
 
 int _disk_init(Disk *disk) {
 
+    // i386-pc driver only supports MBR and GPT labels
+    disk->supportedLabels = DISK_LABEL_MBR | DISK_LABEL_GPT;
     disk->blocksize = BIOS_DP->bytesPerSector;
     disk->totalBlocks = BIOS_DP->sectors;
     // Some BIOSes limit the max sectors to read to 127
@@ -85,7 +87,7 @@ int _disk_read(uint32_t start, uint32_t blocks) {
     __int32(0x13, &regs);
 
     if ((regs.eflags & EFLAGS_CF) == EFLAGS_CF) {
-        return -1;
+        return E_DISK_READ;
     } else {
         return E_SUCCESS;
     }

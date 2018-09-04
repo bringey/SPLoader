@@ -9,15 +9,33 @@
 #include <console.h>
 #include <disk.h>
 #include <err.h>
+//#include <mem.h>
 #include <string.h>
 
 
-
-static Disk DISK;
+Disk BOOT_DISK;
+//DiskPart BOOT_PART;
 
 
 int disk_init(void) {
-    return _disk_init(&DISK);
+    int err = _disk_init(&BOOT_DISK);
+    if (err == E_SUCCESS) {
+        // disk driver successfully initialized
+        // determine the disk label
+        DiskLabel label = DISK_LABEL_MBR;
+        //uint8_t *detectBuf = (uint8_t*)mem_malloc(1024);
+        //disk_read(detectBuf, 0, 512, 2);
+
+        // now check if the driver supports this label
+        if ((label & BOOT_DISK.supportedLabels) == 0) {
+            error("Disk label is not supported");
+        }
+
+        BOOT_DISK.label = label;
+
+        //mem_free(detectBuf);
+    }
+    return err;
 }
 
 
@@ -26,15 +44,15 @@ int disk_read(uint8_t *buf, uint32_t start, uint32_t blocks) {
     assert(start <= UINT32_MAX - blocks);
     // make sure we don't read more blocks that exist
     uint32_t limit = start + blocks;
-    assert(limit <= DISK.totalBlocks);
+    assert(limit <= BOOT_DISK.totalBlocks);
     
     int err;
     uint32_t blocksToRead;
     uint32_t transfers, remainder;
     uint32_t bytes;
-    if (DISK.maxBlocksPerRead) {
-        transfers = blocks / DISK.maxBlocksPerRead;
-        remainder = blocks % DISK.maxBlocksPerRead;
+    if (BOOT_DISK.maxBlocksPerRead) {
+        transfers = blocks / BOOT_DISK.maxBlocksPerRead;
+        remainder = blocks % BOOT_DISK.maxBlocksPerRead;
     } else {
         transfers = 0;
         remainder = blocks;
@@ -43,11 +61,11 @@ int disk_read(uint8_t *buf, uint32_t start, uint32_t blocks) {
         blocksToRead = (i == 1) ? remainder : transfers;
         err = _disk_read(start, blocksToRead);
         if (err == E_SUCCESS) {
-            bytes = blocksToRead * DISK.blocksize;
-            memcpy(buf, DISK.buffer, bytes);
+            bytes = blocksToRead * BOOT_DISK.blocksize;
+            memcpy(buf, BOOT_DISK.buffer, bytes);
             buf += bytes;
         } else {
-            break;
+            error("A disk read error occurred");
         }
     }
     // size_t bytesCopied = 0;
@@ -70,9 +88,9 @@ int disk_read(uint8_t *buf, uint32_t start, uint32_t blocks) {
 }
 
 int disk_dump(void) {
-    con_printf("[DISK] totalBlocks =  %d\n", DISK.totalBlocks);
-    con_printf("[DISK] blocksize = %d\n", DISK.blocksize);
-    con_printf("[DISK] maxBlocksPerRead = %d\n", DISK.maxBlocksPerRead);
-    con_printf("[DISK] buffer = 0x%08x\n", DISK.buffer);
+    con_printf("[DISK] totalBlocks =  %d\n", BOOT_DISK.totalBlocks);
+    con_printf("[DISK] blocksize = %d\n", BOOT_DISK.blocksize);
+    con_printf("[DISK] maxBlocksPerRead = %d\n", BOOT_DISK.maxBlocksPerRead);
+    con_printf("[DISK] buffer = 0x%08x\n", BOOT_DISK.buffer);
     return E_SUCCESS;
 }
