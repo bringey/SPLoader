@@ -5,6 +5,7 @@
 **
 */
 
+#include <abort.h>
 #include <assert.h>
 #include <console.h>
 #include <disk.h>
@@ -28,7 +29,7 @@ int disk_init(void) {
 
         // now check if the driver supports this label
         if ((label & BOOT_DISK.supportedLabels) == 0) {
-            error("Disk label is not supported");
+            except(EX_DISK_LABEL_UNSUPPORTED);
         }
 
         BOOT_DISK.label = label;
@@ -65,7 +66,7 @@ int disk_read(uint8_t *buf, uint32_t start, uint32_t blocks) {
             memcpy(buf, BOOT_DISK.buffer, bytes);
             buf += bytes;
         } else {
-            error("A disk read error occurred");
+            except(EX_DISK_READ);
         }
     }
     // size_t bytesCopied = 0;
