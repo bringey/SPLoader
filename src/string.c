@@ -15,7 +15,7 @@
 static int __ultostr(unsigned long u, unsigned base, char *buf);
 
 int ltostr(long i, unsigned base, char *buf) {
-    checke(buf != NULL, E_ARGNULL);
+    assert(buf != NULL);
 
     unsigned long value;
 
@@ -32,7 +32,7 @@ int ltostr(long i, unsigned base, char *buf) {
 }
 
 int ultostr(unsigned long u, unsigned base, char *buf) {
-    checke(buf != NULL, E_ARGNULL);
+    assert(buf != NULL);
     return __ultostr(u, base, buf);
 }
 
@@ -47,7 +47,7 @@ void* memcpy(void *dest, const void *source, size_t num) {
 }
 
 int strlower(char *str) {
-    checke(str != NULL, E_ARGNULL);
+    assert(str != NULL);
 
     char ch;
     while ((ch = *str) != '\0') {
@@ -64,7 +64,7 @@ int strlower(char *str) {
 }
 
 int strupper(char *str) {
-    checke(str != NULL, E_ARGNULL);
+    assert(str != NULL);
 
     char ch;
     while ((ch = *str) != '\0') {

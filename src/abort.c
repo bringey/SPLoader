@@ -27,7 +27,8 @@ static const char *EX_TABLE[] = {
     "Could not read file",
     "Path does not exist",
     "Config file does not exist",
-    "Syntax error in config file"
+    "Syntax error in config file",
+    "Assertion failed"
 };
 
 #define EX_TABLE_SIZE (sizeof(EX_TABLE) / sizeof(const char *))

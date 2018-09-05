@@ -11,7 +11,7 @@
 
 
 int blocklist_insert(Blocklist *list, Block32 block, bool mergeOverlap) {
-    checke(list != NULL, E_ARGNULL);
+    assert(list != NULL);
     assertblock(block);
 
     if (list->len == list->capacity) {

@@ -49,6 +49,7 @@ int disk_mbr_dump(MbrGeneric *mbr) {
         con_printf("%3d   %4d   %9d   %9d\n", i, part.type, part.firstLba, part.firstLba + part.sectors);
     }
     con_printf("Signature: 0x%04x\n", mbr->signature);
+    return E_SUCCESS;
 }
 
 int disk_mbr_findBoot(MbrGeneric *mbr, int *numVar) {

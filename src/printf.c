@@ -18,7 +18,7 @@
 static int __vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args);
 
 int puts(PutcharFn putcharFn, void *opt, const char *str) {
-    asserte(putcharFn != NULL && str != NULL, E_ARGNULL);
+    assert(putcharFn != NULL && str != NULL);
 
     char ch;
     while ((ch = *str++) != '\0') {
@@ -30,7 +30,7 @@ int puts(PutcharFn putcharFn, void *opt, const char *str) {
 
 
 int printf(PutcharFn putcharFn, void *opt, const char *fmt, ...) {
-    asserte(putcharFn != NULL && fmt != NULL, E_ARGNULL);
+    assert(putcharFn != NULL && fmt != NULL);
 
     va_list args;
     va_start(args, fmt);
@@ -41,7 +41,7 @@ int printf(PutcharFn putcharFn, void *opt, const char *fmt, ...) {
 }
 
 int vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args) {
-    asserte(putcharFn != NULL && fmt != NULL, E_ARGNULL);
+    assert(putcharFn != NULL && fmt != NULL);
 
     return __vprintf(putcharFn, opt, fmt, args);
 }
