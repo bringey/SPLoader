@@ -3,10 +3,13 @@
 **
 ** Author: bringey
 **
+** NOTE: Optional module, OPT_DISK_MBR must be defined when including
 */
 
 #ifndef _DISK_MBR_H
 #define _DISK_MBR_H
+
+#ifdef OPT_DISK_MBR
 
 //
 // MBR Structure
@@ -68,6 +71,8 @@ int disk_mbr_dump(MbrGeneric *mbr);
 int disk_mbr_findBoot(MbrGeneric *mbr, int *numVar);
 
 #endif  // __ASM__
+
+#endif // OPT_DISK_MBR
 
 
 #endif

@@ -38,6 +38,13 @@ LOADER_PLAT_DEP := $(LOADER_PLAT_OBJ:.o=.d)
 
 LOADER_LD_SCRIPT := $(SRC_DIR)/$(PLATFORMDIR)/loader.lds
 
+#
+# Optional compiles
+#
+DEFINES += -DOPT_DISK_MBR -DOPT_DISK_GPT
+OPTIONAL_OBJ := disk/mbr.o disk/gpt.o
+
+
 $(BIOS_BOOTSTRAP_FINAL_OBJ): $(BIOS_BOOTSTRAP_OBJ) $(MARKER)
 	$(LD_V) $(LDFLAGS) -Ttext 0x0 -e begtext -o $@ $(BIOS_BOOTSTRAP_OBJ)
 

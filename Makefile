@@ -80,12 +80,12 @@ LOADER_OBJ = abort.o \
              blocklist.o \
              console.o \
              disk.o \
-             disk/mbr.o \
              main.o \
              mem.o \
              printf.o \
              string.o \
-             version.o
+             version.o \
+             $(OPTIONAL_OBJ)
 
 LOADER_OBJ := $(addprefix $(BUILD_DIR)/,$(LOADER_OBJ))
 LOADER_DEP := $(LOADER_OBJ:.o=.d)

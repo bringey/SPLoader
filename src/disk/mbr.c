@@ -3,6 +3,11 @@
 **
 ** Author: bringey
 **
+** Contains function implementations for the disk/mbr.h module.
+**
+** NOTE: This file is an optional compile. To use: define OPT_DISK_MBR and add
+**       this file to the LOADER_OBJ list (in platform makefile or includes).
+**
 */
 
 #include <blocklist.h>
