@@ -49,18 +49,32 @@
 // generic read error
 #define E_DISK_READ 100
 
-
+// ============================================================================
+// EX_DISK_LABEL_INVALID
+// ============================================================================
 
 //
-// MBR errors
+// MBR exception codes (0-100)
 //
 
 // MBR contains an invalid signature (signature != 0xAA55)
-#define E_MBR_SIGNATURE 100
-
-//
+#define E_MBR_SIGNATURE                     0
 // MBR partitions overlap
-//
-#define E_MBR_OVERLAP 101
+#define E_MBR_PARTITION_OVERLAP             1
+
+// GPT Exception codes (100-200)
+
+// unsupported version
+#define E_GPT_VERSION                       100
+// incorrect crc32 checksum for header
+#define E_GPT_HEADER_INTEGRITY              101
+// incorrect crc32 checksum for partition table
+#define E_GPT_PARTITION_INTEGRITY           102
+// invalid header
+#define E_GPT_HEADER_INVALID                103
+// partition entry invalid
+#define E_GPT_PARTITION_INVALID             104
+// overlapping partitions
+#define E_GPT_PARTITION_OVERLAP             105
 
 #endif 

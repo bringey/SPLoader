@@ -9,33 +9,49 @@
 
 #include <console.h>
 
+#include <abort.h>
 #include <disk.h>
 #include <mem.h>
 #include <version.h>
 
+#include <disk/gpt.h>
 
 //
 // Stage 1 main routine
-// 1. initialize system disk driver (for i386-pc this is the BIOS disk driver)
-// 2. initialize embedded fs driver (default is FAT32)
-// 3. Find boot partition
-// 4. mount boot partition as /
-// 5. read /sploader/core.elf
-// 6. load core.elf
-// 7. transfer control to core.elf's main
+// 1. initialization (mem, disk, vfs)
+// 3. Detect disk label (MBR, GPT, etc)
+// 4. Find boot partition on label
+// 5. Mount filesystem on bootpart to /
+// 6. load config (/sploader.ini)
+// 7. execute config (chainload, load, etc)
 //
 int main(void) {
+    Disk disk;
 
     con_clear();
 
     con_printf("SPLoader (v%s)\n", VERSION_STR);
-    con_puts("Initializing: ");
 
-    con_puts("mem ");
+    // initialization routines
+
+    con_puts("Initialize memory\n");
     mem_init();
-    
-    con_puts("disk ");
-    disk_init();
+
+    con_puts("Initialize disk\n");
+    disk_init(&disk);
+
+    // detect the disk label
+    DiskLabel label = disk_detect();
+    // find the boot partition
+    DiskPart bootpart;
+    disk_findBoot(label, &bootpart);
+
+    // mount it
+
+    // load config file
+
+    // do the loading
+
 
     return 0;
 }

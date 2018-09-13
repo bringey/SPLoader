@@ -4,6 +4,7 @@
 ** Author: bringey
 */
 
+#include <assert.h>
 #include <disk.h>
 
 #include <i386/regs.h>
@@ -50,7 +51,22 @@ typedef struct BiosDp_s BiosDp;
 
 typedef struct BiosDap_s BiosDap;
 
+int _disk_detect(DiskLabel *label) {
+    assert(label != NULL);
+    // i386-pc driver only supports GPT and MBR
+    // try to find GPT first, then MBR
+    // TO-DO
 
+
+    return E_FAILURE;
+}
+
+int _disk_findBoot(DiskLabel label, DiskPart *part) {
+    assert(part != NULL);
+    (void)label;
+
+    return E_FAILURE;
+}
 
 int _disk_init(Disk *disk) {
 

@@ -10,32 +10,41 @@
 #include <console.h>
 #include <disk.h>
 #include <err.h>
-//#include <mem.h>
+#include <mem.h>
 #include <string.h>
 
 
-Disk BOOT_DISK;
-//DiskPart BOOT_PART;
+static Disk BOOT_DISK;
 
 
-int disk_init(void) {
-    int err = _disk_init(&BOOT_DISK);
-    if (err == E_SUCCESS) {
-        // disk driver successfully initialized
-        // determine the disk label
-        DiskLabel label = DISK_LABEL_MBR;
-        //uint8_t *detectBuf = (uint8_t*)mem_malloc(1024);
-        //disk_read(detectBuf, 0, 512, 2);
-
-        // now check if the driver supports this label
-        if ((label & BOOT_DISK.supportedLabels) == 0) {
-            except(EX_DISK_LABEL_UNSUPPORTED);
-        }
-
-        BOOT_DISK.label = label;
-
-        //mem_free(detectBuf);
+DiskLabel disk_detect(void) {
+    DiskLabel label;
+    int err = _disk_detect(&label);
+    if (err != E_SUCCESS) {
+        exceptv(EX_DISK_LABEL_INVALID, err);
     }
+
+    if ((label & BOOT_DISK.supportedLabels) == 0) {
+        except(EX_DISK_LABEL_UNSUPPORTED);
+    }
+
+    return label;
+}
+
+void disk_findBoot(DiskLabel label, DiskPart *part) {
+    int err = _disk_findBoot(label, part);
+    if (err != E_SUCCESS) {
+        except(EX_DISK_NO_BOOT);
+    }
+}
+
+
+int disk_init(Disk *disk) {
+    int err = _disk_init(&BOOT_DISK);
+    if (err != E_SUCCESS) {
+        exceptv(EX_DISK, err);
+    }
+    *disk = BOOT_DISK;
     return err;
 }
 
