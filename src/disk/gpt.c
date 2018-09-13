@@ -7,6 +7,9 @@
 **       this file to the LOADER_OBJ list.
 */
 
+#ifndef OPT_DISK_GPT
+#define OPT_DISK_GPT
+#endif
 
 #include <assert.h>
 #include <disk.h>

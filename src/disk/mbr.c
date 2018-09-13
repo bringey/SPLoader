@@ -10,6 +10,10 @@
 **
 */
 
+#ifndef OPT_DISK_MBR
+#define OPT_DISK_MBR
+#endif
+
 #include <blocklist.h>
 #include <disk/mbr.h>
 #include <err.h>
