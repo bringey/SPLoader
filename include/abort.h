@@ -32,8 +32,8 @@
 // Disk label is invalid or corrupted
 #define EX_DISK_LABEL_INVALID       3
 
-// Disk label is not supported by the disk driver
-#define EX_DISK_LABEL_UNSUPPORTED   4
+// Disk label is unknown to the disk driver
+#define EX_DISK_LABEL_UNKNOWN       4
 
 // Disk driver could not locate the boot partition
 #define EX_DISK_NO_BOOT             5

@@ -18,7 +18,7 @@ static const char *EX_TABLE[] = {
     "Disk error",
     "Disk read error",
     "Disk label is invalid or corrupted",
-    "Disk label is unsupported",
+    "Disk label is unknown",
     "Could not find boot partition",
     "Filesystem error",
     "Filesystem is invalid or corrupted",
