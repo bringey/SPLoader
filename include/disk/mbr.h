@@ -9,8 +9,6 @@
 #ifndef _DISK_MBR_H
 #define _DISK_MBR_H
 
-#ifdef OPT_DISK_MBR
-
 //
 // MBR Structure
 //
@@ -34,6 +32,8 @@
 #define MBR_STATUS_INACTIVE  0x0
 
 #ifndef __ASM__
+
+#ifdef OPT_DISK_MBR
 
 #include <stdint.h>
 
