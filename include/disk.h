@@ -25,11 +25,12 @@ typedef enum {
 
 typedef struct Disk_s {
 
-    uint32_t supportedLabels;  // bitmap of labels supported by the driver
-    uint32_t totalBlocks;
-    uint32_t blocksize;
-    uint32_t maxBlocksPerRead;
-    uint8_t *buffer;
+    uint32_t totalBlocks;       // Total blocks present on the disk
+    uint32_t blocksize;         // Physical size in bytes of a block on disk
+    uint32_t maxBlocksPerRead;  // Maximum number of blocks per read
+    uint8_t *buffer;            // Transfer buffer location for the driver
+    uint8_t *blockBuf;          // buffer for a single block transfer
+    void *aux;                  // auxilary data pointer for driver
 
 } Disk;
 
@@ -40,16 +41,12 @@ typedef struct DiskPart_s {
 } DiskPart;
 
 //
-// Detect the disk label on the boot disk. The detected DiskLabel value is
-// returned if the disk driver supports it. Note that label of value
-// DISK_LABEL_UNKNOWN is never returned, as this is considered an exception
-// (EX_DISK_LABEL_INVALID).
+// Get the boot disk and store it in the given pointer
 //
 // Exceptions:
-//  - EX_DISK_LABEL_INVALID: Disk label was unknown or corrupted
-//  - EX_DISK_LABEL_UNSUPPORTED: Disk label is not supported by the driver
+//  - EX_DISK: Driver-specific error
 //
-DiskLabel disk_detect(void);
+void disk_bootDisk(Disk *disk);
 
 //
 // Finds the boot partition on the boot disk and store it in the part variable.
@@ -57,7 +54,19 @@ DiskLabel disk_detect(void);
 // Exceptions:
 //  - EX_DISK_NO_BOOT: The boot partition was not found
 //
-void disk_findBoot(DiskLabel label, DiskPart *part);
+void disk_bootPart(Disk *disk, DiskLabel label, DiskPart *part);
+
+//
+// Detect the disk label on the boot disk. The detected DiskLabel value is
+// returned if the disk driver supports it. Note that label of value
+// DISK_LABEL_UNKNOWN is never returned, as this is considered an exception
+// (EX_DISK_LABEL_INVALID).
+//
+// Exceptions:
+//  - EX_DISK_LABEL_INVALID: Disk label was invalid or corrupted
+//  - EX_DISK_LABEL_UNKNOWN: Disk label is unknown to the driver
+//
+DiskLabel disk_detect(Disk *disk);
 
 //
 // Initialize the disk driver for the boot disk. This function must be called
@@ -66,7 +75,7 @@ void disk_findBoot(DiskLabel label, DiskPart *part);
 // Exceptions:
 //  - EX_DISK: Driver-specific error code
 //
-int disk_init(Disk *disk);
+void disk_init(void);
 
 //
 // Read a specified number of blocks starting from an LBA and store the read
@@ -76,19 +85,31 @@ int disk_init(Disk *disk);
 // Exceptions:
 //  - EX_DISK_READ: A read error occurred
 //
-int disk_read(uint8_t *buf, uint32_t start, uint32_t blocks);
+int disk_read(Disk *disk, uint8_t *buf, uint32_t start, uint32_t blocks);
 
-int disk_dump(void);
+//
+// Read a single block from the given disk. The read data is stored in the
+// disk's blockBuf member.
+//
+// Exceptions:
+//  - EX_DISK_READ: A read error occurred
+//
+void disk_readb(Disk *disk, uint64_t lba);
+
 
 // ============================================================================
 // Driver functions
+
+int _disk_bootDisk(Disk *disk);
+
+int _disk_bootPart(Disk *disk, DiskLabel label, DiskPart *part);
 
 //
 // Detect the disk label if possible. E_SUCCESS is returned on sucessful
 // detection. If the label cannot be detected, it is either unknown to
 // SPLoader, or is known but is invalid (ie bad CRC in GPT).
 //
-int _disk_detect(DiskLabel *label);
+int _disk_detect(Disk *disk, DiskLabel *label);
 
 //
 // Find the boot partition on the boot disk. The partition if found, is stored
@@ -100,13 +121,13 @@ int _disk_findBoot(DiskLabel label, DiskPart *part);
 // Initialize system disk driver, a disk structure is given to be set with
 // the properties of the driver.
 //
-int _disk_init(Disk *disk);
+int _disk_init(void);
 
 //
 // Read from disk. The blocks from start block to start + blocks will be read
 // into the internal buffer.
 //
-int _disk_read(uint32_t start, uint32_t blocks);
+int _disk_read(Disk *disk, uint32_t start, uint32_t blocks);
 
 
 

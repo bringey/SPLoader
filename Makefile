@@ -45,7 +45,7 @@ include includes.default.mk
 # include includes.mk if it exists
 -include includes.mk
 
-all: build/usb.img
+all: $(BUILD_DIR)/usb.img
 
 
 BUILD_SYSTEM := Makefile $(wildcard *.mk) $(wildcard mk/*.mk)

@@ -26,7 +26,6 @@
 // 7. execute config (chainload, load, etc)
 //
 int main(void) {
-    Disk disk;
 
     con_clear();
 
@@ -38,13 +37,17 @@ int main(void) {
     mem_init();
 
     con_puts("Initialize disk\n");
-    disk_init(&disk);
+    disk_init();
+
+    // get the disk we booted from (aka: boot disk)
+    Disk disk;
+    disk_bootDisk(&disk);
 
     // detect the disk label
-    DiskLabel label = disk_detect();
+    DiskLabel label = disk_detect(&disk);
     // find the boot partition
     DiskPart bootpart;
-    disk_findBoot(label, &bootpart);
+    disk_bootPart(&disk, label, &bootpart);
 
     // mount it
 

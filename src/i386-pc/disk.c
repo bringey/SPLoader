@@ -51,27 +51,7 @@ typedef struct BiosDp_s BiosDp;
 
 typedef struct BiosDap_s BiosDap;
 
-int _disk_detect(DiskLabel *label) {
-    assert(label != NULL);
-    // i386-pc driver only supports GPT and MBR
-    // try to find GPT first, then MBR
-    // TO-DO
-
-
-    return E_FAILURE;
-}
-
-int _disk_findBoot(DiskLabel label, DiskPart *part) {
-    assert(part != NULL);
-    (void)label;
-
-    return E_FAILURE;
-}
-
-int _disk_init(Disk *disk) {
-
-    // i386-pc driver only supports MBR and GPT labels
-    disk->supportedLabels = DISK_LABEL_MBR | DISK_LABEL_GPT;
+int _disk_bootDisk(Disk *disk) {
     disk->blocksize = BIOS_DP->bytesPerSector;
     disk->totalBlocks = BIOS_DP->sectors;
     // Some BIOSes limit the max sectors to read to 127
@@ -80,12 +60,38 @@ int _disk_init(Disk *disk) {
     // this limit
     disk->maxBlocksPerRead = MAX_BLOCKS_PER_TRANSFER;
     disk->buffer = (uint8_t*)BUFFER;
+    // don't need any auxillary data for this driver
+    disk->aux = NULL;
 
     return E_SUCCESS;
 }
 
+int _disk_bootPart(Disk *disk, DiskLabel label, DiskPart *part) {
+    (void)disk; (void)label; (void)part;
+    
+    return E_FAILURE;
+}
 
-int _disk_read(uint32_t start, uint32_t blocks) {
+int _disk_detect(Disk *disk, DiskLabel *label) {
+    assert(disk != NULL);
+    assert(label != NULL);
+    // i386-pc driver only supports GPT and MBR
+    // try to find GPT first, then MBR
+    // TO-DO
+    *label = DISK_LABEL_MBR;
+
+
+    return E_SUCCESS;
+}
+
+int _disk_init(void) {
+    // nothing to init, using BIOS
+    return E_SUCCESS;
+}
+
+
+int _disk_read(Disk *disk, uint32_t start, uint32_t blocks) {
+    (void)disk;
 
     BiosDap *dap = BIOS_DAP;
     dap->size = BIOS_DAP_SIZE;

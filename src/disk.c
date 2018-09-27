@@ -14,65 +14,71 @@
 #include <string.h>
 
 
-static Disk BOOT_DISK;
-
-
-DiskLabel disk_detect(void) {
+DiskLabel disk_detect(Disk *disk) {
     DiskLabel label;
-    int err = _disk_detect(&label);
+    int err = _disk_detect(disk, &label);
     if (err != E_SUCCESS) {
         exceptv(EX_DISK_LABEL_INVALID, err);
     }
 
-    if ((label & BOOT_DISK.supportedLabels) == 0) {
-        except(EX_DISK_LABEL_UNSUPPORTED);
+    if (label == DISK_LABEL_UNKNOWN) {
+        except(EX_DISK_LABEL_UNKNOWN);
     }
 
     return label;
 }
 
-void disk_findBoot(DiskLabel label, DiskPart *part) {
-    int err = _disk_findBoot(label, part);
+void disk_bootDisk(Disk *disk) {
+    int err = _disk_bootDisk(disk);
+    if (err != E_SUCCESS) {
+        exceptv(EX_DISK, err);
+    }
+
+    disk->blockBuf = (uint8_t*)mem_malloc(disk->blocksize);
+}
+
+void disk_bootPart(Disk *disk, DiskLabel label, DiskPart *part) {
+    int err = _disk_bootPart(disk, label, part);
     if (err != E_SUCCESS) {
         except(EX_DISK_NO_BOOT);
     }
 }
 
 
-int disk_init(Disk *disk) {
-    int err = _disk_init(&BOOT_DISK);
+void disk_init(void) {
+    int err = _disk_init();
     if (err != E_SUCCESS) {
         exceptv(EX_DISK, err);
     }
-    *disk = BOOT_DISK;
-    return err;
 }
 
 
-int disk_read(uint8_t *buf, uint32_t start, uint32_t blocks) {
+int disk_read(Disk *disk, uint8_t *buf, uint32_t start, uint32_t blocks) {
+    assert(disk != NULL);
+    assert(buf != NULL);
     // check overflow
     assert(start <= UINT32_MAX - blocks);
     // make sure we don't read more blocks that exist
     uint32_t limit = start + blocks;
-    assert(limit <= BOOT_DISK.totalBlocks);
+    assert(limit <= disk->totalBlocks);
     
     int err;
     uint32_t blocksToRead;
     uint32_t transfers, remainder;
     uint32_t bytes;
-    if (BOOT_DISK.maxBlocksPerRead) {
-        transfers = blocks / BOOT_DISK.maxBlocksPerRead;
-        remainder = blocks % BOOT_DISK.maxBlocksPerRead;
+    if (disk->maxBlocksPerRead) {
+        transfers = blocks / disk->maxBlocksPerRead;
+        remainder = blocks % disk->maxBlocksPerRead;
     } else {
         transfers = 0;
         remainder = blocks;
     }
     for (size_t i = transfers + 1; i != 0; --i) {
         blocksToRead = (i == 1) ? remainder : transfers;
-        err = _disk_read(start, blocksToRead);
+        err = _disk_read(disk, start, blocksToRead);
         if (err == E_SUCCESS) {
-            bytes = blocksToRead * BOOT_DISK.blocksize;
-            memcpy(buf, BOOT_DISK.buffer, bytes);
+            bytes = blocksToRead * disk->blocksize;
+            memcpy(buf, disk->buffer, bytes);
             buf += bytes;
         } else {
             except(EX_DISK_READ);
@@ -95,12 +101,4 @@ int disk_read(uint8_t *buf, uint32_t start, uint32_t blocks) {
     // }
 
     return err;
-}
-
-int disk_dump(void) {
-    con_printf("[DISK] totalBlocks =  %d\n", BOOT_DISK.totalBlocks);
-    con_printf("[DISK] blocksize = %d\n", BOOT_DISK.blocksize);
-    con_printf("[DISK] maxBlocksPerRead = %d\n", BOOT_DISK.maxBlocksPerRead);
-    con_printf("[DISK] buffer = 0x%08x\n", BOOT_DISK.buffer);
-    return E_SUCCESS;
 }
