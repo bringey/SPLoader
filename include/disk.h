@@ -25,7 +25,7 @@ typedef enum {
 
 typedef struct Disk_s {
 
-    uint32_t totalBlocks;       // Total blocks present on the disk
+    uint64_t totalBlocks;       // Total blocks present on the disk
     uint32_t blocksize;         // Physical size in bytes of a block on disk
     uint32_t maxBlocksPerRead;  // Maximum number of blocks per read
     uint8_t *buffer;            // Transfer buffer location for the driver
@@ -85,7 +85,7 @@ void disk_init(void);
 // Exceptions:
 //  - EX_DISK_READ: A read error occurred
 //
-int disk_read(Disk *disk, uint8_t *buf, uint32_t start, uint32_t blocks);
+void disk_read(Disk *disk, uint8_t *buf, uint64_t start, uint32_t blocks);
 
 //
 // Read a single block from the given disk. The read data is stored in the
