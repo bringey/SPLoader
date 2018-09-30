@@ -127,3 +127,14 @@ void disk_read(Disk *disk, uint8_t *buf, uint64_t start, uint32_t blocks) {
     // }
 
 }
+
+void disk_readb(Disk *disk, uint64_t lba) {
+    // convience function, note that disk_read can be used instead. This just
+    // makes it easier for reading single blocks at a time
+    int err = _disk_read(disk, lba, 1);
+    if (err == E_SUCCESS) {
+        memcpy(disk->blockBuf, disk->buffer, disk->blocksize);
+    } else {
+        exceptv(EX_DISK_READ, err);
+    }
+}
