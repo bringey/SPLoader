@@ -23,14 +23,22 @@ typedef enum {
     
 } DiskLabel;
 
-typedef struct Disk_s {
-
+//
+// Structure containing information about a disk device, as well as driver
+// characteristics.
+//
+typedef struct DiskInfo_s {
     uint64_t totalBlocks;       // Total blocks present on the disk
     uint32_t blocksize;         // Physical size in bytes of a block on disk
     uint32_t maxBlocksPerRead;  // Maximum number of blocks per read
     uint8_t *buffer;            // Transfer buffer location for the driver
+    void *aux;                  // auxilary data pointer for the driver
+} DiskInfo;
+
+typedef struct Disk_s {
+
+    const DiskInfo *info;       // info struct returned from driver
     uint8_t *blockBuf;          // buffer for a single block transfer
-    void *aux;                  // auxilary data pointer for driver
 
 } Disk;
 
@@ -100,8 +108,6 @@ void disk_readb(Disk *disk, uint64_t lba);
 // ============================================================================
 // Driver functions
 
-int _disk_bootDisk(Disk *disk);
-
 int _disk_bootPart(Disk *disk, DiskLabel label, DiskPart *part);
 
 //
@@ -116,6 +122,8 @@ int _disk_detect(Disk *disk, DiskLabel *label);
 // the part variable.
 //
 int _disk_findBoot(DiskLabel label, DiskPart *part);
+
+int _disk_info(DiskInfo *info);
 
 //
 // Initialize system disk driver, a disk structure is given to be set with

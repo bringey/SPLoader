@@ -51,21 +51,6 @@ typedef struct BiosDp_s BiosDp;
 
 typedef struct BiosDap_s BiosDap;
 
-int _disk_bootDisk(Disk *disk) {
-    disk->blocksize = BIOS_DP->bytesPerSector;
-    disk->totalBlocks = BIOS_DP->sectors;
-    // Some BIOSes limit the max sectors to read to 127
-    // 127 * 512 (typical sector size) = 0xFE00 (about one segment)
-    // since we use the the segment 2000:0000 for the buffer, we will follow
-    // this limit
-    disk->maxBlocksPerRead = MAX_BLOCKS_PER_TRANSFER;
-    disk->buffer = (uint8_t*)BUFFER;
-    // don't need any auxillary data for this driver
-    disk->aux = NULL;
-
-    return E_SUCCESS;
-}
-
 int _disk_bootPart(Disk *disk, DiskLabel label, DiskPart *part) {
     (void)disk; (void)label; (void)part;
     
@@ -81,6 +66,21 @@ int _disk_detect(Disk *disk, DiskLabel *label) {
     *label = DISK_LABEL_MBR;
 
 
+    return E_SUCCESS;
+}
+
+int _disk_info(DiskInfo *info) {
+    assert(info != NULL);
+    info->totalBlocks = BIOS_DP->sectors;
+    info->blocksize = BIOS_DP->bytesPerSector;
+    // Some BIOSes limit the max sectors to read to 127
+    // 127 * 512 (typical sector size) = 0xFE00 (about one segment)
+    // since we use the the segment 2000:0000 for the buffer, we will follow
+    // this limit
+    info->maxBlocksPerRead = MAX_BLOCKS_PER_TRANSFER;
+    info->buffer = (uint8_t*)BUFFER;
+    // don't need any auxillary data for this driver
+    info->aux = NULL;
     return E_SUCCESS;
 }
 
