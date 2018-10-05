@@ -283,9 +283,9 @@ die_code:
 ** Some useful symbols
 */
 
-DP_LOCATION  = 0x8000 // location of the drive parameter structure
-DAP_LOCATION = 0x8020 // location of the data address packet structure
-BOOT_HEADER  = 0x200  // location of the BootHeader structure
+DP_LOCATION  = BOOT_DP         // location of the drive parameter structure
+DAP_LOCATION = BOOT_DAP        // location of the data address packet structure
+BOOT_HEADER  = BOOT_BOOTHEADER // location of the BootHeader structure
 
 // some BIOS's limit the dap_sectors to 127
 MAX_SECTORS_PER_TRANSFER = 127
