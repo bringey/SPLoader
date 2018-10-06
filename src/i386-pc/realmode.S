@@ -9,7 +9,7 @@
 #include <i386-pc/realmode.h>
 #include <i386-pc/Regs32.h>
 
-#define RELOC(label) ((label - __int32_reloc) + INT32_LOCATION)
+#define RELOC(label) ((label - __int32_reloc) + LOADER_REALMODE_ADDRESS)
 
 
     .arch i686
@@ -22,7 +22,7 @@ __int32_init:
     pushl   %edi
 
     movl    $__int32_reloc, %esi
-    movl    $INT32_LOCATION, %edi
+    movl    $LOADER_REALMODE_ADDRESS, %edi
     movl    $(__int32_reloc_end - __int32_reloc), %ecx
     cld
     rep movsb
@@ -80,7 +80,7 @@ __int32:
     rep movsb                               // do the copy
 
     // jump to the relocated portion
-    ljmpw   $LOADER_GDT_CODE16, $INT32_LOCATION
+    ljmpw   $LOADER_GDT_CODE16, $LOADER_REALMODE_ADDRESS
 
 __int32_exit:
     xorl    %eax, %eax

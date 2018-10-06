@@ -7,8 +7,6 @@
 #ifndef _I386_PC_REALMODE_H
 #define _I386_PC_REALMODE_H
 
-#define INT32_LOCATION 0x5000
-
 #ifndef __ASM__
 
 #include <i386-pc/Regs32.h>
