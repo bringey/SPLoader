@@ -29,6 +29,7 @@
 // See src/i386-pc/stage0b/early.S for how this is setup
 
 #define LOADER_GDT_ADDRESS          0xD00
+#define LOADER_GDT_SEGMENT          0x0D0
 
 #define LOADER_GDT_NULL             0x00
 #define LOADER_GDT_CODE32           0x08
@@ -46,10 +47,12 @@
 
 // Memory map, acquired in stage 0b using BIOS E820
 
-// memory map
-#define LOADER_MMAP_LENGTH          0x4000
-#define LOADER_MMAP_ENTRY_SIZE      0x4004
-#define LOADER_MMAP_TABLE           0x4008
+#define LOADER_MMAP_ADDRESS        0x4000
+
+// memory map structure
+#define LOADER_MMAP_LENGTH          (LOADER_MMAP_ADDRESS + 0)
+#define LOADER_MMAP_ENTRY_SIZE      (LOADER_MMAP_ADDRESS + 4)
+#define LOADER_MMAP_TABLE           (LOADER_MMAP_ADDRESS + 8)
 
 // AVAILABLE ---------------------------------------------- 0x004400 - 0x004FFF
 

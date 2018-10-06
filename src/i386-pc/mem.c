@@ -2,17 +2,18 @@
 #include <err.h>
 #include <mem.h>
 
-#include <i386-pc/mem/map.h>
+#include <i386-pc/loader.h>
+#include <i386-pc/mem.h>
 
 #include <stddef.h>
 #include <stdint.h>
 
-static E820Map *BIOS_MAP = (E820Map*)MEMMAP_LOCATION;
+#define BIOS_MAP ((E820Map*)LOADER_MMAP_ADDRESS)
 
 
 size_t _mem_availableBlocks(void) {
     size_t count = 0;
-    E820Entry *entry = (E820Entry*)MEMMAP_TABLE;
+    E820Entry *entry = (E820Entry*)LOADER_MMAP_TABLE;
 
     // Scan the E820 map provided from BIOS for entries with a type of 1
     // and are 32-bit addresses
@@ -36,7 +37,7 @@ size_t _mem_nextBlock(size_t cont, FreeBlock *block) {
     // starting at index cont, scan the E820 map for an entry that is:
     // 1. available (type == 1)
     // 2. 32-bit base address (base_hi == 0)
-    E820Entry *entry = ((E820Entry*)MEMMAP_TABLE) + cont;
+    E820Entry *entry = ((E820Entry*)LOADER_MMAP_TABLE) + cont;
     for (unsigned i = cont; i != BIOS_MAP->length; ++i) {
         if (entry->type == 1 && entry->base_hi == 0) {
 

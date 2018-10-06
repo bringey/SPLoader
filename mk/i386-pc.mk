@@ -62,3 +62,4 @@ bootstrap.bin: $(BIOS_BOOTSTRAP_BIN)
 
 -include $(BIOS_BOOTSTRAP_DEP)
 -include $(LOADER_PLAT_DEP)
+-include $(LOADER_ENTRY_DEP)
