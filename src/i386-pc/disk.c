@@ -10,20 +10,16 @@
 #include <i386/regs.h>
 #include <err.h>
 
+#include <i386-pc/loader.h>
 #include <i386-pc/realmode.h>
 
 
 // Stage 0 got the drive parameters and left them at 07C0:8000
-#define BIOS_DP ((BiosDp*)0xFC00)
+#define BIOS_DP ((BiosDp*)LOADER_DP_ADDRESS)
 
-#define BIOS_DAP_SEGMENT 0x7C0
-#define BIOS_DAP_OFFSET 0x8020
-#define BIOS_DAP ((BiosDap*)0xFC20)
+#define BIOS_DAP ((BiosDap*)LOADER_DAP_ADDRESS)
 #define BIOS_DAP_SIZE 16
 
-#define BUFFER_SEGMENT 0x2000
-#define BUFFER_OFFSET 0x0
-#define BUFFER 0x20000
 
 #define MAX_BLOCKS_PER_TRANSFER 127
 
@@ -78,7 +74,7 @@ int _disk_info(DiskInfo *info) {
     // since we use the the segment 2000:0000 for the buffer, we will follow
     // this limit
     info->maxBlocksPerRead = MAX_BLOCKS_PER_TRANSFER;
-    info->buffer = (uint8_t*)BUFFER;
+    info->buffer = (uint8_t*)LOADER_DD_BUFFER;
     // don't need any auxillary data for this driver
     info->aux = NULL;
     return E_SUCCESS;
@@ -97,8 +93,8 @@ int _disk_read(Disk *disk, uint32_t start, uint32_t blocks) {
     dap->size = BIOS_DAP_SIZE;
 
     dap->sectors = blocks;
-    dap->bufferOffset = BUFFER_OFFSET;
-    dap->bufferSegment = BUFFER_SEGMENT;
+    dap->bufferOffset = LOADER_DD_OFFSET;
+    dap->bufferSegment = LOADER_DD_SEGMENT;
     dap->lbaLo = start;
     dap->lbaHi = 0;
     
