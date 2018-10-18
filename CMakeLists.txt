@@ -76,4 +76,4 @@ option(ENABLE_WERROR "Treat compiler warnings as errors" ON)
 set(WARNFLAGS "-Wall -Wextra -pedantic" CACHE STRING "Default GCC Warning enable flags")
 
 add_subdirectory(loader)
-
+add_subdirectory(tools)
