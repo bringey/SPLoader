@@ -1,67 +1,62 @@
-# SPLoader/loader
-Stage 1 binary for SPLoader
+# SPLoader
+Systems Programming bootLoader
 
-This project repository contains the stage 1 binary used by SPLoader. This
-project creates two binaries: bootstrap and stage 1 (bootstrap.bin and
-loader.bin, respectively). These binaries are then installed to a disk, image
-or any other medium using the `spl-install` tool.
+SPLoader is a rewrite of the CSCI-452 Systems Programming bootloader. The
+CSCI-452 bootloader was written for the i386-pc platform and is capable of
+loading flat kernel/program binaries at specified memory locations.
 
+SPLoader aims to add additional features while remaining minimal as possible.
 
-The process for booting an OS is as follows:
+## Getting Started
+
+In order to build SPLoader, you will need a cross-compiler setup. The GCC
+toolchain is the only one supported by this build system. The default
+configuration will build for the i386-pc platform, which requires binutils and
+gcc for the i686-elf target. Latest stable versions for GCC and binutils are
+recommended.
+
+Requirements:
+ * GCC
+ * Binutils
+ * CMake
+ * ninja-build or GNU Make
+
+### Building
+
+```sh
+# for i386-pc target
+cd build
+cmake ../ -G Ninja  # ninja is preferred, but make can be used instead
+ninja
+
+# for other targets (none available right now)
+cd build
+cmake -D TARGET=<arch>-<platform> ../ -G Ninja
+ninja
 ```
-bootstrap -> stage 1 -> OS
 
-OR (if a stage 2 exists)
+## Contributing
 
-bootstrap -> stage 1 -> stage 2 -> OS
-```
-Note that the bootstrap is platform-dependent and may not exist for some
-platforms.
-
-## Building
-
-See this [README.md](https://github.com/SPLoader/SPLoader/blob/develop/README.md)
-for details on setting up cmake. The CMakeLists.txt adds the following targets:
- * loader.elf
- * loader.bin
- * bootstrap.elf
- * bootstrap.bin
-
-The *.bin files are flat binaries to be installed to the target medium. Their
-layout depends on the target platform.
-
-### Adding new source files
-
-The `config/sources` file is a list of source files to be compiled and linked.
-When adding a new module to the loader binary, add the relative path of the
-source file to this list.
-
-Architecture-specific source files should go in `config/<arch>/sources`
-
-Platform-specific source files should go in `config/<arch>/<platform>/sources`
-
-### Porting to new targets
-
-When porting the following must be done:
- * Create `config/<arch>` and `config/<arch>/<platform>` directories where
-   arch is the target architecture/isa and platform is the target platform
-   (ie `config/arm/raspberrypi`)
- * Add a `sources` and `config.cmake` files to each of these directories
- * Functions for `_<name>` identifiers must be implemented
+Read the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on the build
+system, coding conventions/style and how to submit pull requests.
 
 ## Versioning
 
-The loader version is stored in the [VERSION](VERSION) file. This version gets
-passed along when building.
+This project uses Semantic Versioning v2.0.0.
 
 Currently, the project is in development phase (major version 0). See the
-[CONTRIBUTING.md](https://github.com/SPLoader/SPLoader/blob/develop/CONTRIBUTING.md)
-file for details on tagging new versions.
+[CONTRIBUTING.md](CONTRIBUTING.md) file for details on tagging new versions.
 
-Only the minor version number should be incremented at this point in time. The
-minor version number should be incremented when a major feature is finished.
+## Authors
+
+ * Brennan Ringey - Project lead - [bringey](https://github.com/bringey)
 
 ## License
 
 This project is licensed under the MIT License - See the [LICENSE](LICENSE) file
 for more details.
+
+## Acknowledgments
+
+ * Thanks to Jon Coles, Warren R. Carithers, K. Reek and Garrett C. Smith for
+   the original bootloader this project is based on.

@@ -1,109 +1,79 @@
-cmake_minimum_required(VERSION 3.10.0)
-project(loader C)
-enable_language(ASM)
+cmake_minimum_required(VERSION 3.0.0)
 
-# use the target toolchain instead of the host's
-target_toolchain()
-
-include_directories(
-    SYSTEM "${CMAKE_SOURCE_DIR}/include"
-    "include"
-)
-
-include(CheckCCompilerFlag)
-
-# compiler checking
-check_c_compiler_flag(-std=gnu11 HAVE_GNU11)
-if (NOT HAVE_GNU11)
-    message(FATAL_ERROR "Compiler {CMAKE_C_COMPILER} does not support C11 standard (with GNU extensions)")
-endif (NOT HAVE_GNU11)
-
-set(CONFIG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/config)
-set(CMAKE_MODULE_PATH ${CONFIG_DIR})
-
-# target isa/platform configuration
-include(${TARGET_ISA}/config OPTIONAL)
-include(${TARGET_ISA}/${TARGET_PLATFORM}/config)
-
-# get our source files
-# these files contain a list of all source files to compile, one file per line
-# this is used instead of globbing, for various reasons.
-# ./config/<isa>/sources             : ISA-specific source files
-# ./config/<isa>/<platform>/sources  : Platform-specific source files
-# ./config/sources                   : cross-platform source files
-
-set(ISA_SOURCES ${CONFIG_DIR}/${TARGET_ISA}/sources)
-set(PLATFORM_SOURCES ${CONFIG_DIR}/${TARGET_ISA}/${TARGET_PLATFORM}/sources)
-set(SOURCES ${CONFIG_DIR}/sources)
-
-file(STRINGS ${ISA_SOURCES} LOADER_ISA_SRC)
-file(STRINGS ${PLATFORM_SOURCES} LOADER_PLATFORM_SRC)
-file(STRINGS ${SOURCES} LOADER_SRC)
-
-# these will allow the build system to automatically reconfigure cmake if any
-# of the sources lists get modified.
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${ISA_SOURCES})
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${PLATFORM_SOURCES})
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${SOURCES})
-
-#set_property(DIRECTORY)
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+    message(FATAL ERROR "in-source builds are not allowed")
+endif()
 
 
-if(OPT_DISK_GPT)
-    add_definitions(-DOPT_DISK_GPT)
-endif(OPT_DISK_GPT)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-if(OPT_DISK_MBR)
-   add_definitions(-DOPT_DISK_MBR)
-endif(OPT_DISK_MBR)
+project(sploader)
 
-# compiler flags
-option(LOADER_WERROR "WERROR override for loader project" ${ENABLE_WERROR})
-set(LOADER_WARNFLAGS ${WARNFLAGS} CACHE STRING "GCC Warning enable flags for loader project")
-set(LOADER_CFLAGS "-fdiagnostics-color=always -std=gnu11 -ffreestanding" CACHE STRING "C compiler flags for loader")
-if(LOADER_WERROR)
-    set(WERROR "-Werror")
-else(LOADER_WERROR)
-    set(WERROR "")
-endif(LOADER_WERROR)
+if(NOT DEFINED TARGET)
+    set(TARGET "i386-pc")
+endif(NOT DEFINED TARGET)
+
+include(${TARGET})
+
+# find the GCC cross-compiler for ${TARGET}
+find_program(GCC_AR         ${TARGET_PREFIX}-ar)
+find_program(GCC_AS         ${TARGET_PREFIX}-as)
+find_program(GCC_CC         ${TARGET_PREFIX}-gcc)
+find_program(GCC_CPP        ${TARGET_PREFIX}-cpp)
+find_program(GCC_NM         ${TARGET_PREFIX}-nm)
+find_program(GCC_LD         ${TARGET_PREFIX}-ld)
+find_program(GCC_OBJCOPY    ${TARGET_PREFIX}-objcopy)
+find_program(GCC_OBJDUMP    ${TARGET_PREFIX}-objdump)
+find_program(GCC_RANLIB     ${TARGET_PREFIX}-ranlib)
+
+function(target_toolchain)
+
+    if (GCC_AR_NOTFOUND)
+        message(FATAL ERROR "could not locate ${TARGET_PREFIX}-ar")
+    endif (GCC_AR_NOTFOUND)
+    if (GCC_AS_NOTFOUND)
+        message(FATAL ERROR "could not locate ${TARGET_PREFIX}-as")
+    endif (GCC_AS_NOTFOUND)
+    if (GCC_CC_NOTFOUND)
+        message(FATAL ERROR "could not locate ${TARGET_PREFIX}-gcc")
+    endif (GCC_CC_NOTFOUND)
+    if (GCC_CPP_NOTFOUND)
+        message(FATAL ERROR "could not locate ${TARGET_PREFIX}-cpp")
+    endif (GCC_CPP_NOTFOUND)
+    if (GCC_NM_NOTFOUND)
+        message(FATAL ERROR "could not locate ${TARGET_PREFIX}-nm")
+    endif (GCC_NM_NOTFOUND)
+    if (GCC_LD_NOTFOUND)
+        message(FATAL ERROR "could not locate ${TARGET_PREFIX}-ld")
+    endif (GCC_LD_NOTFOUND)
+    if (GCC_OBJCOPY_NOTFOUND)
+        message(FATAL ERROR "could not locate ${TARGET_PREFIX}-objcopy")
+    endif (GCC_OBJCOPY_NOTFOUND)
+    if (GCC_OBJDUMP_NOTFOUND)
+        message(FATAL ERROR "could not locate ${TARGET_PREFIX}-objdump")
+    endif (GCC_OBJDUMP_NOTFOUND)
+    if (GCC_RANLIB_NOTFOUND)
+        message(FATAL ERROR "could not locate ${TARGET_PREFIX}-ranlib")
+    endif (GCC_RANLIB_NOTFOUND)
+
+    set(CMAKE_AR ${GCC_AR} PARENT_SCOPE)
+    set(CMAKE_RANLIB ${GCC_RANLIB} PARENT_SCOPE)
+    set(CMAKE_C_COMPILER ${GCC_CC} PARENT_SCOPE)
+    set(CMAKE_ASM_COMPILER ${GCC_CC} PARENT_SCOPE)
+
+endfunction(target_toolchain)
+
+string(REPLACE "-" ";" TARGET_LIST ${TARGET})
+list(GET TARGET_LIST 0 TARGET_ISA)
+list(GET TARGET_LIST 1 TARGET_PLATFORM)
+
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
 
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LOADER_CFLAGS} ${WERROR} ${LOADER_WARNFLAGS}")
-#set(CMAKE_EXE_LINKER_FLAGS "")
+option(ENABLE_WERROR "Treat compiler warnings as errors" ON)
+set(WARNFLAGS "-Wall -Wextra -pedantic" CACHE STRING "Default GCC Warning enable flags")
 
-# pass on the version string to version.c
-set_source_files_properties(src/version.c 
-    PROPERTIES
-    COMPILE_DEFINITIONS
-    "VERSION=\"${VERSION}\""
-)
+add_subdirectory(loader)
 
-# targets
-set(LOADER_ELF loader.elf)  # final loader executable as an ELF binary
-set(LOADER_BIN loader.bin)  # final loader executable as a flat binary
-
-
-add_executable(
-    ${LOADER_ELF}
-    ${LOADER_ENTRY}
-    ${LOADER_PLATFORM_SRC}
-    ${LOADER_ISA_SRC}
-    ${LOADER_SRC}
-    ${LOADER_LD_SCRIPT}
-)
-set_target_properties(
-    ${LOADER_ELF}
-    PROPERTIES
-    LINK_FLAGS "-T ${LOADER_LD_SCRIPT} -nostdlib"
-)
-
-add_custom_command(
-    OUTPUT ${LOADER_BIN}
-    COMMAND ${GCC_LD} -o ${LOADER_BIN} -T ${LOADER_LD_SCRIPT} -s --oformat binary ${LOADER_ELF}
-    COMMENT "Linking flat binary loader.bin"
-    DEPENDS ${LOADER_ELF}
-)
-
-add_custom_target(loader ALL
-    DEPENDS ${LOADER_BIN} ${BOOTSTRAP_BIN}
-)
