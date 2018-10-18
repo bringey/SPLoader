@@ -7,3 +7,5 @@ src/mem.c
 src/printf.c
 src/string.c
 src/version.c
+src/disk/gpt.c
+src/disk/mbr.c

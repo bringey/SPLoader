@@ -10,9 +10,7 @@
 **
 */
 
-#ifndef OPT_DISK_MBR
-#define OPT_DISK_MBR
-#endif
+#ifdef OPT_DISK_MBR
 
 #include <blocklist.h>
 #include <disk/mbr.h>
@@ -75,3 +73,9 @@ int disk_mbr_findBoot(MbrGeneric *mbr, int *numVar) {
 
     return E_FAILURE;
 }
+
+#else
+
+typedef int dummy;
+
+#endif

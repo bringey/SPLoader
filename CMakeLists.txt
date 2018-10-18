@@ -50,13 +50,11 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${SOURCES})
 
 
 if(OPT_DISK_GPT)
-    list(APPEND DEFINES "-DOPT_DISK_GPT")
-    list(APPEND LOADER_SRC "src/disk/gpt.c")
+    add_definitions(-DOPT_DISK_GPT)
 endif(OPT_DISK_GPT)
 
 if(OPT_DISK_MBR)
-    list(APPEND DEFINES "-DOPT_DISK_MBR")
-    list(APPEND LOADER_SRC "src/disk/mbr.c")
+   add_definitions(-DOPT_DISK_MBR)
 endif(OPT_DISK_MBR)
 
 # compiler flags

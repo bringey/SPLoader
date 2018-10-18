@@ -7,9 +7,7 @@
 **       this file to the LOADER_OBJ list.
 */
 
-#ifndef OPT_DISK_GPT
-#define OPT_DISK_GPT
-#endif
+#ifdef OPT_DISK_GPT
 
 #include <assert.h>
 #include <disk.h>
@@ -102,3 +100,9 @@ uint32_t reverse(uint32_t num) {
     num = ((num & 0x0F0F0F0F) << 4) | ((num >> 4) & 0x0F0F0F0F);
     return (num << 24) | ((num & 0xFF00) << 8) | ((num >> 8) & 0xFF00) | (num >> 24);
 }
+
+#else
+
+typedef int dummy;
+
+#endif
