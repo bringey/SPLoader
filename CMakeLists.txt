@@ -75,5 +75,9 @@ endif()
 option(ENABLE_WERROR "Treat compiler warnings as errors" ON)
 set(WARNFLAGS "-Wall -Wextra -pedantic" CACHE STRING "Default GCC Warning enable flags")
 
+set(VERSION_FILE "VERSION")
+file(READ ${VERSION_FILE} VERSION)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${VERSION_FILE})
+
 add_subdirectory(loader)
 add_subdirectory(tools)
