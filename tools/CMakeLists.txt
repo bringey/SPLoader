@@ -14,3 +14,5 @@ add_executable(
     ${MKIMAGE}
     ${MKIMAGE_SRC}
 )
+
+set(MKIMAGE ${CMAKE_CURRENT_BINARY_DIR}/${MKIMAGE} CACHE INTERNAL "" FORCE)

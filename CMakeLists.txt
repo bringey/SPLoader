@@ -7,7 +7,7 @@ endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-project(sploader)
+#project(sploader)
 
 if(NOT DEFINED TARGET)
     set(TARGET "i386-pc")
@@ -81,3 +81,5 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${VERSION_FILE})
 
 add_subdirectory(loader)
 add_subdirectory(tools)
+
+custom_targets()

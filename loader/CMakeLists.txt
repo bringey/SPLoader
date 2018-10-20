@@ -107,3 +107,10 @@ add_custom_command(
 add_custom_target(loader ALL
     DEPENDS ${LOADER_BIN} ${BOOTSTRAP_BIN}
 )
+
+# let other projects know about these targets
+
+set(LOADER_BIN ${CMAKE_CURRENT_BINARY_DIR}/${LOADER_BIN} CACHE INTERNAL "" FORCE)
+if(BOOTSTRAP_BIN)
+    set(BOOTSTRAP_BIN ${CMAKE_CURRENT_BINARY_DIR}/${BOOTSTRAP_BIN} CACHE INTERNAL "" FORCE)
+endif(BOOTSTRAP_BIN)
