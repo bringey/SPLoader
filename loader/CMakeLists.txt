@@ -58,18 +58,16 @@ if(OPT_DISK_MBR)
 endif(OPT_DISK_MBR)
 
 # compiler flags
+set(BASE_FLAGS -std=gnu11 -ffreestanding)
+
 option(LOADER_WERROR "WERROR override for loader project" ${ENABLE_WERROR})
 set(LOADER_WARNFLAGS ${WARNFLAGS} CACHE STRING "GCC Warning enable flags for loader project")
-set(LOADER_CFLAGS "-fdiagnostics-color=always -std=gnu11 -ffreestanding" CACHE STRING "C compiler flags for loader")
+set(LOADER_CFLAGS "" CACHE STRING "C compiler flags for loader")
 if(LOADER_WERROR)
     set(WERROR "-Werror")
 else(LOADER_WERROR)
     set(WERROR "")
 endif(LOADER_WERROR)
-
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LOADER_CFLAGS} ${WERROR} ${LOADER_WARNFLAGS}")
-#set(CMAKE_EXE_LINKER_FLAGS "")
 
 # pass on the version string to version.c
 set_source_files_properties(src/version.c 
@@ -95,6 +93,10 @@ set_target_properties(
     ${LOADER_ELF}
     PROPERTIES
     LINK_FLAGS "-T ${LOADER_LD_SCRIPT} -nostdlib"
+)
+target_compile_options(
+    ${LOADER_ELF}
+    PUBLIC ${BASE_FLAGS} ${LOADER_FLAGS} ${WERROR} ${LOADER_WARNFLAGS}
 )
 
 add_custom_command(

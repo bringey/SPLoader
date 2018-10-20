@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(FATAL ERROR "in-source builds are not allowed")
@@ -7,7 +7,7 @@ endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-#project(sploader)
+project(sploader)
 
 if(NOT DEFINED TARGET)
     set(TARGET "i386-pc")
@@ -73,7 +73,7 @@ endif()
 
 
 option(ENABLE_WERROR "Treat compiler warnings as errors" ON)
-set(WARNFLAGS "-Wall -Wextra -pedantic" CACHE STRING "Default GCC Warning enable flags")
+set(WARNFLAGS -Wall -Wextra -pedantic CACHE STRING "Default GCC Warning enable flags")
 
 set(VERSION_FILE "VERSION")
 file(READ ${VERSION_FILE} VERSION)
