@@ -5,9 +5,9 @@
 **
 */
 
-#include <assert.h>
-#include <err.h>
-#include <string.h>
+#include <loader/assert.h>
+#include <loader/err.h>
+#include <loader/string.h>
 
 #include <stdint.h>
 

@@ -1,9 +1,9 @@
 
-#include <err.h>
-#include <mem.h>
+#include <loader/err.h>
+#include <loader/mem.h>
 
-#include <i386-pc/loader.h>
-#include <i386-pc/mem.h>
+#include <loader/i386-pc/loader.h>
+#include <loader/i386-pc/mem.h>
 
 #include <stddef.h>
 #include <stdint.h>

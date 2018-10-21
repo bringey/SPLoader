@@ -5,9 +5,9 @@
 */
 
 #define __ASM__
-#include <i386-pc/loader.h>
-#include <i386-pc/realmode.h>
-#include <i386-pc/Regs32.h>
+#include <loader/i386-pc/loader.h>
+#include <loader/i386-pc/realmode.h>
+#include <loader/i386-pc/Regs32.h>
 
 #define RELOC(label) ((label - __int32_reloc) + LOADER_REALMODE_ADDRESS)
 

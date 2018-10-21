@@ -9,11 +9,11 @@
 
 #ifdef OPT_DISK_GPT
 
-#include <assert.h>
-#include <disk.h>
-#include <disk/gpt.h>
-#include <err.h>
-#include <string.h>
+#include <loader/assert.h>
+#include <loader/disk.h>
+#include <loader/disk/gpt.h>
+#include <loader/err.h>
+#include <loader/string.h>
 
 static uint32_t reverse(uint32_t num);
 

@@ -4,14 +4,14 @@
 ** Author: bringey
 */
 
-#include <assert.h>
-#include <disk.h>
+#include <loader/assert.h>
+#include <loader/disk.h>
 
-#include <i386/regs.h>
-#include <err.h>
+#include <loader/i386/regs.h>
+#include <loader/err.h>
 
-#include <i386-pc/loader.h>
-#include <i386-pc/realmode.h>
+#include <loader/i386-pc/loader.h>
+#include <loader/i386-pc/realmode.h>
 
 
 // Stage 0 got the drive parameters and left them at 07C0:8000

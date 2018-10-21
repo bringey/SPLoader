@@ -4,9 +4,9 @@
 ** Author: bringey
 */
 
-#include <console.h>
-#include <err.h>
-#include <mem.h>
+#include <loader/console.h>
+#include <loader/err.h>
+#include <loader/mem.h>
 
 #include <stdint.h>
 

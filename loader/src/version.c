@@ -6,7 +6,7 @@
 */ 
 
 
-#include <version.h>
+#include <loader/version.h>
 
 #ifndef VERSION
 #warning VERSION was not defined: using default 0.0.0

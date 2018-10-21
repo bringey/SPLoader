@@ -4,7 +4,6 @@ project(tools C)
 
 include_directories(
     SYSTEM "${CMAKE_SOURCE_DIR}/include"
-    "${CMAKE_SOURCE_DIR}/loader/include"
 )
 
 #

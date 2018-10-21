@@ -5,13 +5,13 @@
 **
 */
 
-#include <abort.h>
-#include <assert.h>
-#include <console.h>
-#include <disk.h>
-#include <err.h>
-#include <mem.h>
-#include <string.h>
+#include <loader/abort.h>
+#include <loader/assert.h>
+#include <loader/console.h>
+#include <loader/disk.h>
+#include <loader/err.h>
+#include <loader/mem.h>
+#include <loader/string.h>
 
 
 DiskLabel disk_detect(Disk *disk) {

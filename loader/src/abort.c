@@ -7,9 +7,9 @@
 **
 */
 
-#include <abort.h>
-#include <err.h>
-#include <console.h>
+#include <loader/abort.h>
+#include <loader/err.h>
+#include <loader/console.h>
 
 #include <stdbool.h>
 

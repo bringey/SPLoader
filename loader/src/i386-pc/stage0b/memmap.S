@@ -6,8 +6,8 @@
 */
 
 #define __ASM__
-#include <i386-pc/loader.h>
-#include <i386-pc/mem.h>
+#include <loader/i386-pc/loader.h>
+#include <loader/i386-pc/mem.h>
 
     .arch i686
     .code16

@@ -10,8 +10,8 @@
 **
 */
 
-#include <console.h>
-#include <err.h>
+#include <loader/console.h>
+#include <loader/err.h>
 
 #include <stddef.h>
 #include <stdint.h>

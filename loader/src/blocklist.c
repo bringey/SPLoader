@@ -1,7 +1,7 @@
 
-#include <assert.h>
-#include <err.h>
-#include <blocklist.h>
+#include <loader/assert.h>
+#include <loader/err.h>
+#include <loader/blocklist.h>
 
 #define min(x, y) ((x < y) ? x : y)
 #define max(x, y) ((x > y) ? x : y)

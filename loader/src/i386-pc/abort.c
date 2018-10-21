@@ -5,13 +5,13 @@
 **
 */
 
-#include <abort.h>
-#include <err.h>
-#include <console.h>
+#include <loader/abort.h>
+#include <loader/err.h>
+#include <loader/console.h>
 
-#include <i386/regs.h>
+#include <loader/i386/regs.h>
 
-#include <i386-pc/loader.h>
+#include <loader/i386-pc/loader.h>
 
 #include <stddef.h>
 

@@ -7,7 +7,7 @@
 **
 */
 
-#include <i386-pc/loader.h>
+#include <loader/i386-pc/loader.h>
 
     .arch i686
     .text

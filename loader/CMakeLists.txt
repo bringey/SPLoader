@@ -7,7 +7,6 @@ target_toolchain()
 
 include_directories(
     SYSTEM "${CMAKE_SOURCE_DIR}/include"
-    "include"
 )
 
 include(CheckCCompilerFlag)

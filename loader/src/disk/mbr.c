@@ -12,10 +12,10 @@
 
 #ifdef OPT_DISK_MBR
 
-#include <blocklist.h>
-#include <disk/mbr.h>
-#include <err.h>
-#include <console.h>
+#include <loader/blocklist.h>
+#include <loader/disk/mbr.h>
+#include <loader/err.h>
+#include <loader/console.h>
 
 
 int disk_mbr_check(MbrGeneric *mbr) {

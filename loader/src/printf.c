@@ -4,10 +4,10 @@
 ** Author: bringey
 */
 
-#include <assert.h>
-#include <err.h>
-#include <printf.h>
-#include <string.h>
+#include <loader/assert.h>
+#include <loader/err.h>
+#include <loader/printf.h>
+#include <loader/string.h>
 
 #include <stdarg.h>
 #include <stdbool.h>

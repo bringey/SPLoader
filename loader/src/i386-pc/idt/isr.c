@@ -5,15 +5,15 @@
 **
 */
 
-#include <i386-pc/idt/isr.h>
-#include <i386-pc/idt/IDTGate.h>
-#include <i386-pc/pic.h>
-#include <i386/io.h>
-#include <abort.h>
-#include <err.h>
-#include <console.h>
+#include <loader/i386-pc/idt/isr.h>
+#include <loader/i386-pc/idt/IDTGate.h>
+#include <loader/i386-pc/pic.h>
+#include <loader/i386/io.h>
+#include <loader/abort.h>
+#include <loader/err.h>
+#include <loader/console.h>
 
-#include <i386-pc/loader.h>
+#include <loader/i386-pc/loader.h>
 
 #include <stddef.h>
 #include <stdint.h>

@@ -5,10 +5,10 @@
 **
 */
 
-#include <err.h>
-#include <console.h>
-#include <printf.h>
-#include <string.h>
+#include <loader/err.h>
+#include <loader/console.h>
+#include <loader/printf.h>
+#include <loader/string.h>
 
 #include <stdarg.h>
 #include <stdint.h>

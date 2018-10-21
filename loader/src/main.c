@@ -7,14 +7,14 @@
 **
 */
 
-#include <console.h>
+#include <loader/console.h>
 
-#include <abort.h>
-#include <disk.h>
-#include <mem.h>
-#include <version.h>
+#include <loader/abort.h>
+#include <loader/disk.h>
+#include <loader/mem.h>
+#include <loader/version.h>
 
-#include <disk/gpt.h>
+#include <loader/disk/gpt.h>
 
 //
 // Stage 1 main routine
