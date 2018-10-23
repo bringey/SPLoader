@@ -79,7 +79,30 @@ set(VERSION_FILE "VERSION")
 file(READ ${VERSION_FILE} VERSION)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${VERSION_FILE})
 
+macro(project_template)
+
+    set(CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/config")
+    set(CMAKE_MODULE_PATH ${CONFIG_DIR})
+
+    string(TOUPPER ${PROJECT_NAME} PREFIX)
+    option(${PREFIX}_WERROR "WERROR override for ${PROJECT_NAME} project" ${ENABLE_WERROR})
+    set(${PREFIX}_WARNFLAGS ${${PREFIX}_WARNFLAGS} ${WARNFLAGS} CACHE STRING "Warning flags for ${PROJECT_NAME}")
+    set(${PREFIX}_CFLAGS ${${PREFIX}_CFLAGS} CACHE STRING "C compiler flags for ${PROJECT_NAME}")
+
+    if (${PREFIX}_WERROR)
+        set(WERROR -Werror)
+    else()
+        set(WERROR "")
+    endif()
+
+    unset(PREFIX)
+
+endmacro(project_template)
+
+
 add_subdirectory(loader)
 add_subdirectory(tools)
 
 custom_targets()
+
+configure_file(qemu ${CMAKE_BINARY_DIR}/qemu COPYONLY)

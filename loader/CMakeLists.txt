@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10.0)
 project(loader C)
 enable_language(ASM)
 
+project_template()
+
 # use the target toolchain instead of the host's
 target_toolchain()
 
@@ -16,9 +18,6 @@ check_c_compiler_flag(-std=gnu11 HAVE_GNU11)
 if (NOT HAVE_GNU11)
     message(FATAL_ERROR "Compiler {CMAKE_C_COMPILER} does not support C11 standard (with GNU extensions)")
 endif (NOT HAVE_GNU11)
-
-set(CONFIG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/config)
-set(CMAKE_MODULE_PATH ${CONFIG_DIR})
 
 # target isa/platform configuration
 include(${TARGET_ISA}/config OPTIONAL)
@@ -59,20 +58,11 @@ endif(OPT_DISK_MBR)
 # compiler flags
 set(BASE_FLAGS -std=gnu11 -ffreestanding)
 
-option(LOADER_WERROR "WERROR override for loader project" ${ENABLE_WERROR})
-set(LOADER_WARNFLAGS ${WARNFLAGS} CACHE STRING "GCC Warning enable flags for loader project")
-set(LOADER_CFLAGS "" CACHE STRING "C compiler flags for loader")
-if(LOADER_WERROR)
-    set(WERROR "-Werror")
-else(LOADER_WERROR)
-    set(WERROR "")
-endif(LOADER_WERROR)
-
 # pass on the version string to version.c
 set_source_files_properties(src/version.c 
     PROPERTIES
-    COMPILE_DEFINITIONS
-    "VERSION=\"${VERSION}\""
+    COMPILE_DEFINITIONS "VERSION=\"${VERSION}\""
+    OBJECT_DEPENDS ${CMAKE_SOURCE_DIR}/${VERSION_FILE}
 )
 
 # targets
