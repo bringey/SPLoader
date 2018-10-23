@@ -26,6 +26,14 @@
 #define SPL_ARCH_AARCH64        0xB7
 
 //
+// Disk Labels
+//
+#define SPL_DISK_LABEL_UNKNOWN  0x0     // Disk label is unknown or corrupted
+#define SPL_DISK_LABEL_NONE     0x1     // No label detected on disk (for embedded installs)
+#define SPL_DISK_LABEL_MBR      0x2     // MBR
+#define SPL_DISK_LABEL_GPT      0x3     // GPT + Protective MBR
+
+//
 // Endianess
 //
 #define SPL_ENDIAN_LITTLE       0x01
@@ -87,6 +95,8 @@ struct SplHeader_s {
     uint32_t loaderSize;        // size of the loader binary, in bytes
     uint32_t label;             // disk label type
     uint32_t partition;         // boot partition index
+
+    // remainder of the block is zero
 
 } __attribute__((packed));
 

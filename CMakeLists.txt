@@ -99,7 +99,7 @@ macro(project_template)
 
 endmacro(project_template)
 
-
+add_subdirectory(libsploader)
 add_subdirectory(loader)
 add_subdirectory(tools)
 
