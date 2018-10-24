@@ -79,6 +79,14 @@ set(VERSION_FILE "VERSION")
 file(READ ${VERSION_FILE} VERSION)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${VERSION_FILE})
 
+function(prepend outputVar prefix)
+    set(list "")
+    foreach(i ${ARGN})
+        list(APPEND list "${prefix}${i}")
+    endforeach(i)
+    set(${outputVar} "${list}" PARENT_SCOPE)
+endfunction(prepend)
+
 macro(project_template)
 
     set(CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/config")
@@ -100,6 +108,7 @@ macro(project_template)
 endmacro(project_template)
 
 add_subdirectory(libsploader)
+add_subdirectory(libsploaderk)
 add_subdirectory(loader)
 add_subdirectory(tools)
 
