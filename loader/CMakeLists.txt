@@ -83,6 +83,7 @@ target_compile_options(
     ${LOADER_ELF}
     PUBLIC ${BASE_FLAGS} ${LOADER_FLAGS} ${WERROR} ${LOADER_WARNFLAGS}
 )
+target_link_libraries(${LOADER_ELF} ${LIBSPLOADERK})
 
 add_custom_command(
     OUTPUT ${LOADER_BIN}
