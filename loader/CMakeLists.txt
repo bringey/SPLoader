@@ -2,17 +2,17 @@ cmake_minimum_required(VERSION 3.10.0)
 project(loader C)
 enable_language(ASM)
 
-project_template()
-
 # use the target toolchain instead of the host's
 target_toolchain()
+
+project_template()
 
 include(CheckCCompilerFlag)
 
 # compiler checking
 check_c_compiler_flag(-std=gnu11 HAVE_GNU11)
 if (NOT HAVE_GNU11)
-    message(FATAL_ERROR "Compiler {CMAKE_C_COMPILER} does not support C11 standard (with GNU extensions)")
+    message(FATAL_ERROR "Compiler ${CMAKE_C_COMPILER} does not support C11 standard (with GNU extensions)")
 endif (NOT HAVE_GNU11)
 
 # target isa/platform configuration

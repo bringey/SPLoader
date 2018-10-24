@@ -91,11 +91,6 @@ int disk_gpt_checkHeader(uint64_t lba, GptHeader *header);
 
 int disk_gpt_checkTable(GptHeader *header, GptPartitionEntry *table);
 
-//
-// Calculate a CRC32 checksum for the given data buffer. 
-//
-uint32_t disk_gpt_crc32(uint8_t *data, size_t size);
-
 #endif
 
 #endif

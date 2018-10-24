@@ -9,13 +9,13 @@
 
 #ifdef OPT_DISK_GPT
 
+#include <sploader.h>
+
 #include <loader/assert.h>
 #include <loader/disk.h>
 #include <loader/disk/gpt.h>
 #include <loader/err.h>
 #include <loader/string.h>
-
-static uint32_t reverse(uint32_t num);
 
 
 int disk_gpt_check(void) {
@@ -58,7 +58,7 @@ int disk_gpt_checkHeader(uint64_t lba, GptHeader *header) {
     uint32_t headerCrc = header->headerCrc32;
     // zero the header crc field (must be zero when calculating the CRC)
     header->headerCrc32 = 0;
-    uint32_t testCrc = disk_gpt_crc32((uint8_t*)header, header->headerSize);
+    uint32_t testCrc = spl_crc32((uint8_t*)header, header->headerSize);
     // restore the old crc value back in header
     header->headerCrc32 = headerCrc;
     if (headerCrc != testCrc) {
@@ -72,33 +72,6 @@ int disk_gpt_checkHeader(uint64_t lba, GptHeader *header) {
 
 
     return E_SUCCESS;
-}
-
-uint32_t disk_gpt_crc32(uint8_t *data, size_t size) {
-
-    uint32_t byte;
-    uint32_t crc = 0xFFFFFFFF;
-    for (size_t i = 0; i != size; ++i) {
-        byte = reverse(data[i]);
-        for (size_t j = 0; j != 8; ++j) {
-            if ((int)(crc ^ byte) < 0) {
-                crc = (crc << 1) ^ 0x04C11DB7;
-            } else {
-                crc <<= 1;
-            }
-            byte <<= 1;
-        }
-    }
-
-    return reverse(~crc);
-
-}
-
-uint32_t reverse(uint32_t num) {
-    num = ((num & 0x55555555) << 1) | ((num >> 1) & 0x55555555);
-    num = ((num & 0x33333333) << 2) | ((num >> 2) & 0x33333333);
-    num = ((num & 0x0F0F0F0F) << 4) | ((num >> 4) & 0x0F0F0F0F);
-    return (num << 24) | ((num & 0xFF00) << 8) | ((num >> 8) & 0xFF00) | (num >> 24);
 }
 
 #else

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10.0)
-project(host C)
+project(libsploaderk C)
 
 project_template()
 
@@ -19,8 +19,8 @@ add_library(
 )
 target_compile_options(
     ${LIBSPLOADERK}
-    PUBLIC -ffreestanding -std=gnu11 
+    PRIVATE -ffreestanding -std=gnu11 
         ${LIBSPLOADERK_CFLAGS}
         ${LIBSPLOADERK_WARNFLAGS}
-        ${LIBSPLOADERK_WERROR}
+        ${WERROR}
 )
