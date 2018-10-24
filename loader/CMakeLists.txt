@@ -7,10 +7,6 @@ project_template()
 # use the target toolchain instead of the host's
 target_toolchain()
 
-include_directories(
-    SYSTEM "${CMAKE_SOURCE_DIR}/include"
-)
-
 include(CheckCCompilerFlag)
 
 # compiler checking

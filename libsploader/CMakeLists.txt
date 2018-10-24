@@ -3,10 +3,6 @@ project(libsploader C)
 
 project_template()
 
-include_directories(
-    SYSTEM "${CMAKE_SOURCE_DIR}/include"
-)
-
 set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/config/sources")
 file(STRINGS ${SOURCES} LIBSPLOADER_SRC)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${SOURCES})

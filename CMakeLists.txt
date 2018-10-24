@@ -107,6 +107,10 @@ macro(project_template)
 
 endmacro(project_template)
 
+include_directories(
+    SYSTEM "${CMAKE_SOURCE_DIR}/include"
+)
+
 add_subdirectory(libsploader)
 add_subdirectory(libsploaderk)
 add_subdirectory(loader)

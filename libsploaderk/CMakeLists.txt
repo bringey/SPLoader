@@ -5,10 +5,6 @@ project_template()
 
 target_toolchain()
 
-include_directories(
-    SYSTEM "${CMAKE_SOURCE_DIR}/include"
-)
-
 set(SOURCES "${CMAKE_SOURCE_DIR}/libsploader/config/sources")
 file(STRINGS ${SOURCES} LIBSPLOADERK_SRC)
 prepend(LIBSPLOADERK_SRC "${CMAKE_SOURCE_DIR}/libsploader/" ${LIBSPLOADERK_SRC})

@@ -3,10 +3,6 @@ project(tools C)
 
 project_template()
 
-include_directories(
-    SYSTEM "${CMAKE_SOURCE_DIR}/include"
-)
-
 set(MKIMAGE "mkimage")
 set(MKIMAGE_SRC "mkimage/mkimage.c")
 
