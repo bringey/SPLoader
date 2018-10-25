@@ -1,5 +1,5 @@
 /*
-** File: mkimage.c
+** File: tools/src/mkimage.c
 **
 ** mkimage <image files> -o <output_file>
 **
@@ -102,6 +102,7 @@ int main(int argc, char* argv[]) {
         switch (c) {
             case ':':
                 fprintf(stderr, "missing operand after -%c\n", optopt);
+                // fall through
             case '?':
                 usage();
                 break;
