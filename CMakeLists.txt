@@ -107,6 +107,14 @@ macro(project_template)
 
 endmacro(project_template)
 
+function(sources var filename)
+
+    file(STRINGS ${filename} SRC)
+    set(${var} ${SRC} PARENT_SCOPE)
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${filename})
+
+endfunction(sources)
+
 include_directories(
     SYSTEM "${CMAKE_SOURCE_DIR}/include"
 )

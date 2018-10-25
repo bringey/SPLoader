@@ -3,9 +3,7 @@ project(libsploader C)
 
 project_template()
 
-set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/config/sources")
-file(STRINGS ${SOURCES} LIBSPLOADER_SRC)
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${SOURCES})
+sources(LIBSPLOADER_SRC ${CONFIG_DIR}/sources)
 
 set(LIBSPLOADER "sploader" CACHE INTERNAL "" FORCE)
 

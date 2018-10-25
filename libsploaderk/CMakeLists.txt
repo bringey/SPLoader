@@ -5,10 +5,8 @@ project_template()
 
 target_toolchain()
 
-set(SOURCES "${CMAKE_SOURCE_DIR}/libsploader/config/sources")
-file(STRINGS ${SOURCES} LIBSPLOADERK_SRC)
+sources(LIBSPLOADERK_SRC "${CMAKE_SOURCE_DIR}/libsploader/config/sources")
 prepend(LIBSPLOADERK_SRC "${CMAKE_SOURCE_DIR}/libsploader/" ${LIBSPLOADERK_SRC})
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${SOURCES})
 
 set(LIBSPLOADERK "sploaderk" CACHE INTERNAL "" FORCE)
 

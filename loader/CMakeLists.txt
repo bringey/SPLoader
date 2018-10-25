@@ -25,20 +25,9 @@ include(${TARGET_ISA}/${TARGET_PLATFORM}/config)
 # ./config/<isa>/sources             : ISA-specific source files
 # ./config/<isa>/<platform>/sources  : Platform-specific source files
 # ./config/sources                   : cross-platform source files
-
-set(ISA_SOURCES ${CONFIG_DIR}/${TARGET_ISA}/sources)
-set(PLATFORM_SOURCES ${CONFIG_DIR}/${TARGET_ISA}/${TARGET_PLATFORM}/sources)
-set(SOURCES ${CONFIG_DIR}/sources)
-
-file(STRINGS ${ISA_SOURCES} LOADER_ISA_SRC)
-file(STRINGS ${PLATFORM_SOURCES} LOADER_PLATFORM_SRC)
-file(STRINGS ${SOURCES} LOADER_SRC)
-
-# these will allow the build system to automatically reconfigure cmake if any
-# of the sources lists get modified.
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${ISA_SOURCES})
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${PLATFORM_SOURCES})
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${SOURCES})
+sources(LOADER_SRC          ${CONFIG_DIR}/sources)
+sources(LOADER_ISA_SRC      ${CONFIG_DIR}/${TARGET_ISA}/sources)
+sources(LOADER_PLATFORM_SRC ${CONFIG_DIR}/${TARGET_ISA}/${TARGET_PLATFORM}/sources)
 
 #set_property(DIRECTORY)
 
