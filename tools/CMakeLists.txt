@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(tools C)
 
+set(TOOLS_CFLAGS -std=gnu11)
 project_template()
 
 sources(MKIMAGE_SRC ${CONFIG_DIR}/mkimage.sources)
@@ -20,6 +21,7 @@ target_compile_options(
     ${MKBIN}
     PUBLIC ${TOOLS_CFLAGS} ${WERROR} ${TOOLS_WARNFLAGS}
 )
+target_link_libraries(${MKBIN} ${LIBSPLOADER})
 
 add_executable(
     ${MKIMAGE}
