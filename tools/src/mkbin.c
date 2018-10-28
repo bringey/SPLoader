@@ -18,18 +18,17 @@
 
 #include <sploader.h>
 
-#define EXIT_BAD_OPTIONS 2
+#define USAGE_STR "mkbin [-e] [options] <input> [-o <output>]"
+#include "common.h"
+
 #define DEFAULT_BLOCKSIZE 512
 
 
-typedef struct Prog_s {
+struct ProgData {
     FILE *in;
     FILE *out;
     uint8_t *buf;
-    char *name;
-} Prog;
-
-typedef struct ProgOpt_s {
+    // command-line options
     bool editmode;      // if true, the input file is a spl binary to be edited
     bool verbose;
     uint32_t flags;     // flags bitmap to set in the header
@@ -38,39 +37,42 @@ typedef struct ProgOpt_s {
     char *outputFile;
     char *inputFile;
     uint32_t setmap;    // bitmap of fields to update the header with
-} ProgOpt;
-
-static int parse_args(int argc, char *argv[], ProgOpt *opts);
-static void quit(Prog *prog, int code);
-static void cleanup(Prog *prog);
-
+};
 
 #define SETMAP_F    0x1
 #define SETMAP_L    0x2
 #define SETMAP_P    0x4
 #define SETMAP_ALL  0xFFFFFFFF
 
-#define eputs(name, msg) \
-    fprintf(stderr, "%s: %s\n", name, msg)
+static bool edit_header(Prog *prog, SplHeader *header);
 
-#define eprintf(fmt, name, ...) \
-    fprintf(stderr, "%s: " fmt, name, ##__VA_ARGS__)
+int init(Prog *prog) {
+    nullcheck(prog);
 
-#define usage() \
-    fputs("usage: mkbin [-e] [options] <input> [-o <output>]\n", stderr)
-
-
-FILE* checkfopen(Prog *p, const char *filename, const char *mode) {
-    FILE *f = fopen(filename, mode);
-    if (f == NULL) {
-        eprintf("unable to open file '%s'\n", p->name, filename);
-        quit(p, EXIT_FAILURE);
+    ProgData *data = (ProgData*)malloc(sizeof(ProgData));
+    if (data == NULL) {
+        return EXIT_FAILURE;
+    } else {
+        *data = (ProgData){
+            .in = NULL,
+            .out = NULL,
+            .buf = NULL,
+            .editmode = false,
+            .verbose = false,
+            .flags = 0,
+            .label = SPL_DISK_LABEL_UNKNOWN,
+            .partition = 0,
+            .inputFile = NULL,
+            .outputFile = NULL,
+            .setmap = 0
+        };
+        prog->data = data;
+        return EXIT_SUCCESS;
     }
-    return f;
 }
 
 
-int parse_args(int argc, char *argv[], ProgOpt *opts) {
+int parse_args(Prog *prog, int argc, char *argv[]) {
 
     static int label = SPL_DISK_LABEL_UNKNOWN;
 
@@ -88,19 +90,9 @@ int parse_args(int argc, char *argv[], ProgOpt *opts) {
         {0, 0, 0, 0}
     };
 
-    
-
-    // default options
-    *opts = (ProgOpt){
-        .editmode = false,
-        .verbose = false,
-        .flags = 0,
-        .label = SPL_DISK_LABEL_UNKNOWN,
-        .partition = 0,
-        .inputFile = NULL,
-        .outputFile = NULL,
-        .setmap = 0
-    };
+    nullcheck(prog);
+    ProgData *data = prog->data;
+    nullcheck(data);
 
     bool badoptions = false;
 
@@ -116,33 +108,33 @@ int parse_args(int argc, char *argv[], ProgOpt *opts) {
 
         switch (c) {
             case 0:
-                opts->label = label;
-                opts->setmap |= SETMAP_L;
+                data->label = label;
+                data->setmap |= SETMAP_L;
                 break;
             case 'e':
-                opts->editmode = true;
+                data->editmode = true;
                 break;
             case 'f':
-                opts->setmap |= SETMAP_F;
+                data->setmap |= SETMAP_F;
                 break;
             // case 'l':
-            //     opts->setmap |= SETMAP_L;
+            //     data->setmap |= SETMAP_L;
             //     break;
             case 'o':
-                opts->outputFile = optarg;
+                data->outputFile = optarg;
                 break;
             case 'p':
-                opts->setmap |= SETMAP_P;
+                data->setmap |= SETMAP_P;
                 long num = strtol(optarg, NULL, 10);
                 if (num < 0) {
-                    eputs(argv[0], "parition index must be positive");
+                    eputs(prog, "parition index must be positive");
                     badoptions = true;
                 } else {
-                    opts->partition = (uint32_t)num;
+                    data->partition = (uint32_t)num;
                 }
                 break;
             case 'v':
-                opts->verbose = true;
+                data->verbose = true;
                 break;
             case '?':
             default:
@@ -156,22 +148,22 @@ int parse_args(int argc, char *argv[], ProgOpt *opts) {
     // mkbin -e loader.spl              # edit mode
     // mkbin loader.bin -o loader.spl   # output mode
     //
-    // x = opts->editmode
-    // y = opts->outputFile == NULL
+    // x = data->editmode
+    // y = data->outputFile == NULL
     // test if x != y
-    if (opts->editmode != (opts->outputFile == NULL)) {
+    if (data->editmode != (data->outputFile == NULL)) {
         const char *msg;
-        if (opts->editmode) {
+        if (data->editmode) {
             msg = "-o option cannot be used in edit mode";
         } else {
             msg = "missing output argument";
         }
-        eputs(argv[0], msg);
+        eputs(prog, msg);
         badoptions = true;
     }
 
     if (argc - optind != 1) {
-        eputs(argv[0], "missing input argument");
+        eputs(prog, "missing input argument");
         badoptions = true;
     }
 
@@ -179,115 +171,53 @@ int parse_args(int argc, char *argv[], ProgOpt *opts) {
         usage();
         return EXIT_BAD_OPTIONS;
     } else {
-        opts->inputFile = argv[optind];
+        data->inputFile = argv[optind];
         return EXIT_SUCCESS;
     }
 }
 
-bool edit_header(SplHeader *header, ProgOpt *opts) {
-    if (opts->setmap == 0) {
-        return false;
-    } else {
-        if (opts->setmap & SETMAP_F) {
-            header->flags = opts->flags;
-        }
+int run(Prog *prog) {
+    nullcheck(prog);
 
-        if (opts->setmap & SETMAP_L) {
-            header->label = opts->label;
-        }
-
-        if (opts->setmap & SETMAP_P) {
-            header->partition = opts->partition;
-        }
-
-        SplHeader copy;
-        memcpy(&copy, header, sizeof(SplHeader));
-        copy.headerCrc = 0;
-        copy.loaderCrc = 0;
-        uint32_t crc = spl_crc32((uint8_t*)&copy, sizeof(SplHeader));
-        header->headerCrc = crc;
-        return true;
-    }
-
-}
-
-
-void cleanup(Prog *prog) {
-    if (prog->in != NULL) {
-        fclose(prog->in);
-        prog->in = NULL;
-    }
-    if (prog->out != NULL) {
-        fclose(prog->out);
-        prog->out = NULL;
-    }
-    if (prog->buf != NULL) {
-        free(prog->buf);
-        prog->buf = NULL;
-    }
-}
-
-
-//
-// Close all opened files and exit the program with the given error code
-// 
-void quit(Prog *prog, int code) {
-    cleanup(prog);
-    exit(code);
-}
-
-
-int main(int argc, char *argv[]) {
-
-    ProgOpt opts;
-    int code = parse_args(argc, argv, &opts);
-    if (code) {
-        return code;
-    }
-
-    Prog p = (Prog){
-        .in = NULL,
-        .out = NULL,
-        .name = argv[0]
-    };
-
+    ProgData *data = prog->data;
+    nullcheck(data);
     SplHeader header;
 
-    if (opts.editmode) {
+    if (data->editmode) {
         // load the header from the input file to edit
-        p.in = checkfopen(&p, opts.inputFile, "rb+");
-        p.out = p.in;
-        size_t bytesRead = fread(&header, sizeof(SplHeader), 1, p.in);
+        data->in = checkfopen(prog, data->inputFile, "rb+");
+        data->out = data->in;
+        size_t bytesRead = fread(&header, sizeof(SplHeader), 1, data->in);
         if (bytesRead != 1) {
-            eprintf("error occurred when reading '%s'\n", argv[0], opts.inputFile);
-            quit(&p, EXIT_FAILURE);
+            eprintf(prog, "error occurred when reading '%s'\n", data->inputFile);
+            quit(prog, EXIT_FAILURE);
         }
     } else {
         // read the input file and write it to the output
-        p.out = checkfopen(&p, opts.outputFile, "wb");
-        p.in = checkfopen(&p, opts.inputFile, "rb");
+        data->in = checkfopen(prog, data->inputFile, "rb");
+        data->out = checkfopen(prog, data->outputFile, "wb");
         size_t blocksize = DEFAULT_BLOCKSIZE;
         uint8_t *buf = (uint8_t*)malloc(blocksize);
-        p.buf = buf;
+        data->buf = buf;
         if (buf == NULL) {
-            eputs(argv[0], "unable to allocate memory");
-            quit(&p, EXIT_FAILURE);
+            eputs(prog, "unable to allocate memory");
+            quit(prog, EXIT_FAILURE);
         }
 
-        fseek(p.out, blocksize, SEEK_SET);
+        fseek(data->out, blocksize, SEEK_SET);
         size_t loaderSize = 0;
         uint32_t loaderCrc = SPL_CRC32_INIT;
         size_t bytesRead;
-        while ((bytesRead = fread(buf, sizeof(uint8_t), blocksize, p.in)) != 0) {
+        while ((bytesRead = fread(buf, sizeof(uint8_t), blocksize, data->in)) != 0) {
             if (bytesRead != blocksize) {
                 // we did not read a full block, pad the rest of the buffer
                 // with 0
                 memset(buf + bytesRead, 0, blocksize - bytesRead);
             }
 
-            if (fwrite(buf, sizeof(uint8_t), blocksize, p.out) != blocksize) {
-                eprintf("error occurred when writing to '%s'\n", argv[0], opts.outputFile);
-                quit(&p, EXIT_FAILURE);
+            if (fwrite(buf, sizeof(uint8_t), blocksize, data->out) != blocksize) {
+                eprintf(prog, "error occurred when writing to '%s'\n", data->outputFile);
+                quit(prog, EXIT_FAILURE);
             }
             loaderSize += bytesRead;
             for (size_t i = 0; i != bytesRead; ++i) {
@@ -304,25 +234,77 @@ int main(int argc, char *argv[]) {
         //#endif
         header.loaderSize = loaderSize;
         header.loaderCrc = spl_reverse32(~loaderCrc);
-        opts.setmap = SETMAP_ALL;
+        data->setmap = SETMAP_ALL;
     }
 
-    bool headerChanged = edit_header(&header, &opts);
+    bool headerChanged = edit_header(prog, &header);
 
     if (headerChanged) {
         // seek to the start (to write the header)
-        fseek(p.out, 0, SEEK_SET);
+        fseek(data->out, 0, SEEK_SET);
         // write the header
-        size_t bytesWritten = fwrite(&header, sizeof(SplHeader), 1, p.out);
+        size_t bytesWritten = fwrite(&header, sizeof(SplHeader), 1, data->out);
         if (bytesWritten != 1) {
-            eputs(argv[0], "error occurred when writing header");
-            quit(&p, EXIT_FAILURE);
+            eputs(prog, "error occurred when writing header");
+            quit(prog, EXIT_FAILURE);
         }
     }
 
-
-
-
-    cleanup(&p);
     return EXIT_SUCCESS;
+}
+
+bool edit_header(Prog *prog, SplHeader *header) {
+    nullcheck(prog);
+    nullcheck(header);
+
+    ProgData *data = prog->data;
+    nullcheck(data);
+
+    if (data->setmap == 0) {
+        return false;
+    } else {
+        if (data->setmap & SETMAP_F) {
+            header->flags = data->flags;
+        }
+
+        if (data->setmap & SETMAP_L) {
+            header->label = data->label;
+        }
+
+        if (data->setmap & SETMAP_P) {
+            header->partition = data->partition;
+        }
+
+        SplHeader copy;
+        memcpy(&copy, header, sizeof(SplHeader));
+        copy.headerCrc = 0;
+        copy.loaderCrc = 0;
+        uint32_t crc = spl_crc32((uint8_t*)&copy, sizeof(SplHeader));
+        header->headerCrc = crc;
+        return true;
+    }
+
+}
+
+
+void cleanup(Prog *prog) {
+    nullcheck(prog);
+
+    ProgData *data = prog->data;
+    if (data != NULL) {
+        if (data->in != NULL) {
+            fclose(data->in);
+            data->in = NULL;
+        }
+        if (data->out != NULL) {
+            fclose(data->out);
+            data->out = NULL;
+        }
+        if (data->buf != NULL) {
+            free(data->buf);
+            data->buf = NULL;
+        }
+    }
+    free(data);
+    prog->data = NULL;
 }
