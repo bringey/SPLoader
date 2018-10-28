@@ -46,6 +46,7 @@
 #define SPL_HEADER_SIGNATURE_HI 0x52454441   // "ADER" little-endian
 #define SPL_HEADER_SIGNATURE_LO 0x4F4C5053   // "SPLO" little-endian
 #define SPL_HEADER_SIGNATURE 0x524544414F4C5053ULL
+#define SPL_HEADER_SIGNATURE_STR "SPLOADER"
 
 //
 // Header byte offsets (for assembly)
@@ -77,6 +78,8 @@
 #define SPL_HEADER_INVALID 1
 #define SPL_HEADER_INTEGRITY 2
 
+#define SPL_CRC32_INIT       0xFFFFFFFF
+#define SPL_CRC32_POLYNOMIAL 0x04C11DB7
 
 #ifndef __ASM__
 
@@ -85,7 +88,7 @@
 
 struct SplHeader_s {
 
-    uint64_t signature;         // must be "SPLOADER"
+    uint8_t signature[8];       // must be "SPLOADER"
     uint8_t version[33];        // version string: <major>.<minor>.<patch>
     uint8_t endian;             // endianess of the header
     uint16_t arch;              // target architecture
@@ -112,6 +115,24 @@ int spl_check(SplHeader *header);
 // Calculate a CRC32 checksum for the given data buffer
 //
 uint32_t spl_crc32(uint8_t data[], size_t size);
+
+//
+// Accumulate a CRC32 checksum with the given data byte
+//
+uint32_t spl_crc32_acc(uint8_t data, uint32_t crc);
+
+//
+// Concludes a crc32 calculation, this function is to be called after
+// successive spl_crc32_acc calls.
+//
+#define spl_crc32_end(crc) \
+    spl_reverse32(~crc)
+
+//
+// Reverses the bits in a 32-bit integer. The reversed value of num is
+// returned.
+//
+uint32_t spl_reverse32(uint32_t num);
 
 #endif // __ASM__
 
