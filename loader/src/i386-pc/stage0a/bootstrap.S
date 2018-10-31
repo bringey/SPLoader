@@ -15,7 +15,8 @@
 #include <loader/i386-pc/stage0a/bootstrap.h>
 #include <loader/disk/mbr.h>
 #include <loader/i386-pc/loader.h>
-#include <loader/i386-pc/BootHeader.h>
+
+#include <sploader.h>
 
 //
 // Macro for stopping execution with a code as an immediate/register/address
@@ -137,24 +138,25 @@ loadimage:
     // the first sector is the boot header
     // the second contains loader16.bin
     movw    $dap, %si
-    movw    $16, dap_size                  // set the size to 16 (must be set)
+    movw    $16, dap_size                      // set the size to 16 (must be
+                                               // set)
     movw    $BOOT_SEGMENT, dap_buffer_segment  // setup transfer buffer
     movw    $0x200, dap_buffer_offset          // 07C0:0200 (0x7E00)
     movw    $1, dap_sectors                    // set the sectors to read
     movl    boot_lba, %ecx                     // ECX = boot partition LBA
     movl    %ecx, dap_lowlba
-    call    readsectors                    // do the read
-    testw   %ax, %ax                       // check for disk error
+    call    readsectors                        // do the read
+    testw   %ax, %ax                           // check for disk error
     jnz     loadimage_diskerror
 
-    // test the boot header located at 07C0:0200, make sure the signature is
+    // test the SplHeader located at 07C0:0200, make sure the signature is
     // correct. If it isn't then the image is either corrupted, or isn't a
     // sploader image.
     movl    bh_sig, %eax
-    xorl    $BOOT_HEADER_SIGNATURE_LO, %eax // test the lower four bytes
-    jnz     loadimage_badheader             // if ZF is set = header matched
+    xorl    $SPL_HEADER_SIGNATURE_LO, %eax     // test the lower four bytes
+    jnz     loadimage_badheader                // if ZF is set = header matched
     movl    bh_sig + 4, %eax
-    xorl    $BOOT_HEADER_SIGNATURE_HI, %eax // test the upper four bytes
+    xorl    $SPL_HEADER_SIGNATURE_HI, %eax     // test the upper four bytes
     jnz     loadimage_badheader
 
     // read the loaderSize field in the header and determine how many sectors
@@ -296,9 +298,9 @@ MAX_SECTORS_PER_TRANSFER = 127
 ** See include/SPLoader/i386-pc/BootHeader.h for details
 */
 
-bh_sig = BOOT_HEADER + BOOT_HEADER_SIGNATURE
-bh_flags = BOOT_HEADER + BOOT_HEADER_FLAGS
-bh_loaderSize = BOOT_HEADER + BOOT_HEADER_LOADER_SIZE
+bh_sig = BOOT_HEADER + SPL_HEADER_SIGNATURE
+bh_flags = BOOT_HEADER + SPL_HEADER_FLAGS
+bh_loaderSize = BOOT_HEADER + SPL_HEADER_LOADER_SIZE
 
 /*
 ** dap - Data Address Packet
