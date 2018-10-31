@@ -15,7 +15,6 @@
 
 #include <loader/disk/mbr.h>
 #include <loader/i386-pc/stage0a/bootstrap.h>
-#include <loader/i386-pc/BootHeader.h>
 
 #include "common.h"
 
