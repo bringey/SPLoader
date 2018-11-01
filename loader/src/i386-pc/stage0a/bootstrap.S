@@ -158,6 +158,12 @@ loadimage:
     movl    bh_sig + 4, %eax
     xorl    $SPL_HEADER_SIGNATURE_HI, %eax     // test the upper four bytes
     jnz     loadimage_badheader
+    movw    bh_arch, %ax
+    xorw    $SPL_ARCH_X86, %ax                 // test target architecture
+    jnz     loadimage_badheader
+    movb    bh_endian, %al
+    xorb    $SPL_ENDIAN_LITTLE, %al            // make sure it's little-endian
+    jnz     loadimage_badheader
 
     // read the loaderSize field in the header and determine how many sectors
     // to load from the disk, %AX = ceil(bh_loaderSize / dp_bytes_per_sector)
@@ -295,12 +301,14 @@ MAX_SECTORS_PER_TRANSFER = 127
 /*
 ** bh - Boot header
 **
-** See include/SPLoader/i386-pc/BootHeader.h for details
+** See include/sploader.h for details
 */
 
 bh_sig = BOOT_HEADER + SPL_HEADER_SIGNATURE
 bh_flags = BOOT_HEADER + SPL_HEADER_FLAGS
 bh_loaderSize = BOOT_HEADER + SPL_HEADER_LOADER_SIZE
+bh_arch = BOOT_HEADER + SPL_HEADER_ARCH
+bh_endian = BOOT_HEADER + SPL_HEADER_ENDIAN
 
 /*
 ** dap - Data Address Packet
