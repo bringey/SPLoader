@@ -19,51 +19,56 @@
 // displayed as well (ie EX_DISK_LABEL_INVALID)
 // ----------------------------------------------------------------------------
 
+// NOTE: the values for these exceptions will be PERMANENT once version 1.0.0
+// is reached, otherwise they are subject to change at any point in time
+
+// Invalid or integrity error for header
+#define EX_HEADER                   1
 
 // Memory exception
-#define EX_MEM                      0
+#define EX_MEM                      2
 
 // General disk exception
-#define EX_DISK                     1
+#define EX_DISK                     3
 
 // Read error in disk
-#define EX_DISK_READ                2
+#define EX_DISK_READ                4
 
 // Disk label is invalid or corrupted
-#define EX_DISK_LABEL_INVALID       3
+#define EX_DISK_LABEL_INVALID       5
 
 // Disk label is unknown to the disk driver
-#define EX_DISK_LABEL_UNKNOWN       4
+#define EX_DISK_LABEL_UNKNOWN       6
 
 // Disk driver could not locate the boot partition
-#define EX_DISK_NO_BOOT             5
+#define EX_DISK_NO_BOOT             7
 
 // General filesystem error
-#define EX_FS                       6
+#define EX_FS                       8
 
 // Filesystem is invalid or corrupted
-#define EX_FS_INVALID               7
+#define EX_FS_INVALID               9
 
 // Filesystem driver could not mount filesystem
-#define EX_FS_MOUNT                 8
+#define EX_FS_MOUNT                 10
 
 // Loader does not support the boot partition filesystem
-#define EX_FS_UNSUPPORTED           9
+#define EX_FS_UNSUPPORTED           11
 
 // Filesystem read error
-#define EX_FS_READ                  10
+#define EX_FS_READ                  12
 
 // Path not found in filesystem
-#define EX_FS_PATH                  11
+#define EX_FS_PATH                  13
 
 // Configuration file not found
-#define EX_CONFIG                   12
+#define EX_CONFIG                   14
 
 // Syntax error in configuration file
-#define EX_CONFIG_SYNTAX            13
+#define EX_CONFIG_SYNTAX            15
 
 // Assertion has failed (see assert.h)
-#define EX_ASSERT                   14
+#define EX_ASSERT                   16
 
 // ============================================================================
 

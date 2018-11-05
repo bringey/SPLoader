@@ -8,16 +8,28 @@
 #include <sploader.h>
 
 
-int spl_check(SplHeader *header) {
-    (void)header;
-    return SPL_HEADER_SUCCESS;
+bool spl_check(SplHeader *header) {
+
+    SplHeader copy = *header;
+    copy.loaderCrc = 0;
+    copy.headerCrc = 0;
+    uint32_t crc = spl_crc32(&copy, sizeof(SplHeader));
+
+    return crc == header->headerCrc;
 }
 
-uint32_t spl_crc32(uint8_t data[], size_t size) {
+bool spl_checkBin(SplHeader *header, void *binary) {
+    uint32_t crc = spl_crc32(binary, header->loaderSize);
+
+    return crc == header->loaderCrc;
+}
+
+uint32_t spl_crc32(void *data, size_t size) {
     // uint32_t byte;
+    uint8_t *dp = (uint8_t*)data;
     uint32_t crc = SPL_CRC32_INIT;
     for (size_t i = 0; i != size; ++i) {
-        crc = spl_crc32_acc(data[i], crc);
+        crc = spl_crc32_acc(*dp++, crc);
     }
 
     return spl_crc32_end(crc);

@@ -83,6 +83,7 @@
 
 #ifndef __ASM__
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
 
@@ -107,17 +108,27 @@ typedef struct SplHeader_s SplHeader;
 
 
 //
-// Check the header for validity and integrity.
+// Verifiy that the header->headerCrc checksum is correct
 //
-int spl_check(SplHeader *header);
+bool spl_check(SplHeader *header);
+
+//
+// Verify that the header->loaderCrc checksum is correct for the given binary.
+//
+bool spl_checkBin(SplHeader *header, void *binary);
 
 //
 // Calculate a CRC32 checksum for the given data buffer
 //
-uint32_t spl_crc32(uint8_t data[], size_t size);
+uint32_t spl_crc32(void *data, size_t size);
 
 //
-// Accumulate a CRC32 checksum with the given data byte
+// Accumulate a CRC32 checksum with the given data byte. This function is meant
+// to be used to calculate a checksum for a buffer of unknown length. This
+// function should be called for each byte of the data to checksum, with crc
+// being the return value of the previous call (use SPL_CRC32_INIT for the
+// first call). When finished processing the data, call spl_crc32_end to get
+// the final checksum value.
 //
 uint32_t spl_crc32_acc(uint8_t data, uint32_t crc);
 

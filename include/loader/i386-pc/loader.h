@@ -67,9 +67,9 @@
 
 #define LOADER_MBR_ADDRESS          0x7C00
 
-// BOOT_HEADER -------------------------------------------- 0x007E00 - 0x007FFF
+// SPL_HEADER --------------------------------------------- 0x007E00 - 0x007FFF
 
-#define LOADER_BOOT_HEADER_ADDRESS  flataddr(BOOT_SEGMENT, BOOT_BOOTHEADER)
+#define LOADER_SPL_HEADER_ADDRESS  flataddr(BOOT_SEGMENT, BOOT_BOOTHEADER)
 
 // DAP, DP ------------------------------------------------ 0x008000 - 0x0081FF
 

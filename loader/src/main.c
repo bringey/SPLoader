@@ -10,11 +10,12 @@
 #include <loader/console.h>
 
 #include <loader/abort.h>
+#include <loader/err.h>
 #include <loader/disk.h>
 #include <loader/mem.h>
 #include <loader/version.h>
 
-#include <loader/disk/gpt.h>
+#include <sploader.h>
 
 //
 // Stage 1 main routine
@@ -25,9 +26,19 @@
 // 6. load config (/sploader.ini)
 // 7. execute config (chainload, load, etc)
 //
-int main(void) {
+int main(SplHeader *header, void* entryAddr) {
 
     con_clear();
+
+    // verify header checksum
+    if (!spl_check(header)) {
+        exceptv(EX_HEADER, E_HEADER_INTEGRITY);
+    }
+
+    // verify loader.bin checksum
+    if (!spl_checkBin(header, entryAddr)) {
+        exceptv(EX_HEADER, E_HEADER_LOADER_INTEGRITY);
+    }
 
     con_printf("SPLoader (v%s)\n", VERSION_STR);
 

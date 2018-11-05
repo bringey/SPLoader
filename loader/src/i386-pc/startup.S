@@ -35,6 +35,8 @@ _start:
 
     call    __int32_init
 
+    pushl   $LOADER_ADDRESS
+    pushl   $LOADER_SPL_HEADER_ADDRESS
     call    main
 
 

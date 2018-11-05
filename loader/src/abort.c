@@ -14,6 +14,8 @@
 #include <stdbool.h>
 
 static const char *EX_TABLE[] = {
+    "General error",
+    "Stage 1 header error",
     "A memory allocation failed",
     "Disk error",
     "Disk read error",
