@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include <sploader.h>
+#include <version.h>
 
 #define USAGE_STR "mkbin [-e] [options] <input> [-o <output>]"
 #include "common.h"
@@ -228,6 +229,12 @@ int run(Prog *prog) {
         // initialize the header
         memset(&header, 0, sizeof(SplHeader));
         memcpy(header.signature, SPL_HEADER_SIGNATURE_STR, sizeof(header.signature));
+        const char *version = VERSION_STR;
+        size_t vlen = strlen(version);
+        if (vlen > sizeof(header.version)) {
+            vlen = sizeof(header.version);
+        }
+        memcpy(header.version, version, vlen);
         //#if TARGET_ISA == i386
         header.arch = SPL_ARCH_X86;
         header.endian = SPL_ENDIAN_LITTLE;

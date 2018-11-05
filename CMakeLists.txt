@@ -78,6 +78,7 @@ set(WARNFLAGS -Wall -Wextra -pedantic CACHE STRING "Default GCC Warning enable f
 set(VERSION_FILE "VERSION")
 file(READ ${VERSION_FILE} VERSION)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${VERSION_FILE})
+set(PROJECT_VERSION ${VERSION})
 
 function(prepend outputVar prefix)
     set(list "")
@@ -117,6 +118,7 @@ endfunction(sources)
 
 include_directories(
     SYSTEM "${CMAKE_SOURCE_DIR}/include"
+    SYSTEM "${CMAKE_BINARY_DIR}/include"
 )
 
 add_subdirectory(libsploader)
@@ -127,3 +129,4 @@ add_subdirectory(tools)
 custom_targets()
 
 configure_file(qemu ${CMAKE_BINARY_DIR}/qemu COPYONLY)
+configure_file(include/version.h.in ${CMAKE_BINARY_DIR}/include/version.h)
