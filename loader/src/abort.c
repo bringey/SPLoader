@@ -35,20 +35,15 @@ static const char *EX_TABLE[] = {
 
 #define EX_TABLE_SIZE (sizeof(EX_TABLE) / sizeof(const char *))
 
-void except_(unsigned ex, int code, bool hasCode) {
-    con_puts("Error occurred: ");
+void exceptv(unsigned ex, int code) {
     const char *str;
     if (ex >= EX_TABLE_SIZE) {
         str = "unknown";
     } else {
         str = EX_TABLE[ex];
     }
-    con_puts(str);
-    if (hasCode) {
-        con_printf(" (%d)\n", code);
-    } else {
-        con_putchar('\n');
-    }
 
+    con_puts("Error occurred: ");
+    con_printf("%s (%d:%d)\n", str, ex, code);
     _abort();
 }

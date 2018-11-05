@@ -87,15 +87,12 @@
 //
 // Exception occurred, print message relative to the exception ex and abort.
 //
-#define except(ex) except_(ex, 0, false)
+#define except(ex) exceptv(ex, 0)
 
 //
 // Same as except, but with an additional error code to be displayed
 //
-#define exceptv(ex, code) except_(ex, code, true)
-
-
-noreturn void except_(unsigned ex, int code, bool hasCode);
+noreturn void exceptv(unsigned ex, int code);
 
 //
 // Stop execution of the loader completely. A message is printed and the system
