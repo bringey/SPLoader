@@ -43,13 +43,6 @@ endif(OPT_DISK_MBR)
 # compiler flags
 set(BASE_FLAGS -std=gnu11 -ffreestanding)
 
-# pass on the version string to version.c
-set_source_files_properties(src/version.c 
-    PROPERTIES
-    COMPILE_DEFINITIONS "VERSION=\"${VERSION}\""
-    OBJECT_DEPENDS ${CMAKE_SOURCE_DIR}/${VERSION_FILE}
-)
-
 # targets
 set(LOADER_ELF loader.elf)  # final loader executable as an ELF binary
 set(LOADER_BIN loader.bin)  # final loader executable as a flat binary

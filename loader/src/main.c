@@ -13,7 +13,6 @@
 #include <loader/err.h>
 #include <loader/disk.h>
 #include <loader/mem.h>
-#include <loader/version.h>
 
 #include <sploader.h>
 
@@ -40,7 +39,7 @@ int main(SplHeader *header, void* entryAddr) {
         exceptv(EX_HEADER, E_HEADER_LOADER_INTEGRITY);
     }
 
-    con_printf("SPLoader (v%s)\n", VERSION_STR);
+    con_printf("SPLoader (v%s)\n", header->version);
 
     // initialization routines
 
