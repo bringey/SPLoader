@@ -28,10 +28,10 @@
 //
 // Disk Labels
 //
-#define SPL_DISK_LABEL_UNKNOWN  0x0     // Disk label is unknown or corrupted
-#define SPL_DISK_LABEL_NONE     0x1     // No label detected on disk (for embedded installs)
-#define SPL_DISK_LABEL_MBR      0x2     // MBR
-#define SPL_DISK_LABEL_GPT      0x3     // GPT + Protective MBR
+// #define SPL_DISK_LABEL_UNKNOWN  0x0     // Disk label is unknown or corrupted
+// #define SPL_DISK_LABEL_NONE     0x1     // No label detected on disk (for embedded installs)
+// #define SPL_DISK_LABEL_MBR      0x2     // MBR
+// #define SPL_DISK_LABEL_GPT      0x3     // GPT + Protective MBR
 
 //
 // Endianess
@@ -86,6 +86,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
+
+typedef enum {
+
+    SPL_DISK_LABEL_UNKNOWN = 0,
+    SPL_DISK_LABEL_NONE    = 1,
+    SPL_DISK_LABEL_MBR     = 2,
+    SPL_DISK_LABEL_GPT     = 3
+
+} SplDiskLabel;
 
 struct SplHeader_s {
 
