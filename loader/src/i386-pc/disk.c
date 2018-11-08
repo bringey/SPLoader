@@ -47,24 +47,6 @@ typedef struct BiosDp_s BiosDp;
 
 typedef struct BiosDap_s BiosDap;
 
-int _disk_bootPart(Disk *disk, DiskLabel label, DiskPart *part) {
-    (void)disk; (void)label; (void)part;
-    
-    return E_FAILURE;
-}
-
-int _disk_detect(Disk *disk, DiskLabel *label) {
-    assert(disk != NULL);
-    assert(label != NULL);
-    // i386-pc driver only supports GPT and MBR
-    // try to find GPT first, then MBR
-    // TO-DO
-    *label = DISK_LABEL_MBR;
-
-
-    return E_SUCCESS;
-}
-
 int _disk_info(DiskInfo *info) {
     assert(info != NULL);
     info->totalBlocks = BIOS_DP->sectors;

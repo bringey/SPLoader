@@ -32,6 +32,7 @@
 
 #include <stdint.h>
 
+#include <loader/disk.h>
 
 //
 // Structure for a GPT header, field names are inspired by Table 20 from the 
@@ -78,18 +79,28 @@ typedef struct GptPartitionEntry_s GptPartitionEntry;
 // Parse the GPT header block and store it in the given header variable.
 // If isBackup is true, then
 //
-int disk_gpt_check(void);
+// int disk_gpt_check(void);
 
-int disk_gpt_header(GptHeader *header);
+// int disk_gpt_header(GptHeader *header);
 
-int disk_gpt_tablesize(GptHeader *header);
+// int disk_gpt_tablesize(GptHeader *header);
 
-int disk_gpt_table(GptPartitionEntry *buf);
+// int disk_gpt_table(GptPartitionEntry *buf);
 
 
-int disk_gpt_checkHeader(uint64_t lba, GptHeader *header);
+// int disk_gpt_checkHeader(uint64_t lba, GptHeader *header);
 
-int disk_gpt_checkTable(GptHeader *header, GptPartitionEntry *table);
+// int disk_gpt_checkTable(GptHeader *header, GptPartitionEntry *table);
+
+
+int disk_gpt_init(DiskLabel *label);
+
+int disk_gpt_check(DiskLabel *label);
+
+int disk_gpt_getActive(DiskLabel *label, DiskPart *part);
+
+int disk_gpt_getPart(DiskLabel *label, uint32_t index, DiskPart *part);
+
 
 #endif
 

@@ -53,11 +53,20 @@ int main(SplHeader *header, void* entryAddr) {
     Disk disk;
     disk_bootDisk(&disk);
 
-    // detect the disk label
-    DiskLabel label = disk_detect(&disk);
-    // find the boot partition
-    DiskPart bootpart;
-    disk_bootPart(&disk, label, &bootpart);
+    // get the disk label from the header and verify it
+    DiskLabel label;
+    disk_label_init(&disk, header->label, &label);
+    disk_label_check(&label);
+
+    // // get the boot partition
+    // DiskPart bootpart;
+    // if (header->flags & SPL_HEADER_FLAG_ACTIVE) {
+    //     // search for the active partition
+    //     disk_label_getActive(&disk, label, &bootpart);
+    // } else {
+    //     // use the partition index set in header
+    //     disk_label_getPart(&disk, label, header->partition, &bootpart);
+    // }
 
     // mount it
 

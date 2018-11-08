@@ -37,6 +37,8 @@
 
 #include <stdint.h>
 
+#include <loader/disk.h>
+
 struct MbrPart_s {
     uint8_t status;         // 0x80 = boot 0x0 = inactive
     uint8_t firstChs[3];    // CHS address of the first absolute sector
@@ -58,17 +60,25 @@ struct MbrGeneric_s {
 
 typedef struct MbrGeneric_s MbrGeneric;
 
-//
-// Check the MBR for validity. Returns E_FAILURE if the MBR is corrupted
-//
-int disk_mbr_check(MbrGeneric *mbr);
+// //
+// // Check the MBR for validity. Returns E_FAILURE if the MBR is corrupted
+// //
+// int disk_mbr_check(MbrGeneric *mbr);
 
-int disk_mbr_dump(MbrGeneric *mbr);
+// int disk_mbr_dump(MbrGeneric *mbr);
 
-//
-// Find the first bootable partition and store the partition number in numVar
-//
-int disk_mbr_findBoot(MbrGeneric *mbr, int *numVar);
+// //
+// // Find the first bootable partition and store the partition number in numVar
+// //
+// int disk_mbr_findBoot(MbrGeneric *mbr, int *numVar);
+
+int disk_mbr_init(DiskLabel *label);
+
+int disk_mbr_check(DiskLabel *label);
+
+int disk_mbr_getActive(DiskLabel *label, DiskPart *part);
+
+int disk_mbr_getPart(DiskLabel *label, uint32_t index, DiskPart *part);
 
 #endif  // __ASM__
 

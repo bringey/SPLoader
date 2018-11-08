@@ -13,15 +13,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <sploader.h>
 
-typedef enum {
-
-    DISK_LABEL_UNKNOWN   = 0x0,   // Disk label is unknown or corrupted
-    DISK_LABEL_NONE      = 0x1,   // No label detected on disk (for embedded installs)
-    DISK_LABEL_MBR       = 0x2,   // MBR
-    DISK_LABEL_GPT       = 0x4,   // GPT + Protective MBR
-    
-} DiskLabel;
 
 //
 // Structure containing information about a disk device, as well as driver
@@ -42,11 +35,23 @@ typedef struct Disk_s {
 
 } Disk;
 
-typedef struct DiskPart_s {
+typedef struct DiskLabel_s DiskLabel;
+typedef struct DiskPart_s DiskPart;
+
+struct DiskLabel_s {
+    Disk *disk;
+    SplDiskLabel kind;
+    void *aux;
+    int (*check)(DiskLabel*);
+    int (*getActive)(DiskLabel*, DiskPart*);
+    int (*getPart)(DiskLabel*, uint32_t, DiskPart*);
+};
+
+struct DiskPart_s {
     uint8_t num;
     uint64_t startLba;
     uint64_t endLba;
-} DiskPart;
+};
 
 //
 // Get the boot disk and store it in the given pointer
@@ -55,26 +60,6 @@ typedef struct DiskPart_s {
 //  - EX_DISK: Driver-specific error
 //
 void disk_bootDisk(Disk *disk);
-
-//
-// Finds the boot partition on the boot disk and store it in the part variable.
-//
-// Exceptions:
-//  - EX_DISK_NO_BOOT: The boot partition was not found
-//
-void disk_bootPart(Disk *disk, DiskLabel label, DiskPart *part);
-
-//
-// Detect the disk label on the boot disk. The detected DiskLabel value is
-// returned if the disk driver supports it. Note that label of value
-// DISK_LABEL_UNKNOWN is never returned, as this is considered an exception
-// (EX_DISK_LABEL_INVALID).
-//
-// Exceptions:
-//  - EX_DISK_LABEL_INVALID: Disk label was invalid or corrupted
-//  - EX_DISK_LABEL_UNKNOWN: Disk label is unknown to the driver
-//
-DiskLabel disk_detect(Disk *disk);
 
 //
 // Initialize the disk driver for the boot disk. This function must be called
@@ -104,24 +89,25 @@ void disk_read(Disk *disk, uint8_t *buf, uint64_t start, uint32_t blocks);
 //
 void disk_readb(Disk *disk, uint64_t lba);
 
+void disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label);
+
+//
+// Check the disk for the specified label. If the disk contains the label and
+// is valid this function returns, otherwise abort.
+//
+// Exceptions:
+//  - EX_DISK_LABEL: The label on disk was not valid
+//
+void disk_label_check(DiskLabel *label);
+
+void disk_label_getActive(DiskLabel *label, DiskPart *part);
+
+void disk_label_getPart(DiskLabel *label, uint32_t index, DiskPart *part);
+
+
 
 // ============================================================================
 // Driver functions
-
-int _disk_bootPart(Disk *disk, DiskLabel label, DiskPart *part);
-
-//
-// Detect the disk label if possible. E_SUCCESS is returned on sucessful
-// detection. If the label cannot be detected, it is either unknown to
-// SPLoader, or is known but is invalid (ie bad CRC in GPT).
-//
-int _disk_detect(Disk *disk, DiskLabel *label);
-
-//
-// Find the boot partition on the boot disk. The partition if found, is stored
-// the part variable.
-//
-int _disk_findBoot(DiskLabel label, DiskPart *part);
 
 int _disk_info(DiskInfo *info);
 

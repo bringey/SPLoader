@@ -12,21 +12,9 @@
 #include <loader/err.h>
 #include <loader/mem.h>
 #include <loader/string.h>
+#include <loader/disk/mbr.h>
+#include <loader/disk/gpt.h>
 
-
-DiskLabel disk_detect(Disk *disk) {
-    DiskLabel label;
-    int err = _disk_detect(disk, &label);
-    if (err != E_SUCCESS) {
-        exceptv(EX_DISK_LABEL_INVALID, err);
-    }
-
-    if (label == DISK_LABEL_UNKNOWN) {
-        except(EX_DISK_LABEL_UNKNOWN);
-    }
-
-    return label;
-}
 
 void disk_bootDisk(Disk *disk) {
     DiskInfo *info = (DiskInfo*)mem_malloc(sizeof(DiskInfo));
@@ -37,14 +25,6 @@ void disk_bootDisk(Disk *disk) {
     disk->info = info;
     disk->blockBuf = (uint8_t*)mem_malloc(info->blocksize);
 }
-
-void disk_bootPart(Disk *disk, DiskLabel label, DiskPart *part) {
-    int err = _disk_bootPart(disk, label, part);
-    if (err != E_SUCCESS) {
-        except(EX_DISK_NO_BOOT);
-    }
-}
-
 
 void disk_init(void) {
     int err = _disk_init();
@@ -146,4 +126,56 @@ void disk_readb(Disk *disk, uint64_t lba) {
     } else {
         exceptv(EX_DISK_READ, err);
     }
+}
+
+void disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label) {
+    label->disk = disk;
+    label->kind = kind;
+    int (*initFn)(DiskLabel*);
+    switch (kind) {
+        case SPL_DISK_LABEL_UNKNOWN:
+        case SPL_DISK_LABEL_NONE:
+            exceptv(EX_DISK_LABEL, E_DISK_LABEL_UNKNOWN);
+            break;
+        case SPL_DISK_LABEL_MBR:
+            #ifdef OPT_DISK_MBR
+                label->check = disk_mbr_check;
+                label->getActive = disk_mbr_getActive;
+                label->getPart = disk_mbr_getPart;
+                initFn = disk_mbr_init;
+            #else
+                exceptv(EX_DISK_LABEL, E_DISK_LABEL_UNSUPPORTED);
+            #endif
+            break;
+        case SPL_DISK_LABEL_GPT:
+            #ifdef OPT_DISK_GPT
+                disk_gpt_init(label);
+                label->check = disk_gpt_check;
+                label->getActive = disk_mbr_getActive;
+                label->getPart = disk_mbr_getPart;
+                initFn = disk_gpt_init;
+            #else
+                exceptv(EX_DISK_LABEL, E_DISK_LABEL_UNSUPPORTED);
+            #endif
+            break;
+    }
+
+    int err = initFn(label);
+    ERRCHECK(EX_DISK_LABEL, err);
+}
+
+
+void disk_label_check(DiskLabel *label) {
+    int err = label->check(label);
+    ERRCHECK(EX_DISK_LABEL, err);
+}
+
+void disk_label_getActive(DiskLabel *label, DiskPart *part) {
+    int err = label->getActive(label, part);
+    ERRCHECK(EX_DISK_LABEL, err);
+}
+
+void disk_label_getPart(DiskLabel *label, uint32_t index, DiskPart *part) {
+    int err = label->getPart(label, index, part);
+    ERRCHECK(EX_DISK_LABEL, err);
 }
