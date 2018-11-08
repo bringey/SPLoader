@@ -14,23 +14,24 @@
 #include <stdbool.h>
 
 static const char *EX_TABLE[] = {
-    "General error",
+    "Assertion failed",
     "Stage 1 header error",
     "A memory allocation failed",
     "Disk error",
     "Disk read error",
     "Disk label is invalid or corrupted",
-    "Disk label is unknown",
-    "Could not find boot partition",
-    "Filesystem error",
-    "Filesystem is invalid or corrupted",
-    "Could not mount filesystem",
-    "Filesystem is unsupported",
-    "Could not read file",
-    "Path does not exist",
-    "Config file does not exist",
-    "Syntax error in config file",
-    "Assertion failed"
+    "Disk partition error"
+    // "Disk label is unknown",
+    // "Could not find boot partition",
+    // "Filesystem error",
+    // "Filesystem is invalid or corrupted",
+    // "Could not mount filesystem",
+    // "Filesystem is unsupported",
+    // "Could not read file",
+    // "Path does not exist",
+    // "Config file does not exist",
+    // "Syntax error in config file",
+    // "Assertion failed"
 };
 
 #define EX_TABLE_SIZE (sizeof(EX_TABLE) / sizeof(const char *))

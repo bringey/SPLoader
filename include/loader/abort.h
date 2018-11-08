@@ -22,6 +22,10 @@
 // NOTE: the values for these exceptions will be PERMANENT once version 1.0.0
 // is reached, otherwise they are subject to change at any point in time
 
+
+// Assertion has failed (see assert.h)
+#define EX_ASSERT                   0
+
 // Invalid or integrity error for header
 #define EX_HEADER                   1
 
@@ -35,40 +39,35 @@
 #define EX_DISK_READ                4
 
 // Disk label is invalid or corrupted
-#define EX_DISK_LABEL_INVALID       5
-
-// Disk label is unknown to the disk driver
-#define EX_DISK_LABEL_UNKNOWN       6
+#define EX_DISK_LABEL               5
 
 // Disk driver could not locate the boot partition
-#define EX_DISK_NO_BOOT             7
+#define EX_DISK_PARTITION           6
 
-// General filesystem error
-#define EX_FS                       8
+// // General filesystem error
+// #define EX_FS                       8
 
-// Filesystem is invalid or corrupted
-#define EX_FS_INVALID               9
+// // Filesystem is invalid or corrupted
+// #define EX_FS_INVALID               9
 
-// Filesystem driver could not mount filesystem
-#define EX_FS_MOUNT                 10
+// // Filesystem driver could not mount filesystem
+// #define EX_FS_MOUNT                 10
 
-// Loader does not support the boot partition filesystem
-#define EX_FS_UNSUPPORTED           11
+// // Loader does not support the boot partition filesystem
+// #define EX_FS_UNSUPPORTED           11
 
-// Filesystem read error
-#define EX_FS_READ                  12
+// // Filesystem read error
+// #define EX_FS_READ                  12
 
-// Path not found in filesystem
-#define EX_FS_PATH                  13
+// // Path not found in filesystem
+// #define EX_FS_PATH                  13
 
-// Configuration file not found
-#define EX_CONFIG                   14
+// // Configuration file not found
+// #define EX_CONFIG                   14
 
-// Syntax error in configuration file
-#define EX_CONFIG_SYNTAX            15
+// // Syntax error in configuration file
+// #define EX_CONFIG_SYNTAX            15
 
-// Assertion has failed (see assert.h)
-#define EX_ASSERT                   16
 
 // ============================================================================
 
@@ -76,6 +75,16 @@
 
 #include <stdnoreturn.h>
 #include <stdbool.h>
+
+//
+// Macro for raising an exception ex, if err != E_SUCCESS
+//
+#define ERRCHECK(ex, err) \
+    do { \
+        if (err != E_SUCCESS) { \
+            exceptv(ex, err); \
+        } \
+    } while (0)
 
 
 //

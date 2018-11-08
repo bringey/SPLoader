@@ -53,38 +53,42 @@
 // EX_HEADER
 // ============================================================================
 
-#define E_HEADER_INVALID 0
+#define E_HEADER_INVALID 1
 
-#define E_HEADER_INTEGRITY 1
+#define E_HEADER_INTEGRITY 2
 
-#define E_HEADER_LOADER_INTEGRITY 2
+#define E_HEADER_LOADER_INTEGRITY 3
 
 // ============================================================================
-// EX_DISK_LABEL_INVALID
+// EX_DISK_LABEL
 // ============================================================================
+
+#define E_DISK_LABEL_UNKNOWN                1
+#define E_DISK_LABEL_UNSUPPORTED            2
+
 
 //
-// MBR exception codes (0-100)
+// MBR exception codes (100-199)
 //
 
 // MBR contains an invalid signature (signature != 0xAA55)
-#define E_MBR_SIGNATURE                     0
+#define E_MBR_SIGNATURE                     100
 // MBR partitions overlap
-#define E_MBR_PARTITION_OVERLAP             1
+#define E_MBR_PARTITION_OVERLAP             101
 
-// GPT Exception codes (100-200)
+// GPT Exception codes (200-299)
 
 // unsupported version
-#define E_GPT_VERSION                       100
+#define E_GPT_VERSION                       200
 // incorrect crc32 checksum for header
-#define E_GPT_HEADER_INTEGRITY              101
+#define E_GPT_HEADER_INTEGRITY              201
 // incorrect crc32 checksum for partition table
-#define E_GPT_PARTITION_INTEGRITY           102
+#define E_GPT_PARTITION_INTEGRITY           202
 // invalid header
-#define E_GPT_HEADER_INVALID                103
+#define E_GPT_HEADER_INVALID                203
 // partition entry invalid
-#define E_GPT_PARTITION_INVALID             104
+#define E_GPT_PARTITION_INVALID             204
 // overlapping partitions
-#define E_GPT_PARTITION_OVERLAP             105
+#define E_GPT_PARTITION_OVERLAP             205
 
 #endif 
