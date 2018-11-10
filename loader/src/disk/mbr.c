@@ -12,85 +12,74 @@
 
 #ifdef OPT_DISK_MBR
 
-#include <loader/blocklist.h>
+#include <loader/assert.h>
 #include <loader/disk/mbr.h>
 #include <loader/err.h>
-#include <loader/console.h>
+#include <loader/mem.h>
 
-
-// int disk_mbr_check(MbrGeneric *mbr) {
-
-//     // check the signature
-//     if (mbr->signature != MBR_BOOTSIG) {
-//         return E_FAILURE;
-//     }
-
-//     // check for overlapping partitions
-//     Block32 blocklist[4];
-//     Blocklist list = {
-//         .blocks = blocklist,
-//         .len = 0,
-//         .capacity = 4
-//     };
-//     Block32 block = {0};
-//     MbrPart *part;
-//     for (int i = 0; i != 4; ++i) {
-//         part = mbr->parts + i;
-//         // skip the partition if its type is 0 (type 0 = not used)
-//         if (part->type != 0) {
-//             block.base = part->firstLba;
-//             block.limit = part->firstLba + part->sectors;
-//             if (blocklist_insert(&list, block, false) != E_SUCCESS) {
-//                 return E_FAILURE;
-//             }
-//         }
-//     }
-
-//     return E_SUCCESS;
-// }
-
-// int disk_mbr_dump(MbrGeneric *mbr) {
-//     con_printf("Num   Type   LBA Start   LBA end\n");
-//     for (int i = 0; i != 4; ++i) {
-//         MbrPart part = mbr->parts[i];
-//         con_printf("%3d   %4d   %9d   %9d\n", i, part.type, part.firstLba, part.firstLba + part.sectors);
-//     }
-//     con_printf("Signature: 0x%04x\n", mbr->signature);
-//     return E_SUCCESS;
-// }
-
-// int disk_mbr_findBoot(MbrGeneric *mbr, int *numVar) {
-
-//     MbrPart *part;
-//     for (int i = 0; i != 4; ++i) {
-//         part = mbr->parts + i;
-//         if ((part->status & MBR_STATUS_ACTIVE) == MBR_STATUS_ACTIVE) {
-//             *numVar = i;
-//             return E_SUCCESS;
-//         }
-
-//     }
-
-//     return E_FAILURE;
-// }
 
 int disk_mbr_init(DiskLabel *label) {
-    (void)label;
+    Disk *disk = label->disk;
+    // allocate a buffer for the MBR
+    MbrGeneric *mbr = (MbrGeneric*)mem_malloc(sizeof(MbrGeneric));
+    if (mbr == NULL) {
+        return E_NOMEM; // should raise EX_MEM
+    }
+    disk_read(disk, (uint8_t*)mbr, 0, 1);
+    // our aux pointer is the MBR we just read from disk
+    label->aux = mbr;
     return E_SUCCESS;
 }
 
 int disk_mbr_check(DiskLabel *label) {
-    (void)label;
-    return E_FAILURE;
+    assert(label != NULL);
+    MbrGeneric *mbr = (MbrGeneric*)label->aux;
+    assert(mbr != NULL);
+
+    // check the signature
+    if (mbr->signature != MBR_BOOTSIG) {
+        return E_MBR_SIGNATURE;
+    }
+
+    return E_SUCCESS;
 }
 
 int disk_mbr_getActive(DiskLabel *label, DiskPart *part) {
-    (void)label; (void)part;
-    return E_FAILURE;
+    assert(label != NULL);
+    MbrGeneric *mbr = (MbrGeneric*)label->aux;
+    assert(mbr != NULL);
+
+    MbrPart *mbrpart = mbr->parts;
+    for (size_t i = 0; i != 4; ++i) {
+        if (mbrpart->status & MBR_STATUS_ACTIVE) {
+            part->num = i;
+            part->startLba = mbrpart->firstLba;
+            part->endLba = mbrpart->firstLba + mbrpart->sectors;
+            return E_SUCCESS;
+        }
+        ++mbrpart;
+    }
+    return E_DISK_LABEL_NO_PARTITION;
 }
 
 int disk_mbr_getPart(DiskLabel *label, uint32_t index, DiskPart *part) {
-    (void)label; (void)index; (void)part;
+    
+    if (index >= 4) {
+        return E_DISK_LABEL_INDEX;
+    }
+
+    assert(label != NULL);
+    MbrGeneric *mbr = (MbrGeneric*)label->aux;
+    assert(mbr != NULL);
+
+    MbrPart *mbrpart = mbr->parts + index;
+    if (mbrpart->type == 0) {
+        return E_DISK_LABEL_NO_PARTITION;
+    }
+    part->num = index;
+    part->startLba = mbrpart->firstLba;
+    part->endLba = mbrpart->firstLba + mbrpart->sectors;
+
     return E_FAILURE;
 }
 

@@ -65,6 +65,10 @@
 
 #define E_DISK_LABEL_UNKNOWN                1
 #define E_DISK_LABEL_UNSUPPORTED            2
+// partition index is invalid
+#define E_DISK_LABEL_INDEX                  3
+// partition index is not a valid partition
+#define E_DISK_LABEL_NO_PARTITION           4
 
 
 //
