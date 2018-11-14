@@ -84,8 +84,8 @@ int disk_gpt_check(DiskLabel *label) {
     return E_FAILURE;
 }
 
-int disk_gpt_getActive(DiskLabel *label, DiskPart *part) {
-    (void)label; (void)part;
+int disk_gpt_getActive(DiskLabel *label, uint32_t *index) {
+    (void)label; (void)index;
     return E_FAILURE;
 }
 

@@ -39,16 +39,18 @@ typedef struct DiskLabel_s DiskLabel;
 typedef struct DiskPart_s DiskPart;
 
 struct DiskLabel_s {
-    Disk *disk;
-    SplDiskLabel kind;
-    void *aux;
+    Disk *disk;                 // handle to disk
+    SplDiskLabel kind;          // Label type
+    size_t maxIndex;            // maximum number of partitions
+    void *aux;                  // label-specific data pointer
     int (*check)(DiskLabel*);
-    int (*getActive)(DiskLabel*, DiskPart*);
+    int (*getActive)(DiskLabel*, uint32_t*);
     int (*getPart)(DiskLabel*, uint32_t, DiskPart*);
 };
 
 struct DiskPart_s {
-    uint8_t num;
+    uint32_t num;
+    bool active;
     uint64_t startLba;
     uint64_t endLba;
 };
@@ -91,19 +93,7 @@ void disk_readb(Disk *disk, uint64_t lba);
 
 void disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label);
 
-//
-// Check the disk for the specified label. If the disk contains the label and
-// is valid this function returns, otherwise abort.
-//
-// Exceptions:
-//  - EX_DISK_LABEL: The label on disk was not valid
-//
 void disk_label_check(DiskLabel *label);
-
-void disk_label_getActive(DiskLabel *label, DiskPart *part);
-
-void disk_label_getPart(DiskLabel *label, uint32_t index, DiskPart *part);
-
 
 
 // ============================================================================

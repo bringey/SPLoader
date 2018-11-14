@@ -26,6 +26,7 @@
 // 7. execute config (chainload, load, etc)
 //
 int main(SplHeader *header, void* entryAddr) {
+    int err;
 
     con_clear();
 
@@ -56,17 +57,28 @@ int main(SplHeader *header, void* entryAddr) {
     // get the disk label from the header and verify it
     DiskLabel label;
     disk_label_init(&disk, header->label, &label);
+
+    // check it
     disk_label_check(&label);
 
-    // // get the boot partition
-    // DiskPart bootpart;
-    // if (header->flags & SPL_HEADER_FLAG_ACTIVE) {
-    //     // search for the active partition
-    //     disk_label_getActive(&disk, label, &bootpart);
-    // } else {
-    //     // use the partition index set in header
-    //     disk_label_getPart(&disk, label, header->partition, &bootpart);
-    // }
+    // determine index of boot partition
+    uint32_t bootindex;
+    if (header->flags & SPL_HEADER_FLAG_ACTIVE) {
+        // search for the active partition
+        err = label.getActive(&label, &bootindex);
+        ERRCHECK(EX_DISK_LABEL, err);
+    } else {
+        // use the partition index set in header
+        bootindex = header->partition;
+    }
+
+    DiskPart bootpart;
+    err = label.getPart(&label, bootindex, &bootpart);
+    if (err == E_DISK_LABEL_NO_PARTITION) {
+        except(EX_DISK_PARTITION);
+    } else if (err != E_SUCCESS) {
+        exceptv(EX_DISK_LABEL, err);
+    }
 
     // mount it
 

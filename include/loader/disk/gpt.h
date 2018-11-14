@@ -97,7 +97,7 @@ int disk_gpt_init(DiskLabel *label);
 
 int disk_gpt_check(DiskLabel *label);
 
-int disk_gpt_getActive(DiskLabel *label, DiskPart *part);
+int disk_gpt_getActive(DiskLabel *label, uint32_t *index);
 
 int disk_gpt_getPart(DiskLabel *label, uint32_t index, DiskPart *part);
 

@@ -15,6 +15,7 @@
 // Success, no error
 //
 #define E_SUCCESS 0
+#define E_NONE E_SUCCESS
 
 //
 // Generic error
@@ -69,6 +70,8 @@
 #define E_DISK_LABEL_INDEX                  3
 // partition index is not a valid partition
 #define E_DISK_LABEL_NO_PARTITION           4
+// overlapping partitions
+#define E_DISK_LABEL_OVERLAP                5
 
 
 //

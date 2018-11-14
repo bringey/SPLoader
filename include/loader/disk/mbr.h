@@ -60,23 +60,11 @@ struct MbrGeneric_s {
 
 typedef struct MbrGeneric_s MbrGeneric;
 
-// //
-// // Check the MBR for validity. Returns E_FAILURE if the MBR is corrupted
-// //
-// int disk_mbr_check(MbrGeneric *mbr);
-
-// int disk_mbr_dump(MbrGeneric *mbr);
-
-// //
-// // Find the first bootable partition and store the partition number in numVar
-// //
-// int disk_mbr_findBoot(MbrGeneric *mbr, int *numVar);
-
 int disk_mbr_init(DiskLabel *label);
 
 int disk_mbr_check(DiskLabel *label);
 
-int disk_mbr_getActive(DiskLabel *label, DiskPart *part);
+int disk_mbr_getActive(DiskLabel *label, uint32_t *index);
 
 int disk_mbr_getPart(DiskLabel *label, uint32_t index, DiskPart *part);
 
