@@ -22,6 +22,9 @@
 
 #define MBR_BOOTSIG_LOCATION 0x1FE
 
+#define MBR_LENGTH  512
+#define MBR_LBA     0
+
 //
 // MBR Boot Signature
 //

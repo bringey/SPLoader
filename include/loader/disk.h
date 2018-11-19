@@ -73,14 +73,20 @@ void disk_bootDisk(Disk *disk);
 void disk_init(void);
 
 //
-// Read a specified number of blocks starting from an LBA and store the read
-// data into buf. If a read error occurs, except will be called and the loader
-// will abort.
+// Logical disk read. Similar to disk_pread, except uses a provided blocksize.
+//
+void disk_read(Disk *disk, void *buf, uint64_t lba, uint32_t blocksize, uint32_t blocks);
+
+//
+// Physical disk read. Read a specified number of blocks starting from an LBA
+// and store the read data into buf. The size of a block depends on the disk's
+// physical block size (disk->info->blocksize). If a read error occurs, except
+// will be called and the loader will abort.
 //
 // Exceptions:
 //  - EX_DISK_READ: A read error occurred
 //
-void disk_read(Disk *disk, uint8_t *buf, uint64_t start, uint32_t blocks);
+void disk_pread(Disk *disk, void *buf, uint64_t start, uint32_t blocks);
 
 //
 // Read a single block from the given disk. The read data is stored in the

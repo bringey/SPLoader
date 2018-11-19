@@ -27,7 +27,7 @@ int disk_mbr_init(DiskLabel *label) {
     if (mbr == NULL) {
         return E_NOMEM; // should raise EX_MEM
     }
-    disk_read(disk, (uint8_t*)mbr, 0, 1);
+    disk_read(disk, mbr, MBR_LBA, MBR_LENGTH, 1);
     // mbr has 4 partition entries so getPart will only work for indices 0-3
     label->maxIndex = MAX_INDEX;
     // our aux pointer is the MBR we just read from disk

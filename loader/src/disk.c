@@ -33,8 +33,30 @@ void disk_init(void) {
     }
 }
 
+void disk_read(Disk *disk, void *buf, uint64_t lba, uint32_t blocksize, uint32_t blocks) {
+    assert(disk != NULL);
+    assert(buf != NULL);
 
-void disk_read(Disk *disk, uint8_t *buf, uint64_t start, uint32_t blocks) {
+    const DiskInfo *info = disk->info;
+    assert(info != NULL);
+
+    // overflow? ignore it, assume buf won't be larger than SIZE_MAX
+    size_t bytes = blocksize * blocks;
+    uint32_t pblocks = bytes / info->blocksize;
+    uint32_t leftover = bytes % info->blocksize;
+
+    disk_pread(disk, buf, lba, pblocks);
+    // if the logical blocksize was not a multiple of the physical blocksize,
+    // read one more block and copy whatever is leftover
+    if (leftover) {
+        disk_readb(disk, lba + pblocks);
+        memcpy((uint8_t*)buf + (bytes - leftover), disk->blockBuf, leftover);
+    }
+
+
+}
+
+void disk_pread(Disk *disk, void *buf, uint64_t start, uint32_t blocks) {
     assert(disk != NULL);
     assert(buf != NULL);
 
@@ -48,73 +70,31 @@ void disk_read(Disk *disk, uint8_t *buf, uint64_t start, uint32_t blocks) {
     assert(limit <= info->totalBlocks);
 
     int err;
-    // size in blocks of a single transfer
-    uint32_t transferSize = info->maxBlocksPerRead;
-    // blocks to read for a transfer: min(transferSize, blocks)
-    uint32_t blocksToRead;
-    // bytes to copy to buf
-    uint32_t bytes;
+    // convert buf to a uint8_t pointer
+    uint8_t *bbuf = (uint8_t*)buf;
 
-    while (start != limit) {
-        if (transferSize != 0 && blocks > transferSize) {
-            blocksToRead = transferSize;
-        } else {
-            blocksToRead = blocks;
-        }
-        err = _disk_read(disk, start, blocksToRead);
-        if (err == E_SUCCESS) {
-            bytes = blocksToRead * info->blocksize;
-            memcpy(buf, info->buffer, bytes);
-            buf += bytes;
-            start += blocksToRead;
-            blocks -= blocksToRead;
-        } else {
-            exceptv(EX_DISK_READ, err);
-        }
+    // size in blocks of a single transfer (depends on driver)
+    uint32_t transferSize = info->maxBlocksPerRead;
+    // total number of transfers to do
+    uint32_t transfers = blocks / transferSize;
+    // size of a transfer in bytes
+    uint32_t bytesRead = transfers * info->blocksize;
+    // remaining blocks to read
+    uint32_t leftovers = blocks % transferSize;
+
+    for (uint32_t i = 0; i != transfers; ++i) {
+        err = _disk_read(disk, start, transferSize);
+        ERRCHECK(EX_DISK_READ, err);
+        memcpy(bbuf, info->buffer, bytesRead);
+        start += transferSize;
+        bbuf += bytesRead;
     }
 
-    // int err;
-    // // size in blocks for a single transfer
-    // uint32_t transferSize = disk->maxBlocksPerRead;
-    // // number of blocks to read for the iteration
-    // uint32_t blocksToRead;
-    // // number of transfers to do
-    // uint32_t transfers, final;
-    // uint32_t bytes;
-    // if (transferSize) {
-    //     transfers = blocks / disk->maxBlocksPerRead;
-    //     remainder = blocks % disk->maxBlocksPerRead;
-    // } else {
-    //     transfers = 0;
-    //     remainder = blocks;
-    // }
-    // for (size_t i = transfers + 1; i != 0; --i) {
-    //     blocksToRead = (i == 1) ? remainder : disk;
-    //     err = _disk_read(disk, start, blocksToRead);
-    //     if (err == E_SUCCESS) {
-    //         bytes = blocksToRead * disk->blocksize;
-    //         memcpy(buf, disk->buffer, bytes);
-    //         buf += bytes;
-    //     } else {
-    //         except(EX_DISK_READ);
-    //     }
-    // }
-    // size_t bytesCopied = 0;
-
-    // while (blocks != 0) {
-    //     if (DISK.maxBlocksPerRead) {
-
-    //     }
-    //     blocksToRead = blocks > DISK.maxBlocksPerRead ? DISK.maxBlocksPerRead : blocks;
-    //     err = _disk_read(start, blocksToRead);
-    //     if (err == E_SUCCESS) {
-    //         memcpy(buf, DISK.buffer, blocksToRead * DISK.blocksize);
-    //         blocks -= blocksToRead;
-    //     } else {
-    //         break;
-    //     }
-    // }
-
+    if (leftovers) {
+        err = _disk_read(disk, start, leftovers);
+        ERRCHECK(EX_DISK_READ, err);
+        memcpy(bbuf, info->buffer, leftovers * info->blocksize);
+    }
 }
 
 void disk_readb(Disk *disk, uint64_t lba) {
