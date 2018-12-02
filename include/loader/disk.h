@@ -38,14 +38,18 @@ typedef struct Disk_s {
 typedef struct DiskLabel_s DiskLabel;
 typedef struct DiskPart_s DiskPart;
 
+//
+// Typedef for a disk label read function pointer. Functions of this prototype
+// are expected to read a disk label and store all visible partitions in the
+// table pointer
+//
+typedef int (*DiskLabelReadFn)(DiskLabel*);
+
 struct DiskLabel_s {
     Disk *disk;                 // handle to disk
     SplDiskLabel kind;          // Label type
-    size_t maxIndex;            // maximum number of partitions
-    void *aux;                  // label-specific data pointer
-    int (*check)(DiskLabel*);
-    int (*getActive)(DiskLabel*, uint32_t*);
-    int (*getPart)(DiskLabel*, uint32_t, DiskPart*);
+    size_t tablesize;
+    DiskPart *table;
 };
 
 struct DiskPart_s {
@@ -97,9 +101,37 @@ void disk_pread(Disk *disk, void *buf, uint64_t start, uint32_t blocks);
 //
 void disk_readb(Disk *disk, uint64_t lba);
 
+//
+// Disk label initialization. The disk is checked for a given disk label and
+// its parition data is read into the given label pointer.
+//
+// Exceptions:
+//  - EX_DISK_READ: A read error occurred while reading the disk label
+//  - EX_DISK_LABEL: The disk label is invalid
+//
 void disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label);
 
-void disk_label_check(DiskLabel *label);
+//
+// Get the active partition from the disk label. The active partition is a
+// partition primarily used for booting the system. Some labels do not have
+// the concept of an active partition. The partition is stored in the part
+// variable if it is found. For labels with multiple active partitions, only
+// the first one found is returned.
+//
+// Exceptions:
+//  - EX_DISK_PARTITION: The active partition was not found
+//
+void disk_label_getActive(DiskLabel *label, DiskPart *part);
+
+//
+// Get the partition from the label for the given index. If the partition
+// exists it is stored in the part pointer, otherwise abort.
+//
+// Exceptions:
+//  - EX_DISK_PARTITION: The partition for the given partnum does not exist on
+//                       the given label
+//
+void disk_label_getPart(DiskLabel *label, uint32_t partnum, DiskPart *part);
 
 
 // ============================================================================

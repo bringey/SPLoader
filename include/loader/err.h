@@ -73,15 +73,12 @@
 // overlapping partitions
 #define E_DISK_LABEL_OVERLAP                5
 
-
 //
 // MBR exception codes (100-199)
 //
 
 // MBR contains an invalid signature (signature != 0xAA55)
 #define E_MBR_SIGNATURE                     100
-// MBR partitions overlap
-#define E_MBR_PARTITION_OVERLAP             101
 
 // GPT Exception codes (200-299)
 
@@ -95,7 +92,15 @@
 #define E_GPT_HEADER_INVALID                203
 // partition entry invalid
 #define E_GPT_PARTITION_INVALID             204
-// overlapping partitions
-#define E_GPT_PARTITION_OVERLAP             205
+
+// ============================================================================
+// EX_DISK_PARTITION
+// ============================================================================
+
+// parition does not exist in label
+#define E_DISK_PARTITION_INDEX              1
+// active partition was not found
+#define E_DISK_PARTITION_ACTIVE             2
+
 
 #endif 

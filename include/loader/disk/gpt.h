@@ -75,31 +75,7 @@ struct GptPartitionEntry_s {
 
 typedef struct GptPartitionEntry_s GptPartitionEntry;
 
-//
-// Parse the GPT header block and store it in the given header variable.
-// If isBackup is true, then
-//
-// int disk_gpt_check(void);
-
-// int disk_gpt_header(GptHeader *header);
-
-// int disk_gpt_tablesize(GptHeader *header);
-
-// int disk_gpt_table(GptPartitionEntry *buf);
-
-
-// int disk_gpt_checkHeader(uint64_t lba, GptHeader *header);
-
-// int disk_gpt_checkTable(GptHeader *header, GptPartitionEntry *table);
-
-
-int disk_gpt_init(DiskLabel *label);
-
-int disk_gpt_check(DiskLabel *label);
-
-int disk_gpt_getActive(DiskLabel *label, uint32_t *index);
-
-int disk_gpt_getPart(DiskLabel *label, uint32_t index, DiskPart *part);
+int disk_gpt_read(DiskLabel *label);
 
 
 #endif

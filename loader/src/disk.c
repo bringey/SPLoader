@@ -111,10 +111,10 @@ void disk_readb(Disk *disk, uint64_t lba) {
 void disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label) {
     label->disk = disk;
     label->kind = kind;
-    label->maxIndex = 0;
-    label->aux = NULL;
+    label->tablesize = 0;
+    label->table = NULL;
 
-    int (*initFn)(DiskLabel*);
+    DiskLabelReadFn readFn;
 
     switch (kind) {
         case SPL_DISK_LABEL_UNKNOWN:
@@ -123,56 +123,26 @@ void disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label) {
             break;
         case SPL_DISK_LABEL_MBR:
             #ifdef OPT_DISK_MBR
-                initFn = disk_mbr_init;
-                label->check = disk_mbr_check;
-                label->getActive = disk_mbr_getActive;
-                label->getPart = disk_mbr_getPart;
+                readFn = disk_mbr_read;
             #else
                 exceptv(EX_DISK_LABEL, E_DISK_LABEL_UNSUPPORTED);
             #endif
             break;
         case SPL_DISK_LABEL_GPT:
             #ifdef OPT_DISK_GPT
-                initFn = disk_gpt_init;
-                label->check = disk_gpt_check;
-                label->getActive = disk_gpt_getActive;
-                label->getPart = disk_gpt_getPart;
+                readFn = disk_gpt_read;
             #else
                 exceptv(EX_DISK_LABEL, E_DISK_LABEL_UNSUPPORTED);
             #endif
             break;
     }
 
-    int err = initFn(label);
-    ERRCHECK(EX_DISK_LABEL, err);
-}
-
-void disk_label_check(DiskLabel *label) {
-    int err = label->check(label);
+    int err = readFn(label);
     ERRCHECK(EX_DISK_LABEL, err);
 
-    // get the total count of partitions
-    const uint32_t maxIndex = label->maxIndex;
-    size_t nparts = 0;
-    for (size_t i = 0; i != maxIndex; ++i) {
-        if (label->getPart(label, i, NULL) == E_SUCCESS) {
-            ++nparts;
-        }
-    }
-
+    DiskPart *partbuf = label->table;
+    size_t nparts = label->tablesize;
     if (nparts > 0) {
-        DiskPart *partbuf = (DiskPart*)mem_malloc(sizeof(DiskPart) * nparts);
-        if (partbuf == NULL) {
-            except(EX_MEM);
-        }
-
-        DiskPart *iter = partbuf;
-        for (uint32_t i = 0; i != maxIndex; ++i) {
-            if (label->getPart(label, i, iter) == E_SUCCESS) {
-                ++iter;
-            }
-        }
-
         // test each part for overlap
         DiskPart *left, *right;
         for (size_t i = 0; i != nparts - 1; ++i) {
@@ -188,5 +158,35 @@ void disk_label_check(DiskLabel *label) {
             }
         }
     }
+}
 
+void disk_label_getActive(DiskLabel *label, DiskPart *part) {
+    // scan the table for a DiskPart with active == true
+    for (size_t i = 0; i != label->tablesize; ++i) {
+        if (label->table[i].active) {
+            *part = label->table[i];
+            return;
+        }
+    }
+    // no active partition found, abort
+    exceptv(EX_DISK_PARTITION, E_DISK_PARTITION_ACTIVE);
+}
+
+void disk_label_getPart(DiskLabel *label, uint32_t partnum, DiskPart *part) {
+    if (partnum >= label->tablesize) {
+        exceptv(EX_DISK_LABEL, E_DISK_LABEL_NO_PARTITION);
+    }
+
+    // scan the table for a DiskPart with num == partnum
+    size_t nparts = label->tablesize;
+    DiskPart *iter = label->table;
+    for (size_t i = 0; i != nparts; ++i) {
+        if (iter->num == partnum) {
+            *part = *iter;
+            return;
+        }
+        ++iter;
+    }
+    // couldn't find the partition, abort
+    exceptv(EX_DISK_PARTITION, E_DISK_PARTITION_INDEX);
 }
