@@ -22,8 +22,11 @@ void* mem_malloc(size_t bytes);
 
 void* mem_calloc(size_t bytes);
 
-// mem_free not implemented (not needed)
-// int mem_free(void *ptr);
+//
+// free implementation, only works for the LAST pointer returned by mem_malloc
+// or mem_calloc. Used for temporary buffers.
+//
+int mem_free(void *ptr);
 
 // ============================================================================
 // Driver functions
@@ -53,6 +56,7 @@ typedef struct FreeMap_s {
     FreeBlock *freelist;
     FreeBlock *nextblock;
     size_t blockCount;
+    void *lastalloc;
 
 } FreeMap;
 

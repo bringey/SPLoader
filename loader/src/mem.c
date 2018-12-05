@@ -4,10 +4,12 @@
 ** Author: bringey
 */
 
+#include <loader/assert.h>
 #include <loader/console.h>
 #include <loader/err.h>
 #include <loader/mem.h>
 
+#include <stdbool.h>
 #include <stdint.h>
 
 static void* __allocate(FreeBlock *block, size_t bytes);
@@ -103,6 +105,31 @@ void* mem_malloc(size_t bytes) {
 
 }
 
+int mem_free(void *ptr) {
+
+    assert(map->lastalloc == ptr);
+
+    // find the block that contains the pointer
+    bool found = false;
+    FreeBlock *block = map->freelist;
+    for (size_t i = 0; i != map->blockCount; ++i) {
+        if (found) {
+            // reset all freeblocks past the block that contained the pointer
+            block->next = block->base;
+        } else {
+            if (ptr >= block->base && ptr < block->limit) {
+                // found the pointer to free, set the next alloc to this
+                // pointer
+                found = true;
+                block->next = ptr;
+            }
+        }
+        ++block;
+    }
+
+    return found ? E_SUCCESS : E_FAILURE;
+}
+
 
 void* __allocate(FreeBlock *block, size_t bytes) {
     size_t space = (size_t)block->limit - (size_t)block->next;
@@ -130,5 +157,8 @@ void* __allocate(FreeBlock *block, size_t bytes) {
         }
     }
 
+    if (result != NULL) {
+        map->lastalloc = result;
+    }
     return result;
 }
