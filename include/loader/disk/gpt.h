@@ -23,6 +23,18 @@
 #define GPT_HEADER_MYLBA 0x18
 #define GPT_HEADER_ALTERNATELBA 0x20
 
+// partition attributes
+#define GPT_ATTRIBUTE_REQUIRED  0x1     // bit 0
+#define GPT_ATTRIBUTE_IGNORED   0x2     // bit 1
+#define GPT_ATTRIBUTE_LEGACY    0x4     // bit 2
+// bits 3-47 are reserved
+// bits 48-63 are partition-specific
+
+#define GPT_ATTRIBUTE_MS_READONLY       0x1000000000000000  // bit 60
+#define GPT_ATTRIBUTE_MS_SHADOWCOPY     0x2000000000000000  // bit 61
+#define GPT_ATTRIBUTE_MS_HIDDEN         0x4000000000000000  // bit 62
+#define GPT_ATTRIBUTE_MS_NOAUTOMOUNT    0x8000000000000000  // bit 63
+
 #define GPT_LBA_HEADER 1
 #define GPT_LBA_MBR 0
 
