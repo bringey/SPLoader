@@ -72,6 +72,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 
+option(ENABLE_TESTS "Enable unit testing" ON)
 option(ENABLE_WERROR "Treat compiler warnings as errors" ON)
 set(WARNFLAGS -Wall -Wextra -pedantic CACHE STRING "Default GCC Warning enable flags")
 
@@ -125,6 +126,15 @@ add_subdirectory(libsploader)
 add_subdirectory(libsploaderk)
 add_subdirectory(loader)
 add_subdirectory(tools)
+
+if (ENABLE_TESTS)
+    find_library(CMOCKA_LIB cmocka)
+    if (CMOCKA_LIB STREQUAL "CMOCKA_LIB-NOTFOUND")
+        message(FATAL_ERROR "libcmocka was not found")
+    endif ()
+    enable_testing()
+    add_subdirectory(test)
+endif (ENABLE_TESTS)
 
 custom_targets()
 
