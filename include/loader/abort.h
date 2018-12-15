@@ -91,7 +91,7 @@
 // Stop execution of the loader completely. A message is printed to the
 // console and the system is halted forever.
 //
-#define abort() _abort()
+#define loader_abort() _loader_abort()
 
 //
 // Exception occurred, print message relative to the exception ex and abort.
