@@ -1,2 +1,3 @@
 src/loader/common/abort.c
 src/loader/common/console.c
+../loader/src/abort.c

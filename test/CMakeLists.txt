@@ -1,5 +1,6 @@
 project(test C)
 
+set(TEST_CFLAGS -std=gnu11)
 project_template()
 
 sources(LOADER_COMMON_SRC ${CONFIG_DIR}/loader/common.sources)
@@ -22,7 +23,7 @@ function(add_loader_test testname)
         ${CMOCKA_LIB}
     )
     add_test(
-        NAME "loader_${test_target}"
+        NAME "${test_target}"
         COMMAND ${test_target}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )

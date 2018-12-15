@@ -10,6 +10,19 @@
 #include <setjmp.h>
 #include <cmocka.h>
 
+#include <loader/mem.h>
+
+
+size_t _mem_availableBlocks(void) {
+    return 0;
+}
+
+size_t _mem_nextBlock(size_t cont, FreeBlock *block) {
+    (void)cont; (void)block;
+    return 0;
+}
+
+
 static void test_init(void **state) {
     (void)state;
 }

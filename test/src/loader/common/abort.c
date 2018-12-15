@@ -10,6 +10,6 @@
 
 #include <stdlib.h>
 
-void _abort(void) {
+void _loader_abort(void) {
     exit(EXIT_FAILURE);
 }
