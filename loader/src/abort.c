@@ -46,5 +46,5 @@ void exceptv(unsigned ex, int code) {
 
     con_puts("Error occurred: ");
     con_printf("%s (%d:%d)\n", str, ex, code);
-    _abort();
+    _loader_abort();
 }

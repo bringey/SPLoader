@@ -107,7 +107,7 @@ noreturn void exceptv(unsigned ex, int code);
 // Stop execution of the loader completely. A message is printed and the system
 // is halted forever.
 //
-noreturn void _abort(void);
+noreturn void _loader_abort(void);
 
 #endif  // __ASM__
 
