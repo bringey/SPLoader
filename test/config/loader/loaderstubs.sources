@@ -1,0 +1,2 @@
+src/loader/stubs/abort.c
+src/loader/stubs/console.c

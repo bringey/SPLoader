@@ -73,8 +73,16 @@
 
 #ifndef __ASM__
 
+#ifdef UNIT_TESTING
+
+#define NORETURN
+
+#else
+
 #include <stdnoreturn.h>
-#include <stdbool.h>
+#define NORETURN noreturn
+
+#endif // UNIT_TESTING
 
 //
 // Macro for raising an exception ex, if err != E_SUCCESS
@@ -101,13 +109,13 @@
 //
 // Same as except, but with an additional error code to be displayed
 //
-noreturn void exceptv(unsigned ex, int code);
+NORETURN void exceptv(unsigned ex, int code);
 
 //
 // Stop execution of the loader completely. A message is printed and the system
 // is halted forever.
 //
-noreturn void _loader_abort(void);
+NORETURN void _loader_abort(void);
 
 #endif  // __ASM__
 

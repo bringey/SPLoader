@@ -3,10 +3,10 @@ project(test C)
 set(TEST_CFLAGS -std=gnu11)
 project_template()
 
-sources(LOADER_COMMON_SRC ${CONFIG_DIR}/loader/common.sources)
-set(LOADER_COMMON "loader_common")
+sources(LOADER_STUBS_SRC ${CONFIG_DIR}/loader/loaderstubs.sources)
+set(LOADER_STUBS_LIB "loaderstubs")
 
-add_library(${LOADER_COMMON} STATIC ${LOADER_COMMON_SRC})
+add_library(${LOADER_STUBS_LIB} STATIC ${LOADER_STUBS_SRC})
 
 # loader tests
 
@@ -19,7 +19,7 @@ function(add_loader_test testname)
     )
     target_link_libraries(
         ${test_target}
-        ${LOADER_COMMON}
+        ${LOADER_STUBS_LIB}
         ${CMOCKA_LIB}
     )
     add_test(
