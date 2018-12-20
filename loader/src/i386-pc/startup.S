@@ -11,7 +11,7 @@
 
     .arch i686
     .text
-    .globl _start, main
+    .globl _start, ldr_main
     .globl __int32_init
     .globl ldr_con_init
 
@@ -37,7 +37,7 @@ _start:
 
     pushl   $LOADER_ADDRESS
     pushl   $LOADER_SPL_HEADER_ADDRESS
-    call    main
+    call    ldr_main
 
 
     // returned from main! do nothing forever

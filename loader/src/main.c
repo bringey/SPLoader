@@ -25,7 +25,7 @@
 // 6. load config (/sploader.ini)
 // 7. execute config (chainload, load, etc)
 //
-int main(SplHeader *header, void* entryAddr) {
+int ldr_main(SplHeader *header, void* entryAddr) {
 
     ldr_con_clear();
 
