@@ -11,7 +11,7 @@
 #define BIOS_MAP ((E820Map*)LOADER_MMAP_ADDRESS)
 
 
-size_t _mem_availableBlocks(void) {
+size_t _ldr_mem_availableBlocks(void) {
     size_t count = 0;
     E820Entry *entry = (E820Entry*)LOADER_MMAP_TABLE;
 
@@ -30,7 +30,7 @@ size_t _mem_availableBlocks(void) {
 }
 
 
-size_t _mem_nextBlock(size_t cont, FreeBlock *block) {
+size_t _ldr_mem_nextBlock(size_t cont, FreeBlock *block) {
     // the continuation value for the i386-pc driver is an index in the E820
     // map. The next index is returned.
 

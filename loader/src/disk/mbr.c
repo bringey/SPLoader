@@ -18,11 +18,11 @@
 
 #define MAX_INDEX 4
 
-int disk_mbr_read(DiskLabel *label) {
+int ldr_disk_mbr_read(DiskLabel *label) {
     Disk *disk = label->disk;
     // MBR is a measly 512 bytes, just keep it on the stack
     MbrGeneric mbr;
-    disk_read(disk, &mbr, MBR_LBA, MBR_LENGTH, 1);
+    ldr_disk_read(disk, &mbr, MBR_LBA, MBR_LENGTH, 1);
 
     // check the signature
     // TODO: make portable (this only works on little-endian platforms)
@@ -43,7 +43,7 @@ int disk_mbr_read(DiskLabel *label) {
     // convert each MbrPart to a DiskPart and store it in the label's table
     label->tablesize = nparts;
     if (nparts) {
-        DiskPart *table = (DiskPart*)mem_malloc(sizeof(DiskPart) * nparts);
+        DiskPart *table = (DiskPart*)ldr_malloc(sizeof(DiskPart) * nparts);
         MbrPart *part;
         label->table = table;
         for (size_t i = 0; i != 4; ++i) {

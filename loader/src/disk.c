@@ -16,58 +16,58 @@
 #include <loader/disk/gpt.h>
 
 
-void disk_bootDisk(Disk *disk) {
-    DiskInfo *info = (DiskInfo*)mem_malloc(sizeof(DiskInfo));
-    int err = _disk_info(info);
+void ldr_disk_bootDisk(Disk *disk) {
+    DiskInfo *info = (DiskInfo*)ldr_malloc(sizeof(DiskInfo));
+    int err = _ldr_disk_info(info);
     if (err != E_SUCCESS) {
-        exceptv(EX_DISK, err);
+        ldr_exceptv(EX_DISK, err);
     }
     disk->info = info;
-    disk->blockBuf = (uint8_t*)mem_malloc(info->blocksize);
+    disk->blockBuf = (uint8_t*)ldr_malloc(info->blocksize);
 }
 
-void disk_init(void) {
-    int err = _disk_init();
+void ldr_disk_init(void) {
+    int err = _ldr_disk_init();
     if (err != E_SUCCESS) {
-        exceptv(EX_DISK, err);
+        ldr_exceptv(EX_DISK, err);
     }
 }
 
-void disk_read(Disk *disk, void *buf, uint64_t lba, uint32_t blocksize, uint32_t blocks) {
-    assert(disk != NULL);
-    assert(buf != NULL);
+void ldr_disk_read(Disk *disk, void *buf, uint64_t lba, uint32_t blocksize, uint32_t blocks) {
+    ldr_assert(disk != NULL);
+    ldr_assert(buf != NULL);
 
     const DiskInfo *info = disk->info;
-    assert(info != NULL);
+    ldr_assert(info != NULL);
 
     // overflow? ignore it, assume buf won't be larger than SIZE_MAX
     size_t bytes = blocksize * blocks;
     uint32_t pblocks = bytes / info->blocksize;
     uint32_t leftover = bytes % info->blocksize;
 
-    disk_pread(disk, buf, lba, pblocks);
+    ldr_disk_pread(disk, buf, lba, pblocks);
     // if the logical blocksize was not a multiple of the physical blocksize,
     // read one more block and copy whatever is leftover
     if (leftover) {
-        disk_readb(disk, lba + pblocks);
-        memcpy((uint8_t*)buf + (bytes - leftover), disk->blockBuf, leftover);
+        ldr_disk_readb(disk, lba + pblocks);
+        ldr_memcpy((uint8_t*)buf + (bytes - leftover), disk->blockBuf, leftover);
     }
 
 
 }
 
-void disk_pread(Disk *disk, void *buf, uint64_t start, uint32_t blocks) {
-    assert(disk != NULL);
-    assert(buf != NULL);
+void ldr_disk_pread(Disk *disk, void *buf, uint64_t start, uint32_t blocks) {
+    ldr_assert(disk != NULL);
+    ldr_assert(buf != NULL);
 
     const DiskInfo *info = disk->info;
-    assert(info != NULL);
+    ldr_assert(info != NULL);
 
     // check overflow
-    assert(start <= UINT64_MAX - blocks);
+    ldr_assert(start <= UINT64_MAX - blocks);
     // make sure we don't read more blocks that exist
     uint64_t limit = start + blocks;
-    assert(limit <= info->totalBlocks);
+    ldr_assert(limit <= info->totalBlocks);
 
     int err;
     // convert buf to a uint8_t pointer
@@ -83,32 +83,32 @@ void disk_pread(Disk *disk, void *buf, uint64_t start, uint32_t blocks) {
     uint32_t leftovers = blocks % transferSize;
 
     for (uint32_t i = 0; i != transfers; ++i) {
-        err = _disk_read(disk, start, transferSize);
+        err = _ldr_disk_read(disk, start, transferSize);
         ERRCHECK(EX_DISK_READ, err);
-        memcpy(bbuf, info->buffer, bytesRead);
+        ldr_memcpy(bbuf, info->buffer, bytesRead);
         start += transferSize;
         bbuf += bytesRead;
     }
 
     if (leftovers) {
-        err = _disk_read(disk, start, leftovers);
+        err = _ldr_disk_read(disk, start, leftovers);
         ERRCHECK(EX_DISK_READ, err);
-        memcpy(bbuf, info->buffer, leftovers * info->blocksize);
+        ldr_memcpy(bbuf, info->buffer, leftovers * info->blocksize);
     }
 }
 
-void disk_readb(Disk *disk, uint64_t lba) {
+void ldr_disk_readb(Disk *disk, uint64_t lba) {
     // convience function, note that disk_read can be used instead. This just
     // makes it easier for reading single blocks at a time
-    int err = _disk_read(disk, lba, 1);
+    int err = _ldr_disk_read(disk, lba, 1);
     if (err == E_SUCCESS) {
-        memcpy(disk->blockBuf, disk->info->buffer, disk->info->blocksize);
+        ldr_memcpy(disk->blockBuf, disk->info->buffer, disk->info->blocksize);
     } else {
-        exceptv(EX_DISK_READ, err);
+        ldr_exceptv(EX_DISK_READ, err);
     }
 }
 
-void disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label) {
+void ldr_disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label) {
     label->disk = disk;
     label->kind = kind;
     label->tablesize = 0;
@@ -119,20 +119,20 @@ void disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label) {
     switch (kind) {
         case SPL_DISK_LABEL_UNKNOWN:
         case SPL_DISK_LABEL_NONE:
-            exceptv(EX_DISK_LABEL, E_DISK_LABEL_UNKNOWN);
+            ldr_exceptv(EX_DISK_LABEL, E_DISK_LABEL_UNKNOWN);
             break;
         case SPL_DISK_LABEL_MBR:
             #ifdef OPT_DISK_MBR
-                readFn = disk_mbr_read;
+                readFn = ldr_disk_mbr_read;
             #else
-                exceptv(EX_DISK_LABEL, E_DISK_LABEL_UNSUPPORTED);
+                ldr_exceptv(EX_DISK_LABEL, E_DISK_LABEL_UNSUPPORTED);
             #endif
             break;
         case SPL_DISK_LABEL_GPT:
             #ifdef OPT_DISK_GPT
-                readFn = disk_gpt_read;
+                readFn = ldr_disk_gpt_read;
             #else
-                exceptv(EX_DISK_LABEL, E_DISK_LABEL_UNSUPPORTED);
+                ldr_exceptv(EX_DISK_LABEL, E_DISK_LABEL_UNSUPPORTED);
             #endif
             break;
     }
@@ -153,14 +153,14 @@ void disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label) {
                 right = partbuf + j;
                 // test if the left and right partitions overlap
                 if (left->endLba > right->startLba || left->startLba < right->endLba) {
-                    exceptv(EX_DISK_LABEL, E_DISK_LABEL_OVERLAP);
+                    ldr_exceptv(EX_DISK_LABEL, E_DISK_LABEL_OVERLAP);
                 }
             }
         }
     }
 }
 
-void disk_label_getActive(DiskLabel *label, DiskPart *part) {
+void ldr_disk_label_getActive(DiskLabel *label, DiskPart *part) {
     // scan the table for a DiskPart with active == true
     for (size_t i = 0; i != label->tablesize; ++i) {
         if (label->table[i].active) {
@@ -169,12 +169,12 @@ void disk_label_getActive(DiskLabel *label, DiskPart *part) {
         }
     }
     // no active partition found, abort
-    exceptv(EX_DISK_PARTITION, E_DISK_PARTITION_ACTIVE);
+    ldr_exceptv(EX_DISK_PARTITION, E_DISK_PARTITION_ACTIVE);
 }
 
-void disk_label_getPart(DiskLabel *label, uint32_t partnum, DiskPart *part) {
+void ldr_disk_label_getPart(DiskLabel *label, uint32_t partnum, DiskPart *part) {
     if (partnum >= label->tablesize) {
-        exceptv(EX_DISK_LABEL, E_DISK_LABEL_NO_PARTITION);
+        ldr_exceptv(EX_DISK_LABEL, E_DISK_LABEL_NO_PARTITION);
     }
 
     // scan the table for a DiskPart with num == partnum
@@ -188,5 +188,5 @@ void disk_label_getPart(DiskLabel *label, uint32_t partnum, DiskPart *part) {
         ++iter;
     }
     // couldn't find the partition, abort
-    exceptv(EX_DISK_PARTITION, E_DISK_PARTITION_INDEX);
+    ldr_exceptv(EX_DISK_PARTITION, E_DISK_PARTITION_INDEX);
 }

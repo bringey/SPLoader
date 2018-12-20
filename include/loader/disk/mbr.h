@@ -63,7 +63,7 @@ struct MbrGeneric_s {
 
 typedef struct MbrGeneric_s MbrGeneric;
 
-int disk_mbr_read(DiskLabel *label);
+int ldr_disk_mbr_read(DiskLabel *label);
 
 #endif  // __ASM__
 

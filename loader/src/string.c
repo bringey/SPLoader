@@ -14,8 +14,8 @@
 
 static int __ultostr(unsigned long u, unsigned base, char *buf);
 
-int ltostr(long i, unsigned base, char *buf) {
-    assert(buf != NULL);
+int ldr_ltostr(long i, unsigned base, char *buf) {
+    ldr_assert(buf != NULL);
 
     unsigned long value;
 
@@ -31,12 +31,12 @@ int ltostr(long i, unsigned base, char *buf) {
     return __ultostr(value, base, buf);
 }
 
-int ultostr(unsigned long u, unsigned base, char *buf) {
-    assert(buf != NULL);
+int ldr_ultostr(unsigned long u, unsigned base, char *buf) {
+    ldr_assert(buf != NULL);
     return __ultostr(u, base, buf);
 }
 
-void* memcpy(void *dest, const void *source, size_t num) {
+void* ldr_memcpy(void *dest, const void *source, size_t num) {
     uint8_t *dbuf = (uint8_t*)dest;
     uint8_t *sbuf = (uint8_t*)source;
     for (size_t i = 0; i != num; ++i) {
@@ -46,16 +46,16 @@ void* memcpy(void *dest, const void *source, size_t num) {
     return dest;
 }
 
-int strlower(char *str) {
-    assert(str != NULL);
+int ldr_strlower(char *str) {
+    ldr_assert(str != NULL);
 
     char ch;
     while ((ch = *str) != '\0') {
         // test if ch is lowercase [a-z]
-        if (isupper(ch)) {
+        if (ldr_isupper(ch)) {
             // convert ch to uppercase and store it in the string
             // fyi ('a' - 'A') => 32
-            *str = tolower(ch);
+            *str = ldr_tolower(ch);
         }
         ++str;
     }
@@ -63,16 +63,16 @@ int strlower(char *str) {
     return E_SUCCESS;
 }
 
-int strupper(char *str) {
-    assert(str != NULL);
+int ldr_strupper(char *str) {
+    ldr_assert(str != NULL);
 
     char ch;
     while ((ch = *str) != '\0') {
         // test if ch is lowercase [a-z]
-        if (islower(ch)) {
+        if (ldr_islower(ch)) {
             // convert ch to uppercase and store it in the string
             // fyi ('a' - 'A') => 32
-            *str = toupper(ch);
+            *str = ldr_toupper(ch);
         }
         ++str;
     }
@@ -81,7 +81,7 @@ int strupper(char *str) {
     return E_SUCCESS;
 }
 
-size_t strlen(const char *str) {
+size_t ldr_strlen(const char *str) {
     unsigned len = 0;
     while (*str++ != '\0') {
         ++len;

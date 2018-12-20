@@ -47,8 +47,8 @@ typedef struct BiosDp_s BiosDp;
 
 typedef struct BiosDap_s BiosDap;
 
-int _disk_info(DiskInfo *info) {
-    assert(info != NULL);
+int _ldr_disk_info(DiskInfo *info) {
+    ldr_assert(info != NULL);
     info->totalBlocks = BIOS_DP->sectors;
     info->blocksize = BIOS_DP->bytesPerSector;
     // Some BIOSes limit the max sectors to read to 127
@@ -62,13 +62,13 @@ int _disk_info(DiskInfo *info) {
     return E_SUCCESS;
 }
 
-int _disk_init(void) {
+int _ldr_disk_init(void) {
     // nothing to init, using BIOS
     return E_SUCCESS;
 }
 
 
-int _disk_read(Disk *disk, uint32_t start, uint32_t blocks) {
+int _ldr_disk_read(Disk *disk, uint32_t start, uint32_t blocks) {
     (void)disk;
 
     BiosDap *dap = BIOS_DAP;

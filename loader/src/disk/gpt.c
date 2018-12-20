@@ -26,12 +26,12 @@ static bool iszero(void *buf, size_t count);
 
 // TODO: actually test this, not able to test this at time of writing due to
 //       tooling not implemented
-int disk_gpt_read(DiskLabel *label) {
+int ldr_disk_gpt_read(DiskLabel *label) {
 
     // allocate the partition table
     // we use 128 as a fixed limit similar to other OSes, it should be noted
     // that GPT can support more than this.
-    label->table = (DiskPart*)mem_malloc(sizeof(DiskPart) * TABLE_MAX);
+    label->table = (DiskPart*)ldr_malloc(sizeof(DiskPart) * TABLE_MAX);
 
     Disk *disk = label->disk;
     GptHeader header;
@@ -72,7 +72,7 @@ int disk_gpt_read(DiskLabel *label) {
     }
 
 
-    mem_free(buf);
+    ldr_free(buf);
 
     return E_FAILURE;
 }
@@ -111,9 +111,9 @@ int check(Disk *disk, GptHeader *header, uint64_t lba, void **buf) {
     size_t bufsize = entryCount * entrySize;
     if (*buf == NULL) {
         // table buffer is null, alloc it
-        *buf = mem_malloc(bufsize);
+        *buf = ldr_malloc(bufsize);
     }
-    disk_read(disk, *buf, lba, entrySize, entryCount);
+    ldr_disk_read(disk, *buf, lba, entrySize, entryCount);
     uint32_t tableCrc = spl_crc32(*buf, bufsize);
     if (tableCrc != header->partitionEntryCrc32) {
         return E_GPT_PARTITION_INTEGRITY;

@@ -7,11 +7,11 @@
 #define max(x, y) ((x > y) ? x : y)
 
 // assert that the block is valid (base <= limit)
-#define assertblock(block) assert(block.base <= block.limit)
+#define assertblock(block) ldr_assert(block.base <= block.limit)
 
 
 int blocklist_insert(Blocklist *list, Block32 block, bool mergeOverlap) {
-    assert(list != NULL);
+    ldr_assert(list != NULL);
     assertblock(block);
 
     if (list->len == list->capacity) {

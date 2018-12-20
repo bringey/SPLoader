@@ -14,12 +14,12 @@
 
 #ifdef NDEBUG
 
-#define assert(condition)
+#define ldr_assert(condition)
 
 #else
 
-#define assert(condition) \
-    if (!(condition)) except(EX_ASSERT)
+#define ldr_assert(condition) \
+    if (!(condition)) ldr_except(EX_ASSERT)
 
 #endif
 

@@ -27,42 +27,42 @@
 //
 int main(SplHeader *header, void* entryAddr) {
 
-    con_clear();
+    ldr_con_clear();
 
     // verify header checksum
     if (!spl_check(header)) {
-        exceptv(EX_HEADER, E_HEADER_INTEGRITY);
+        ldr_exceptv(EX_HEADER, E_HEADER_INTEGRITY);
     }
 
     // verify loader.bin checksum
     if (!spl_checkBin(header, entryAddr)) {
-        exceptv(EX_HEADER, E_HEADER_LOADER_INTEGRITY);
+        ldr_exceptv(EX_HEADER, E_HEADER_LOADER_INTEGRITY);
     }
 
-    con_printf("SPLoader (v%s)\n", header->version);
+    ldr_con_printf("SPLoader (v%s)\n", header->version);
 
     // initialization routines
 
-    con_puts("Initialize memory\n");
-    mem_init();
+    ldr_con_puts("Initialize memory\n");
+    ldr_mem_init();
 
-    con_puts("Initialize disk\n");
-    disk_init();
+    ldr_con_puts("Initialize disk\n");
+    ldr_disk_init();
 
     // get the disk we booted from (aka: boot disk)
     Disk disk;
-    disk_bootDisk(&disk);
+    ldr_disk_bootDisk(&disk);
 
     // get the disk label from the header and verify it
     DiskLabel label;
-    disk_label_init(&disk, header->label, &label);
+    ldr_disk_label_init(&disk, header->label, &label);
 
     // get the boot partition
     DiskPart bootpart;
     if (header->flags & SPL_HEADER_FLAG_ACTIVE) {
-        disk_label_getActive(&label, &bootpart);
+        ldr_disk_label_getActive(&label, &bootpart);
     } else {
-        disk_label_getPart(&label, header->partition, &bootpart);
+        ldr_disk_label_getPart(&label, header->partition, &bootpart);
     }
 
     // mount it

@@ -15,11 +15,11 @@
 
 typedef int (*PutcharFn)(void *opt, char ch);
 
-int puts(PutcharFn putcharFn, void *opt, const char *str);
+int ldr_puts(PutcharFn putcharFn, void *opt, const char *str);
 
-int printf(PutcharFn putcharFn, void *opt, const char *fmt, ...);
+int ldr_printf(PutcharFn putcharFn, void *opt, const char *fmt, ...);
 
-int vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args);
+int ldr_vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args);
 
 #endif  // __ASM__
 

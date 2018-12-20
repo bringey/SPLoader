@@ -17,8 +17,8 @@
 
 static int __vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args);
 
-int puts(PutcharFn putcharFn, void *opt, const char *str) {
-    assert(putcharFn != NULL && str != NULL);
+int ldr_puts(PutcharFn putcharFn, void *opt, const char *str) {
+    ldr_assert(putcharFn != NULL && str != NULL);
 
     char ch;
     while ((ch = *str++) != '\0') {
@@ -29,8 +29,8 @@ int puts(PutcharFn putcharFn, void *opt, const char *str) {
 }
 
 
-int printf(PutcharFn putcharFn, void *opt, const char *fmt, ...) {
-    assert(putcharFn != NULL && fmt != NULL);
+int ldr_printf(PutcharFn putcharFn, void *opt, const char *fmt, ...) {
+    ldr_assert(putcharFn != NULL && fmt != NULL);
 
     va_list args;
     va_start(args, fmt);
@@ -40,8 +40,8 @@ int printf(PutcharFn putcharFn, void *opt, const char *fmt, ...) {
     return result;
 }
 
-int vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args) {
-    assert(putcharFn != NULL && fmt != NULL);
+int ldr_vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args) {
+    ldr_assert(putcharFn != NULL && fmt != NULL);
 
     return __vprintf(putcharFn, opt, fmt, args);
 }
@@ -97,18 +97,18 @@ int __vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args) {
                     break;
                 case 'd':       // decimal integer
                     //len = con_cvtdec(buf, (int)va_arg(args, int));
-                    len = ltostr((int)va_arg(args, int), 10, buf);
+                    len = ldr_ltostr((int)va_arg(args, int), 10, buf);
                     break;
                 case 'o':       // octal integer
-                    len = ultostr((unsigned)va_arg(args, unsigned), 8, buf);
+                    len = ldr_ultostr((unsigned)va_arg(args, unsigned), 8, buf);
                     break;
                 case 's':       // string
                     str = (char*)va_arg(args, char*);
-                    len = strlen(str);
+                    len = ldr_strlen(str);
                     break;
                 case 'x':       // hexadecimal integer (lowercase)
                 case 'X':       // hexadecimal integer (uppercase)
-                    len = ultostr((unsigned)va_arg(args, unsigned), 16, buf);
+                    len = ldr_ultostr((unsigned)va_arg(args, unsigned), 16, buf);
                     break;
                 default:
                     typeValid = false;
@@ -124,7 +124,7 @@ int __vprintf(PutcharFn putcharFn, void *opt, const char *fmt, va_list args) {
                     }
                 }
 
-                puts(putcharFn, opt, str);
+                ldr_puts(putcharFn, opt, str);
 
                 // pad if needed for left-adjust
                 if (extra > 0 && leftadjust) {

@@ -31,7 +31,7 @@
 #define calcIndex(col, row) ((row * VGA_WIDTH) + col)
 
 
-int _con_clear(void) {
+int _ldr_con_clear(void) {
     // rep stosw
     // %eax: VGA_NULLCELL
     // %ecx: VGA_HEIGHT * VGA_WIDTH (all cells)
@@ -54,11 +54,11 @@ int _con_clear(void) {
 }
 
 
-unsigned _con_index(unsigned x, unsigned y) {
+unsigned _ldr_con_index(unsigned x, unsigned y) {
     return (y * VGA_WIDTH) + x;
 }
 
-int _con_put(unsigned index, char ch) {
+int _ldr_con_put(unsigned index, char ch) {
     if (index >= (VGA_WIDTH * VGA_HEIGHT)) {
         return E_ARGBOUNDS;
     }
@@ -68,7 +68,7 @@ int _con_put(unsigned index, char ch) {
     return E_SUCCESS;
 }
 
-int _con_scroll(unsigned lines) {
+int _ldr_con_scroll(unsigned lines) {
 
     // if lines is zero, we don't need to do anything
 
@@ -77,7 +77,7 @@ int _con_scroll(unsigned lines) {
         // if the lines is greater than the height, just clear it
         // otherwise, copy it line by line
         if (lines >= VGA_HEIGHT) {
-            _con_clear();
+            _ldr_con_clear();
         } else {
 
             uint16_t *windowStart = (uint16_t*)VGA_BUFFER;
@@ -143,7 +143,7 @@ int _con_scroll(unsigned lines) {
 //     return E_SUCCESS;
 // }
 
-int _con_updateCursor(unsigned index) {
+int _ldr_con_updateCursor(unsigned index) {
 
     //unsigned cursor = calcIndex(x, y);
 
@@ -202,10 +202,10 @@ int _con_updateCursor(unsigned index) {
 
 // properties
 
-unsigned _con_width(void) {
+unsigned _ldr_con_width(void) {
     return VGA_WIDTH;
 }
 
-unsigned _con_height(void) {
+unsigned _ldr_con_height(void) {
     return VGA_HEIGHT;
 }

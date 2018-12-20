@@ -14,19 +14,19 @@
 
 #include <stddef.h>
 
-int mem_init(void);
+int ldr_mem_init(void);
 
-void mem_dump(void);
+void ldr_mem_dump(void);
 
-void* mem_malloc(size_t bytes);
+void* ldr_malloc(size_t bytes);
 
-void* mem_calloc(size_t bytes);
+void* ldr_calloc(size_t bytes);
 
 //
 // free implementation, only works for the LAST pointer returned by mem_malloc
 // or mem_calloc. Used for temporary buffers.
 //
-int mem_free(void *ptr);
+int ldr_free(void *ptr);
 
 // ============================================================================
 // Driver functions
@@ -63,11 +63,11 @@ typedef struct FreeMap_s {
 #undef MEM_CONT_END
 #define MEM_CONT_END ((size_t)-1)
 
-int _mem_bootstrap(FreeMap **map);
+int _ldr_mem_bootstrap(FreeMap **map);
 
-size_t _mem_availableBlocks(void);
+size_t _ldr_mem_availableBlocks(void);
 
-size_t _mem_nextBlock(size_t cont, FreeBlock *block);
+size_t _ldr_mem_nextBlock(size_t cont, FreeBlock *block);
 
 
 #endif  // __ASM__

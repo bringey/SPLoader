@@ -36,7 +36,7 @@ static const char *EX_TABLE[] = {
 
 #define EX_TABLE_SIZE (sizeof(EX_TABLE) / sizeof(const char *))
 
-void exceptv(unsigned ex, int code) {
+void ldr_exceptv(unsigned ex, int code) {
     const char *str;
     if (ex >= EX_TABLE_SIZE) {
         str = "unknown";
@@ -44,7 +44,7 @@ void exceptv(unsigned ex, int code) {
         str = EX_TABLE[ex];
     }
 
-    con_puts("Error occurred: ");
-    con_printf("%s (%d:%d)\n", str, ex, code);
-    _loader_abort();
+    ldr_con_puts("Error occurred: ");
+    ldr_con_printf("%s (%d:%d)\n", str, ex, code);
+    _ldr_abort();
 }

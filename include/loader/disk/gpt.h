@@ -87,7 +87,7 @@ struct GptPartitionEntry_s {
 
 typedef struct GptPartitionEntry_s GptPartitionEntry;
 
-int disk_gpt_read(DiskLabel *label);
+int ldr_disk_gpt_read(DiskLabel *label);
 
 
 #endif

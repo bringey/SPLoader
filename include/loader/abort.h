@@ -90,7 +90,7 @@
 #define ERRCHECK(ex, err) \
     do { \
         if (err != E_SUCCESS) { \
-            exceptv(ex, err); \
+            ldr_exceptv(ex, err); \
         } \
     } while (0)
 
@@ -99,23 +99,23 @@
 // Stop execution of the loader completely. A message is printed to the
 // console and the system is halted forever.
 //
-#define loader_abort() _loader_abort()
+#define ldr_abort() _ldr_abort()
 
 //
 // Exception occurred, print message relative to the exception ex and abort.
 //
-#define except(ex) exceptv(ex, 0)
+#define ldr_except(ex) ldr_exceptv(ex, 0)
 
 //
 // Same as except, but with an additional error code to be displayed
 //
-NORETURN void exceptv(unsigned ex, int code);
+NORETURN void ldr_exceptv(unsigned ex, int code);
 
 //
 // Stop execution of the loader completely. A message is printed and the system
 // is halted forever.
 //
-NORETURN void _loader_abort(void);
+NORETURN void _ldr_abort(void);
 
 #endif  // __ASM__
 

@@ -15,8 +15,8 @@
 
 #include <stddef.h>
 
-void _loader_abort(void) {
-    con_puts("ABORTED! System is halted...");
+void _ldr_abort(void) {
+    ldr_con_puts("ABORTED! System is halted...");
     asm ("cli");
     for (;;) {
         asm ("hlt");

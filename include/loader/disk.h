@@ -65,7 +65,7 @@ struct DiskPart_s {
 // Exceptions:
 //  - EX_DISK: Driver-specific error
 //
-void disk_bootDisk(Disk *disk);
+void ldr_disk_bootDisk(Disk *disk);
 
 //
 // Initialize the disk driver for the boot disk. This function must be called
@@ -74,12 +74,12 @@ void disk_bootDisk(Disk *disk);
 // Exceptions:
 //  - EX_DISK: Driver-specific error code
 //
-void disk_init(void);
+void ldr_disk_init(void);
 
 //
 // Logical disk read. Similar to disk_pread, except uses a provided blocksize.
 //
-void disk_read(Disk *disk, void *buf, uint64_t lba, uint32_t blocksize, uint32_t blocks);
+void ldr_disk_read(Disk *disk, void *buf, uint64_t lba, uint32_t blocksize, uint32_t blocks);
 
 //
 // Physical disk read. Read a specified number of blocks starting from an LBA
@@ -90,7 +90,7 @@ void disk_read(Disk *disk, void *buf, uint64_t lba, uint32_t blocksize, uint32_t
 // Exceptions:
 //  - EX_DISK_READ: A read error occurred
 //
-void disk_pread(Disk *disk, void *buf, uint64_t start, uint32_t blocks);
+void ldr_disk_pread(Disk *disk, void *buf, uint64_t start, uint32_t blocks);
 
 //
 // Read a single block from the given disk. The read data is stored in the
@@ -99,7 +99,7 @@ void disk_pread(Disk *disk, void *buf, uint64_t start, uint32_t blocks);
 // Exceptions:
 //  - EX_DISK_READ: A read error occurred
 //
-void disk_readb(Disk *disk, uint64_t lba);
+void ldr_disk_readb(Disk *disk, uint64_t lba);
 
 //
 // Disk label initialization. The disk is checked for a given disk label and
@@ -109,7 +109,7 @@ void disk_readb(Disk *disk, uint64_t lba);
 //  - EX_DISK_READ: A read error occurred while reading the disk label
 //  - EX_DISK_LABEL: The disk label is invalid
 //
-void disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label);
+void ldr_disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label);
 
 //
 // Get the active partition from the disk label. The active partition is a
@@ -121,7 +121,7 @@ void disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label);
 // Exceptions:
 //  - EX_DISK_PARTITION: The active partition was not found
 //
-void disk_label_getActive(DiskLabel *label, DiskPart *part);
+void ldr_disk_label_getActive(DiskLabel *label, DiskPart *part);
 
 //
 // Get the partition from the label for the given index. If the partition
@@ -131,25 +131,25 @@ void disk_label_getActive(DiskLabel *label, DiskPart *part);
 //  - EX_DISK_PARTITION: The partition for the given partnum does not exist on
 //                       the given label
 //
-void disk_label_getPart(DiskLabel *label, uint32_t partnum, DiskPart *part);
+void ldr_disk_label_getPart(DiskLabel *label, uint32_t partnum, DiskPart *part);
 
 
 // ============================================================================
 // Driver functions
 
-int _disk_info(DiskInfo *info);
+int _ldr_disk_info(DiskInfo *info);
 
 //
 // Initialize system disk driver, a disk structure is given to be set with
 // the properties of the driver.
 //
-int _disk_init(void);
+int _ldr_disk_init(void);
 
 //
 // Read from disk. The blocks from start block to start + blocks will be read
 // into the internal buffer.
 //
-int _disk_read(Disk *disk, uint32_t start, uint32_t blocks);
+int _ldr_disk_read(Disk *disk, uint32_t start, uint32_t blocks);
 
 
 
