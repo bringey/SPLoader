@@ -20,7 +20,7 @@ Exception __expectedEx = (Exception){ .state = EKIND_NONE };
 // re-implement these functions to do a mock assert
 // this way we can check if exceptions are being raised when they should
 
-void exceptv(unsigned ex, int code) {
+void ldr_exceptv(unsigned ex, int code) {
     __lastEx.state = EKIND_EXCEPT;
     __lastEx.ex = ex;
     __lastEx.code = code;
@@ -31,7 +31,7 @@ void exceptv(unsigned ex, int code) {
     }
 }
 
-void _loader_abort(void) {
+void _ldr_abort(void) {
     __lastEx.state = EKIND_ABORTED;
     if (__expectingException) {
         longjmp(__env, 1);

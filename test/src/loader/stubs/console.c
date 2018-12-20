@@ -16,27 +16,27 @@
 #include <stdio.h>
 
 
-int con_clear(void) {
+int ldr_con_clear(void) {
     // not implemented
     return E_SUCCESS;
 }
 
-int con_init(void) {
+int ldr_con_init(void) {
     // do nothing
     return E_SUCCESS;
 }
 
-int con_putchar(char ch) {
+int ldr_con_putchar(char ch) {
     putchar(ch);
     return E_SUCCESS;
 }
 
-int con_puts(const char *str) {
+int ldr_con_puts(const char *str) {
     puts(str);
     return E_SUCCESS;
 }
 
-int con_printf(const char *fmt, ...) {
+int ldr_con_printf(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vprintf(fmt, args);
