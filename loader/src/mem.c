@@ -33,7 +33,7 @@ int ldr_mem_init(void) {
     FreeBlock block;
     size_t cont = MEM_CONT_START;
     while ((cont = _ldr_mem_nextBlock(cont, &block)) != MEM_CONT_END) {
-        if (overhead <= (uint32_t)block.limit - (uint32_t)block.base) {
+        if (overhead <= (size_t)block.limit - (size_t)block.base) {
             homebase = (void*)block.base;
             break;
         }
@@ -44,7 +44,7 @@ int ldr_mem_init(void) {
     }
 
     map = (FreeMap*)homebase;
-    map->freelist = (void*)((uint32_t)homebase + sizeof(FreeMap));
+    map->freelist = (void*)((size_t)homebase + sizeof(FreeMap));
     map->nextblock = map->freelist;
     map->blockCount = blockCount;
 
@@ -57,7 +57,7 @@ int ldr_mem_init(void) {
     cont = MEM_CONT_START;
     while ((cont = _ldr_mem_nextBlock(cont, &block)) != MEM_CONT_END) {
         if (block.base == homebase) {
-            block.base = (void*)((uint32_t)block.base + overhead);
+            block.base = (void*)((size_t)block.base + overhead);
             block.next = block.base;
         }
         *freelistIter++ = block;
