@@ -1,5 +1,4 @@
 src/abort.c
-src/blocklist.c
 src/console.c
 src/disk.c
 src/main.c
