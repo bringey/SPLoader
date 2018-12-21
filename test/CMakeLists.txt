@@ -3,6 +3,10 @@ project(test C)
 set(TEST_CFLAGS -std=gnu11)
 project_template()
 
+# add the entire project directory to the include path
+# allow the test programs to include c source files
+include_directories("${CMAKE_SOURCE_DIR}")
+
 sources(LOADER_STUBS_SRC ${CONFIG_DIR}/loader/loaderstubs.sources)
 set(LOADER_STUBS_LIB "loaderstubs")
 
