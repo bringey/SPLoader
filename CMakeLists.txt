@@ -117,6 +117,23 @@ function(sources var filename)
 
 endfunction(sources)
 
+function(add_test_exe testname)
+    sources(test_src ${CONFIG_DIR}/${testname}.sources)
+    add_executable(
+        ${test_target}
+        ${test_src}
+    )
+    target_link_libraries(
+        ${test_target}
+        ${CMOCKA_LIB}
+    )
+    add_test(
+        NAME "${test_target}"
+        COMMAND ${test_target}
+    )
+    
+endfunction(add_test_exe)
+
 include_directories(
     SYSTEM "${CMAKE_SOURCE_DIR}/include"
     SYSTEM "${CMAKE_BINARY_DIR}/include"
@@ -133,7 +150,7 @@ if (ENABLE_TESTS)
         message(FATAL_ERROR "libcmocka was not found")
     endif ()
     enable_testing()
-    add_subdirectory(test)
+    add_subdirectory(loader/test)
 endif (ENABLE_TESTS)
 
 custom_targets()

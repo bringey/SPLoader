@@ -1,5 +1,5 @@
 /*
-** File: test/src/loader/test_mem.c
+** File: loader/test/src/test_mem.c
 **
 ** Author: bringey
 **
@@ -7,7 +7,7 @@
 */
 #include <loaderstubs.h>
 
-#include "loader/src/mem.c"
+#include "mem.c"
 
 size_t _ldr_mem_availableBlocks(void) {
     return 0;
@@ -19,23 +19,23 @@ size_t _ldr_mem_nextBlock(size_t cont, FreeBlock *block) {
 }
 
 
-static void test_init(void **state) {
+static void test_ldr_mem_init(void **state) {
     (void)state;
 }
 
-static void test_malloc_(void **state) {
+static void test_ldr_malloc(void **state) {
     (void)state;
 }
 
-static void test_free_(void **state) {
+static void test_ldr_free(void **state) {
     (void)state;
 }
 
 int main(void) {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test(test_init),
-        cmocka_unit_test(test_malloc_),
-        cmocka_unit_test(test_free_)
+        cmocka_unit_test(test_ldr_mem_init),
+        cmocka_unit_test(test_ldr_malloc),
+        cmocka_unit_test(test_ldr_free)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
