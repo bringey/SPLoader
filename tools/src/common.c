@@ -35,12 +35,9 @@ int main(int argc, char *argv[]) {
         return exitcode;
 
     exitcode = parse_args(&prog, argc, argv);
-    if (exitcode) {
-        cleanup(&prog);
-        return exitcode;
+    if (exitcode == 0) {
+        exitcode = run(&prog);
     }
-
-    exitcode = run(&prog);
 
     cleanup(&prog);
     return exitcode;

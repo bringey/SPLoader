@@ -57,8 +57,8 @@
 #define SPL_HEADER_ARCH         0x2A
 #define SPL_HEADER_HEADERCRC    0x2C
 #define SPL_HEADER_LOADERCRC    0x30
-#define SPL_HEADER_FLAGS        0x34
-#define SPL_HEADER_LOADER_SIZE  0x38
+#define SPL_HEADER_LOADER_SIZE  0x34
+#define SPL_HEADER_FLAGS        0x38
 #define SPL_HEADER_LABEL        0x3C
 #define SPL_HEADER_PARTITION    0x40
 
@@ -104,8 +104,14 @@ struct SplHeader_s {
     uint16_t arch;              // target architecture
     uint32_t headerCrc;         // CRC32 checksum of the header
     uint32_t loaderCrc;         // CRC32 checksum of the loader binary
-    uint32_t flags;             // flags bitmap
     uint32_t loaderSize;        // size of the loader binary, in bytes
+
+    // =======================================================================
+    // The following fields are to be set by the install tool
+    // must be zero'd for binaries created by mkbin
+    // =======================================================================
+
+    uint32_t flags;             // flags bitmap
     uint32_t label;             // disk label type
     uint32_t partition;         // boot partition index
 
