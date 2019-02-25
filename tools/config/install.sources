@@ -1,1 +1,2 @@
 src/install.c
+src/target/i386-pc.c

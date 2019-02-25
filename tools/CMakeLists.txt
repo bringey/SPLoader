@@ -52,6 +52,7 @@ target_compile_options(
     ${SPL_INSTALL}
     PUBLIC ${TOOLS_CFLAGS} ${WERROR} ${TOOLS_WARNFLAGS}
 )
+target_link_libraries(${SPL_INSTALL} ${LIBSPLOADER})
 
 
 set(MKIMAGE ${CMAKE_CURRENT_BINARY_DIR}/${MKIMAGE} CACHE INTERNAL "" FORCE)
