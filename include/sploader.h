@@ -87,12 +87,15 @@
 #include <stdint.h>
 #include <stddef.h>
 
+// enum for disk labels recognized by sploader
+// each value for an enum must be a power of 2
+
 typedef enum {
 
-    SPL_DISK_LABEL_UNKNOWN = 0,
-    SPL_DISK_LABEL_NONE    = 1,
-    SPL_DISK_LABEL_MBR     = 2,
-    SPL_DISK_LABEL_GPT     = 3
+    SPL_DISK_LABEL_UNKNOWN = 0x0,
+    SPL_DISK_LABEL_NONE    = 0x1,
+    SPL_DISK_LABEL_MBR     = 0x2,
+    SPL_DISK_LABEL_GPT     = 0x4
 
 } SplDiskLabel;
 
