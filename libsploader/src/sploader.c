@@ -24,6 +24,17 @@ bool spl_checkBin(SplHeader *header, void *binary) {
     return crc == header->loaderCrc;
 }
 
+#ifndef SPLOADERK
+void spl_setChecksum(SplHeader *header) {
+    uint32_t tempcrc = header->loaderCrc;
+    header->headerCrc = 0;
+    header->loaderCrc = 0;
+    header->headerCrc = spl_crc32(&header, sizeof(SplHeader));
+    header->loaderCrc = tempcrc;
+}
+#endif
+
+
 uint32_t spl_crc32(void *data, size_t size) {
     // uint32_t byte;
     uint8_t *dp = (uint8_t*)data;

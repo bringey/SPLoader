@@ -40,6 +40,10 @@ if(OPT_DISK_MBR)
    add_definitions(-DOPT_DISK_MBR)
 endif(OPT_DISK_MBR)
 
+add_definitions(
+    -DSPLOADERK
+)
+
 # compiler flags
 set(BASE_FLAGS -std=gnu11 -ffreestanding)
 

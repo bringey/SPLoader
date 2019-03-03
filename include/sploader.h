@@ -4,6 +4,23 @@
 ** Author: bringey
 **
 ** Header for the sploader utility library used by both the loader and tooling.
+** Note that this library is compiled twice, one for the tooling and one for
+** the loader. The SPLOADERK definition, when defined, will define functions
+** pertaining to the loader version. If this definition is not defined, then
+** the tooling version is used instead.
+**
+** Functions in both versions:
+**  spl_check
+**  spl_checkBin
+**  spl_crc32
+**  spl_crc32_acc
+**  spl_crc32_end
+**  spl_reverse32
+**  spl_mbr_read
+**  spl_gpt_read
+**
+** Functions in the tooling library (SPLOADERK is not defined):
+**  spl_setChecksum
 */
 
 
@@ -124,6 +141,9 @@ struct SplHeader_s {
 
 typedef struct SplHeader_s SplHeader;
 
+// ============================================================================
+// SplHeader functions
+// ============================================================================
 
 //
 // Verifiy that the header->headerCrc checksum is correct
@@ -134,6 +154,17 @@ bool spl_check(SplHeader *header);
 // Verify that the header->loaderCrc checksum is correct for the given binary.
 //
 bool spl_checkBin(SplHeader *header, void *binary);
+
+#ifndef SPLOADERK
+//
+// Calculates and updates the headerCrc for the given header.
+//
+void spl_setChecksum(SplHeader *header);
+#endif
+
+// ============================================================================
+// CRC32 functions
+// ============================================================================
 
 //
 // Calculate a CRC32 checksum for the given data buffer

@@ -258,13 +258,8 @@ int run(Prog *prog) {
     header.label = label;
     header.partition = 0;
 
-    // TODO: move this to a function in libsploader
     // recalculate the headerCrc
-    uint32_t tempcrc = header.loaderCrc;
-    header.headerCrc = 0;
-    header.loaderCrc = 0;
-    header.headerCrc = spl_crc32(&header, sizeof(SplHeader));
-    header.loaderCrc = tempcrc;
+    spl_setChecksum(&header);
 
     // INSTALL BOOTSTRAP
 

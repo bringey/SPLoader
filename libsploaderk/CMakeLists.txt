@@ -10,6 +10,10 @@ prepend(LIBSPLOADERK_SRC "${CMAKE_SOURCE_DIR}/libsploader/" ${LIBSPLOADERK_SRC})
 
 set(LIBSPLOADERK "sploaderk" CACHE INTERNAL "" FORCE)
 
+add_definitions(
+    -DSPLOADERK
+)
+
 add_library(
     ${LIBSPLOADERK}
     STATIC
