@@ -30,12 +30,12 @@ int ldr_main(SplHeader *header, void* entryAddr) {
     ldr_con_clear();
 
     // verify header checksum
-    if (!spl_check(header)) {
+    if (!spl_hdr_check(header)) {
         ldr_exceptv(EX_HEADER, E_HEADER_INTEGRITY);
     }
 
     // verify loader.bin checksum
-    if (!spl_checkBin(header, entryAddr)) {
+    if (!spl_hdr_checkBin(header, entryAddr)) {
         ldr_exceptv(EX_HEADER, E_HEADER_LOADER_INTEGRITY);
     }
 

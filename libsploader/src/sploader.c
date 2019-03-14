@@ -8,7 +8,7 @@
 #include <sploader.h>
 
 
-bool spl_check(SplHeader *header) {
+bool spl_hdr_check(SplHeader *header) {
 
     SplHeader copy = *header;
     copy.loaderCrc = 0;
@@ -18,14 +18,14 @@ bool spl_check(SplHeader *header) {
     return crc == header->headerCrc;
 }
 
-bool spl_checkBin(SplHeader *header, void *binary) {
+bool spl_hdr_checkBin(SplHeader *header, void *binary) {
     uint32_t crc = spl_crc32(binary, header->loaderSize);
 
     return crc == header->loaderCrc;
 }
 
 #ifndef SPLOADERK
-void spl_setChecksum(SplHeader *header) {
+void spl_hdr_setChecksum(SplHeader *header) {
     uint32_t tempcrc = header->loaderCrc;
     header->headerCrc = 0;
     header->loaderCrc = 0;

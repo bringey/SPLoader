@@ -201,18 +201,18 @@ typedef struct SplHeader_s SplHeader;
 //
 // Verifiy that the header->headerCrc checksum is correct
 //
-bool spl_check(SplHeader *header);
+bool spl_hdr_check(SplHeader *header);
 
 //
 // Verify that the header->loaderCrc checksum is correct for the given binary.
 //
-bool spl_checkBin(SplHeader *header, void *binary);
+bool spl_hdr_checkBin(SplHeader *header, void *binary);
 
 #ifndef SPLOADERK
 //
 // Calculates and updates the headerCrc for the given header.
 //
-void spl_setChecksum(SplHeader *header);
+void spl_hdr_setChecksum(SplHeader *header);
 #endif
 
 // ============================================================================

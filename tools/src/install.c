@@ -231,7 +231,7 @@ int run(Prog *prog) {
         return EXIT_HEADER_TARGET;
     }
 
-    if (!spl_check(&header)) {
+    if (!spl_hdr_check(&header)) {
         return EXIT_HEADER_CHECKSUM;
     }
 
@@ -247,7 +247,7 @@ int run(Prog *prog) {
         return EXIT_LOADER_READ;
     }
 
-    if (!spl_checkBin(&header, data->loaderBinBuf)) {
+    if (!spl_hdr_checkBin(&header, data->loaderBinBuf)) {
         return EXIT_HEADER_BINARY_CHECKSUM;
     }
 
@@ -259,7 +259,7 @@ int run(Prog *prog) {
     header.partition = 0;
 
     // recalculate the headerCrc
-    spl_setChecksum(&header);
+    spl_hdr_setChecksum(&header);
 
     // INSTALL BOOTSTRAP
 
