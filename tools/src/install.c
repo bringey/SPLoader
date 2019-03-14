@@ -56,7 +56,7 @@ static Target TARGET_TABLE[] = {
 // static functions
 
 static Target* getTargetByName(char *name);
-static SplDiskLabel detectLabel(Prog *prog);
+static SplLabelKind detectLabel(Prog *prog);
 static bool detectMbr(Prog *prog);
 static bool detectGpt(Prog *prog);
 
@@ -206,7 +206,7 @@ int run(Prog *prog) {
     data->device = checkfopen(prog, data->devicePath, "r+b");
 
     // 1. DISK LABEL DETECTION
-    SplDiskLabel label = detectLabel(prog);
+    SplLabelKind label = detectLabel(prog);
     if (label == SPL_DISK_LABEL_UNKNOWN) {
         eprintf(prog, "'%s' unrecognized disk label\n", data->devicePath);
         return EXIT_UNSUPPORTED_LABEL;
@@ -268,7 +268,7 @@ int run(Prog *prog) {
     return EXIT_SUCCESS;
 }
 
-SplDiskLabel detectLabel(Prog *prog) {
+SplLabelKind detectLabel(Prog *prog) {
     
     // detection order
     // 1. None
@@ -278,7 +278,7 @@ SplDiskLabel detectLabel(Prog *prog) {
     // overriding a previously detected label (since GPT disks also have a MBR)
 
     // start with none, if we don't detect anything then there's no label
-    SplDiskLabel label = SPL_DISK_LABEL_NONE;
+    SplLabelKind label = SPL_DISK_LABEL_NONE;
     
     // check for mbr
     if (detectMbr(prog)) {

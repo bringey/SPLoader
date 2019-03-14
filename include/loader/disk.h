@@ -47,7 +47,7 @@ typedef int (*DiskLabelReadFn)(DiskLabel*);
 
 struct DiskLabel_s {
     Disk *disk;                 // handle to disk
-    SplDiskLabel kind;          // Label type
+    SplLabelKind kind;          // Label type
     size_t tablesize;
     DiskPart *table;
 };
@@ -109,7 +109,7 @@ void ldr_disk_readb(Disk *disk, uint64_t lba);
 //  - EX_DISK_READ: A read error occurred while reading the disk label
 //  - EX_DISK_LABEL: The disk label is invalid
 //
-void ldr_disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label);
+void ldr_disk_label_init(Disk *disk, SplLabelKind kind, DiskLabel *label);
 
 //
 // Get the active partition from the disk label. The active partition is a

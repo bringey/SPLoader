@@ -108,7 +108,7 @@ void ldr_disk_readb(Disk *disk, uint64_t lba) {
     }
 }
 
-void ldr_disk_label_init(Disk *disk, SplDiskLabel kind, DiskLabel *label) {
+void ldr_disk_label_init(Disk *disk, SplLabelKind kind, DiskLabel *label) {
     label->disk = disk;
     label->kind = kind;
     label->tablesize = 0;
