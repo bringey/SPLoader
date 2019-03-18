@@ -87,6 +87,14 @@
 #define SPL_HEADER_INVALID 1
 #define SPL_HEADER_INTEGRITY 2
 
+#define SPL_E_SUCCESS 0
+#define SPL_E_FAILURE 1
+
+#define SPL_E_DEV_READ 1    // read-error
+#define SPL_E_DEV_WRITE 2   // write-error
+#define SPL_E_DEV_RANGE 3   // starting lba is outside the range of the device
+#define SPL_E_DEV_ZEROBS 4  // blocksize is zero
+
 #define SPL_CRC32_INIT       0xFFFFFFFF
 #define SPL_CRC32_POLYNOMIAL 0x04C11DB7
 
@@ -247,51 +255,32 @@ uint32_t spl_crc32_acc(uint8_t data, uint32_t crc);
 //
 uint32_t spl_reverse32(uint32_t num);
 
-// todo: remove guard once functions are implemented
-#if 0
 
 // ============================================================================
 // Device functions
 // ============================================================================
 
-int spl_dev_close(SplDev *dev);
-
-#ifndef SPLOADERK
-int spl_dev_fromFile(SplDev *dev, const char *path);
-#endif
-
-int spl_dev_init(SplDev *dev, SplDevDriver *drv, void *param);
+int spl_dev_init(SplDev *dev, void *param);
 
 int spl_dev_info(SplDev *dev, SplDevInfo *info);
 
-int spl_dev_read(SplDev *dev, void *buf, size_t bufsize, uint64_t lba, uint32_t bs, uint32_t blocks);
+int spl_dev_pread(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks);
 
-int spl_dev_pread(SplDev *dev, void *buf, size_t bufsize, uint64_t lba, uint32_t blocks);
+int spl_dev_pwrite(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks);
 
-int spl_dev_pwrite(SplDev *dev, void *buf, size_t bufsize, uint64_t lba, unit32_t blocks);
+int spl_dev_read(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t bs, uint32_t blocks);
+
+int spl_dev_write(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t bs, uint32_t blocks);
 
 // ============================================================================
 // Label functions
 // ============================================================================
 
-int spl_label_init(SplDev *dev, SplLabel *label, SplLabelKind kind)
+int spl_label_init(SplDev *dev, SplLabel *label, SplLabelKind kind);
 
 int spl_label_getActive(SplLabel *label, SplPart *part);
 
 int spl_label_getPart(SplLabel *label, uint32_t partnum, SplPart *part);
-
-// libc implementations (for loader)
-
-#ifdef SPLOADERK
-
-#else
-
-#define spl_malloc malloc
-#define spl_memcpy memcpy
-#define spl_strlen strlen
-#define 
-
-#endif
 
 
 // dependencies
@@ -303,17 +292,11 @@ int spl_label_getPart(SplLabel *label, uint32_t partnum, SplPart *part);
 #define EXTERN
 #endif
 
-EXTERN int spl_dev_drv_read(void *aux, SplBuf *inBuf, uint64_t lba, uint32_t blocks);
+EXTERN int spl_dev_drv_read(void *aux, SplBuf inBuf, uint64_t lba, uint32_t blocks);
 
-EXTERN int spl_dev_drv_write(void *aux, SplBuf *outBuf, uint64_t lba, uint32_t blocks);
+EXTERN int spl_dev_drv_write(void *aux, SplBuf outBuf, uint64_t lba, uint32_t blocks);
 
-EXTERN int spl_dev_drv_open(void *aux);
-
-EXTERN int spl_dev_drv_close(void *aux);
-
-EXTERN int spl_dev_drv_init(void *aux);
-
-#endif
+EXTERN int spl_dev_drv_init(void *aux, SplDevInfo *info);
 
 #endif // __ASM__
 

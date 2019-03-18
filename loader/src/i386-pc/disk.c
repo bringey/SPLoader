@@ -13,6 +13,8 @@
 #include <loader/i386-pc/loader.h>
 #include <loader/i386-pc/realmode.h>
 
+#include <sploader.h>
+
 
 // Stage 0 got the drive parameters and left them at 07C0:8000
 #define BIOS_DP ((BiosDp*)LOADER_DP_ADDRESS)
@@ -91,4 +93,20 @@ int _ldr_disk_read(Disk *disk, uint32_t start, uint32_t blocks) {
     } else {
         return E_SUCCESS;
     }
+}
+
+
+int spl_dev_drv_init(void *aux, SplDevInfo *info) {
+    (void)aux; (void)info;
+    return SPL_E_FAILURE;
+}
+
+int spl_dev_drv_read(void *aux, SplBuf inBuf, uint64_t lba, uint32_t blocks) {
+    (void)aux; (void)inBuf; (void)lba; (void)blocks;
+    return SPL_E_FAILURE;
+}
+
+int spl_dev_drv_write(void *aux, SplBuf outBuf, uint64_t lba, uint32_t blocks) {
+    (void)aux; (void)outBuf; (void)lba; (void)blocks;
+    return SPL_E_FAILURE;
 }
