@@ -87,13 +87,16 @@
 #define SPL_HEADER_INVALID 1
 #define SPL_HEADER_INTEGRITY 2
 
-#define SPL_E_SUCCESS 0
-#define SPL_E_FAILURE 1
+#define SPL_E_SUCCESS 0         // no error
+#define SPL_E_FAILURE 1         // general failure
 
-#define SPL_E_DEV_READ 1    // read-error
-#define SPL_E_DEV_WRITE 2   // write-error
-#define SPL_E_DEV_RANGE 3   // starting lba is outside the range of the device
-#define SPL_E_DEV_ZEROBS 4  // blocksize is zero
+#define SPL_E_DEV_READ 1        // read-error
+#define SPL_E_DEV_WRITE 2       // write-error
+#define SPL_E_DEV_RANGE 3       // starting lba is outside the range of the device
+#define SPL_E_DEV_ZEROBS 4      // blocksize is zero
+#define SPL_E_DEV_BSALIGN 5     // blocksize does not align with size of device
+#define SPL_E_DEV_NOFORCEBS 6   // device driver cannot force blocksize
+#define SPL_E_DEV_BADFILE 100   // failed to access the file param
 
 #define SPL_CRC32_INIT       0xFFFFFFFF
 #define SPL_CRC32_POLYNOMIAL 0x04C11DB7
@@ -103,12 +106,17 @@
 //
 #define SPL_DEVICE_FLAG_RO 0x1
 
+#define SPL_DEVICE_BS 0  // use the device physical blocksize
+
 #ifndef __ASM__
 
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
 
+#ifndef SPLOADERK
+#include <assert.h>
+#endif
 
 //
 // Abstraction for a block-addressable device. This provides an interface that
@@ -260,7 +268,7 @@ uint32_t spl_reverse32(uint32_t num);
 // Device functions
 // ============================================================================
 
-int spl_dev_init(SplDev *dev, void *param);
+int spl_dev_init(SplDev *dev, uint32_t forceBs, void *param);
 
 int spl_dev_info(SplDev *dev, SplDevInfo *info);
 
@@ -287,16 +295,28 @@ int spl_label_getPart(SplLabel *label, uint32_t partnum, SplPart *part);
 // these functions must be implemented in the loader
 
 #ifdef SPLOADERK
-#define EXTERN extern
+//
+// abort is only used by assert
+//
+extern void spl_abort(void);
+
+#define spl_assert(cond) if (!(cond)) spl_abort()
+
 #else
-#define EXTERN
+// just use the libc assert
+#define spl_assert(cond) assert(cond)
+
 #endif
 
-EXTERN int spl_dev_drv_read(void *aux, SplBuf inBuf, uint64_t lba, uint32_t blocks);
+//
+// Device "driver" functions
+//
 
-EXTERN int spl_dev_drv_write(void *aux, SplBuf outBuf, uint64_t lba, uint32_t blocks);
+int spl_dev_drv_read(void *aux, SplBuf inBuf, uint64_t lba, uint32_t blocks);
 
-EXTERN int spl_dev_drv_init(void *aux, SplDevInfo *info);
+int spl_dev_drv_write(void *aux, SplBuf outBuf, uint64_t lba, uint32_t blocks);
+
+int spl_dev_drv_init(void *aux, uint32_t forceBs, SplDevInfo *info);
 
 #endif // __ASM__
 

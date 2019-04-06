@@ -23,6 +23,11 @@ void _ldr_abort(void) {
     }
 }
 
+void spl_assert(void) {
+    // called by spl_assert from libsploaderk
+    ldr_except(EX_ASSERT);
+}
+
 
 
 // void _abort(

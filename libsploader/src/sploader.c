@@ -7,6 +7,18 @@
 
 #include <sploader.h>
 
+#ifndef SPLOADERK
+
+#ifdef __linux__
+#include <linux/fs.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
+
+#include <stdio.h>
+#endif
+
 
 bool spl_hdr_check(SplHeader *header) {
 
@@ -71,9 +83,9 @@ struct SplDev {
     void *aux;
 };
 
-int spl_dev_init(SplDev *dev, void *param) {
+int spl_dev_init(SplDev *dev, uint32_t forceBs, void *param) {
     SplDevInfo info;
-    int err = spl_dev_drv_init(param, &info);
+    int err = spl_dev_drv_init(param, forceBs, &info);
     if (err != SPL_E_SUCCESS) {
         return err;
     }
@@ -116,12 +128,67 @@ int spl_dev_write(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t bs, uint32_t b
     return SPL_E_FAILURE;
 }
 
+
+//
+// Device Driver for tooling (only works for linux atm)
+//
+
 #ifndef SPLOADERK
 // default dev driver for the tooling (underlying device is a FILE*)
 
-int spl_dev_drv_init(void *aux, SplDevInfo *info) {
-    (void)aux; (void)info;
+int spl_dev_drv_init(void *aux, uint32_t forceBs, SplDevInfo *info) {
+
+#ifdef __linux__
+
+    FILE *fp = (FILE*)aux;
+    uint32_t blocksize = 512; // default to 512
+    int fd = fileno(fp);
+    if (fd < 0) {
+        return SPL_E_DEV_BADFILE;
+    }
+    
+
+    struct stat statbuf;
+    if (fstat(fd, &statbuf) < 0) {
+        return SPL_E_DEV_BADFILE;
+    }
+
+    if (S_ISBLK(statbuf.st_mode)) {
+        // underlying file is a block device
+        // use ioctl to get the total blocks and physical blocksize
+        uint64_t sizeInBytes;
+        if (ioctl(fd, BLKGETSIZE64, &sizeInBytes) < 0) {
+            return SPL_E_DEV_BADFILE;
+        }
+        if (forceBs == SPL_DEVICE_BS) {
+            if (ioctl(fd, BLKPBSZGET, &blocksize) < 0) {
+                return SPL_E_DEV_BADFILE;
+            }
+        }
+        uint64_t blocks = sizeInBytes / blocksize;
+        if (sizeInBytes % blocksize != 0) {
+            return SPL_E_DEV_BSALIGN; // blocksize is not aligned
+        }
+        info->totalBlocks = blocks;
+    }
+
+    if (forceBs) {
+        blocksize = forceBs;
+    }
+
+    info->blocksize = blocksize;
+    info->flags = 0;
+    info->maxBlocksPerRead = 0;
+    info->maxBlocksPerWrite = 0;
+
+    return SPL_E_SUCCESS;
+
+#else
+
+    (void)aux; (void)forceBs; (void)info;
     return SPL_E_FAILURE;
+
+#endif
 }
 
 int spl_dev_drv_read(void *aux, SplBuf inBuf, uint64_t lba, uint32_t blocks) {
