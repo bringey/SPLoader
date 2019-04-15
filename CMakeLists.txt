@@ -4,7 +4,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(FATAL ERROR "in-source builds are not allowed")
 endif()
 
-
+set(CONFIG_DIR "${CMAKE_SOURCE_DIR}/config")
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 project(sploader)
@@ -91,9 +91,6 @@ endfunction(prepend)
 
 macro(project_template)
 
-    set(CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/config")
-    set(CMAKE_MODULE_PATH ${CONFIG_DIR})
-
     string(TOUPPER ${PROJECT_NAME} PREFIX)
     option(${PREFIX}_WERROR "WERROR override for ${PROJECT_NAME} project" ${ENABLE_WERROR})
     set(${PREFIX}_WARNFLAGS ${${PREFIX}_WARNFLAGS} ${WARNFLAGS} CACHE STRING "Warning flags for ${PROJECT_NAME}")
@@ -150,7 +147,7 @@ if (ENABLE_TESTS)
         message(FATAL_ERROR "libcmocka was not found")
     endif ()
     enable_testing()
-    add_subdirectory(loader/test)
+    #add_subdirectory(loader/test)
 endif (ENABLE_TESTS)
 
 custom_targets()

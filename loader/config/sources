@@ -1,9 +1,0 @@
-src/abort.c
-src/console.c
-src/disk.c
-src/main.c
-src/mem.c
-src/printf.c
-src/string.c
-src/disk/gpt.c
-src/disk/mbr.c

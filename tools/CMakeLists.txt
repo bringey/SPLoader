@@ -4,10 +4,10 @@ project(tools C)
 set(TOOLS_CFLAGS -std=gnu11)
 project_template()
 
-sources(MKIMAGE_SRC ${CONFIG_DIR}/mkimage.sources)
-sources(MKBIN_SRC ${CONFIG_DIR}/mkbin.sources)
-sources(SPL_INSTALL_SRC ${CONFIG_DIR}/install.sources)
-sources(COMMON_SRC ${CONFIG_DIR}/common.sources)
+sources(MKIMAGE_SRC ${CONFIG_DIR}/tools/mkimage.sources)
+sources(MKBIN_SRC ${CONFIG_DIR}/tools/mkbin.sources)
+sources(SPL_INSTALL_SRC ${CONFIG_DIR}/tools/install.sources)
+sources(COMMON_SRC ${CONFIG_DIR}/tools/common.sources)
 
 #
 # TARGETS

@@ -5,9 +5,9 @@ project_template()
 
 # allow loader's src directory as an include path
 # for including c files into a test program
-include_directories("../src")
+include_directories("../")
 
-sources(LOADER_STUBS_SRC ${CONFIG_DIR}/loaderstubs.sources)
+sources(LOADER_STUBS_SRC ${CONFIG_DIR}/loader/test/loaderstubs.sources)
 set(LOADER_STUBS_LIB "loaderstubs")
 
 add_library(${LOADER_STUBS_LIB} STATIC ${LOADER_STUBS_SRC})

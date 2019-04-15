@@ -5,7 +5,7 @@ project_template()
 
 target_toolchain()
 
-sources(LIBSPLOADERK_SRC "${CMAKE_SOURCE_DIR}/libsploader/config/sources")
+sources(LIBSPLOADERK_SRC "${CONFIG_DIR}/libsploader/sources")
 prepend(LIBSPLOADERK_SRC "${CMAKE_SOURCE_DIR}/libsploader/" ${LIBSPLOADERK_SRC})
 
 set(LIBSPLOADERK "sploaderk" CACHE INTERNAL "" FORCE)

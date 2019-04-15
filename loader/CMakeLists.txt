@@ -7,6 +7,8 @@ target_toolchain()
 
 project_template()
 
+list(APPEND CMAKE_MODULE_PATH "${CONFIG_DIR}/loader")
+
 include(CheckCCompilerFlag)
 
 # compiler checking
@@ -25,9 +27,9 @@ include(${TARGET_ISA}/${TARGET_PLATFORM}/config)
 # ./config/<isa>/sources             : ISA-specific source files
 # ./config/<isa>/<platform>/sources  : Platform-specific source files
 # ./config/sources                   : cross-platform source files
-sources(LOADER_SRC          ${CONFIG_DIR}/sources)
-sources(LOADER_ISA_SRC      ${CONFIG_DIR}/${TARGET_ISA}/sources)
-sources(LOADER_PLATFORM_SRC ${CONFIG_DIR}/${TARGET_ISA}/${TARGET_PLATFORM}/sources)
+sources(LOADER_SRC          ${CONFIG_DIR}/loader/sources)
+sources(LOADER_ISA_SRC      ${CONFIG_DIR}/loader/${TARGET_ISA}/sources)
+sources(LOADER_PLATFORM_SRC ${CONFIG_DIR}/loader/${TARGET_ISA}/${TARGET_PLATFORM}/sources)
 
 #set_property(DIRECTORY)
 

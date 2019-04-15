@@ -1,0 +1,9 @@
+i386-pc/stage0b/a20gate.S
+i386-pc/stage0b/memmap.S
+i386-pc/abort.c
+i386-pc/console.c
+i386-pc/disk.c
+i386-pc/io.S
+i386-pc/mem.c
+i386-pc/realmode.S
+i386-pc/startup.S

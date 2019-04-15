@@ -3,11 +3,11 @@
 set(OPT_DISK_GPT ON)
 set(OPT_DISK_MBR ON)
 
-set(LOADER_LD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/src/i386-pc/loader.lds)
+set(LOADER_LD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/i386-pc/loader.lds)
 
-set(LOADER_ENTRY "src/i386-pc/stage0b/early.S")
+set(LOADER_ENTRY "i386-pc/stage0b/early.S")
 
-set(BOOTSTRAP_SRC "src/i386-pc/stage0a/bootstrap.S")
+set(BOOTSTRAP_SRC "i386-pc/stage0a/bootstrap.S")
 
 # targets
 # the main CMakeLists.txt will build ${BOOTSTRAP_BIN} if it is defined

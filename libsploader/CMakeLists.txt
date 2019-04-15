@@ -3,7 +3,7 @@ project(libsploader C)
 
 project_template()
 
-sources(LIBSPLOADER_SRC ${CONFIG_DIR}/sources)
+sources(LIBSPLOADER_SRC ${CONFIG_DIR}/libsploader/sources)
 
 set(LIBSPLOADER "sploader" CACHE INTERNAL "" FORCE)
 
