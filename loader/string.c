@@ -1,5 +1,5 @@
 /*
-** File: src/string.c
+** File: loader/string.c
 **
 ** Author: bringey
 **

@@ -1,5 +1,5 @@
 /*
-** File: tools/src/target/i386-pc.c
+** File: tools/target/i386-pc.c
 **
 ** Author: bringey
 **

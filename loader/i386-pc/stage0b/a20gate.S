@@ -1,5 +1,5 @@
 /*
-** File: src/i386-pc/stage0b/a20gate.S
+** File: loader/i386-pc/stage0b/a20gate.S
 **
 ** Author: bringey
 **

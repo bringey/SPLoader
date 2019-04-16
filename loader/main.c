@@ -1,5 +1,5 @@
 /*
-** File: src/main.c
+** File: loader/main.c
 **
 ** Author: bringey
 **

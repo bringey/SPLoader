@@ -1,5 +1,5 @@
 /*
-** File: tools/src/install.h
+** File: tools/install.h
 **
 ** Author: bringey
 **

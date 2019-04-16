@@ -1,5 +1,5 @@
 /*
-** File: src/i386-pc/console.c
+** File: loader/i386-pc/console.c
 **
 ** Author: bringey
 **

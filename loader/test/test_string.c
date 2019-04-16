@@ -1,5 +1,5 @@
 /*
-** File: loader/test/src/test_string.c
+** File: loader/test/test_string.c
 **
 ** Author: bringey
 **

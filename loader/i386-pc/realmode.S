@@ -1,5 +1,5 @@
 /*
-** File: src/i386-pc/realmode.S
+** File: loader/i386-pc/realmode.S
 **
 ** Author: bringey
 */

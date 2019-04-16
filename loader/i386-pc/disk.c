@@ -1,5 +1,5 @@
 /*
-** File: src/i386-pc/disk.c
+** File: loader/i386-pc/disk.c
 **
 ** Author: bringey
 */

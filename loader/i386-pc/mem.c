@@ -1,3 +1,9 @@
+/*
+** File: loader/i386-pc/mem.c
+**
+** Author: bringey
+**
+*/
 
 #include <loader/err.h>
 #include <loader/mem.h>

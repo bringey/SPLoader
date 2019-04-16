@@ -1,5 +1,5 @@
 /*
-** File: src/disk/mbr.c
+** File: loader/disk/mbr.c
 **
 ** Author: bringey
 **

@@ -1,5 +1,5 @@
 /*
-** File: loader/test/src/test_printf.c
+** File: loader/test/test_printf.c
 **
 ** Author: bringey
 **

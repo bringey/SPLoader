@@ -1,5 +1,5 @@
 /*
-** File: tools/src/install.c
+** File: tools/install.c
 **
 ** Author: bringey
 **

@@ -1,5 +1,5 @@
 /*
-** File: src/i386-pc/stage0a/bootstrap.S
+** File: loader/i386-pc/stage0a/bootstrap.S
 **
 ** Author: bringey
 **

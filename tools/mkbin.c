@@ -1,5 +1,5 @@
 /*
-** File: tools/src/mkbin.c
+** File: tools/mkbin.c
 **
 ** Author: bringey
 **

@@ -1,5 +1,5 @@
 /*
-** File: tools/src/common.c
+** File: tools/common.c
 **
 ** Author: bringey
 **

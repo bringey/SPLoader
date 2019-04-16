@@ -1,5 +1,5 @@
 /*
-** File: src/disk.c
+** File: loader/disk.c
 **
 ** Author: bringey
 **

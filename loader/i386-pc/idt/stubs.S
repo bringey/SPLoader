@@ -1,5 +1,5 @@
 /*
-** File: src/i386-pc/idt/stubs.S
+** File: loader/i386-pc/idt/stubs.S
 **
 ** Author: bringey
 **

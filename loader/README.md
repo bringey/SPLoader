@@ -32,36 +32,20 @@ layout depends on the target platform.
 
 ### Adding new source files
 
-The `config/sources` file is a list of source files to be compiled and linked.
-When adding a new module to the loader binary, add the relative path of the
-source file to this list.
+The `config/loader/sources` file is a list of source files to be compiled and
+linked. When adding a new module to the loader binary, add the relative path of
+the source file to this list.
 
-Architecture-specific source files should go in `config/<arch>/sources`
+Architecture-specific source files should go in `config/loader/<arch>/sources`
 
-Platform-specific source files should go in `config/<arch>/<platform>/sources`
+Platform-specific source files should go in `config/loader/<arch>/<platform>/sources`
 
 ### Porting to new targets
 
 When porting the following must be done:
- * Create `config/<arch>` and `config/<arch>/<platform>` directories where
-   arch is the target architecture/isa and platform is the target platform
-   (ie `config/arm/raspberrypi`)
+ * Create `config/loader/<arch>` and `config/loader/<arch>/<platform>`
+   directories where arch is the target architecture/isa and platform is the
+   target platform (ie `config/loader/arm/raspberrypi`)
  * Add a `sources` and `config.cmake` files to each of these directories
- * Functions for `_<name>` identifiers must be implemented
-
-## Versioning
-
-The loader version is stored in the [VERSION](VERSION) file. This version gets
-passed along when building.
-
-Currently, the project is in development phase (major version 0). See the
-[CONTRIBUTING.md](https://github.com/SPLoader/SPLoader/blob/develop/CONTRIBUTING.md)
-file for details on tagging new versions.
-
-Only the minor version number should be incremented at this point in time. The
-minor version number should be incremented when a major feature is finished.
-
-## License
-
-This project is licensed under the MIT License - See the [LICENSE](LICENSE) file
-for more details.
+   (use i386-pc as an example)
+ * Functions for `_<name>` identifiers must be implemented (type 2 functions)

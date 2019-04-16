@@ -1,5 +1,5 @@
 /*
-** File: src/i386-pc/abort.c
+** File: loader/i386-pc/abort.c
 **
 ** Author: bringey
 **

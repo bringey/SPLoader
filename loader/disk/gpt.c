@@ -1,5 +1,5 @@
 /*
-** File: src/disk/gpt.c
+** File: loader/disk/gpt.c
 **
 ** Author: bringey
 **

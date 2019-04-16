@@ -1,5 +1,5 @@
 /*
-** File: test/src/loader/stubs/console.c
+** File: loader/test/stubs/console.c
 **
 ** Author: bringey
 **

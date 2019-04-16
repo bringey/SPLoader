@@ -7,7 +7,6 @@ Table of Contents
 <!-- TOC -->
 
 - [Contributing guidelines](#contributing-guidelines)
-    - [Building](#building)
     - [Code Conventions](#code-conventions)
         - [General](#general)
             - [Function Names](#function-names)
@@ -18,13 +17,8 @@ Table of Contents
             - [Arch and Platform directories](#arch-and-platform-directories)
             - [Header Guards](#header-guards)
         - [Portability](#portability)
-    - [Contributing](#contributing)
 
 <!-- /TOC -->
-
-## Building
-
-TBD
 
 ## Code Conventions
 
@@ -47,9 +41,9 @@ the following: `struct MyType { ... } *MyType;`).
 
 #### Variables/Symbols
 
-There is no specific convention for variable/symbol names. The only convention
-is that macro constants and constant variables/symbols must be capitalized with
-underscores (ie `MY_CONSTANT_VARIABLE`).
+Variable/Symbol names should be readable, easily understood and concise.
+camelCase is preferred. Macro constants and constant variables/symbols must be
+capitalized with underscores (ie `MY_CONSTANT_VARIABLE`).
 
 #### Whitespace
 
@@ -58,19 +52,12 @@ newlines ('\n') are to be used in all files. NO TABS!
 
 ### Organization
 
-Source code is organized into separate git repos. Each repo is added to the
-main repository as a submodule. For example, the SPLoader/loader repo contains
-the stage 1 binary for the bootloader.
+Source code is organized into projects. For example, the SPLoader/loader
+project contains the stage 1 binary for the bootloader.
 
-Header files for each project reside in the `include/` folder. Common header
-files or library headers used by multiple projects go in the root repo's
-`include/` folder. C and assembly source files reside in a `src/` folder.
-
-All public header files must reside in the `include/` folder. Header files for
-a project are located in a directory with the project's name in the `include/`
-folder. A public header is a header that can be include'd by any source file.
-A private header is a header that can only be include'd by certain source
-files. Private headers should reside with the source files.
+Header files shared between all projects and/or library headers reside in the
+`include/` folder. Project-specific header files and source files reside in
+their corresponding project folder.
 
 The following file extensions are used:
   * .c for C source files
@@ -84,10 +71,10 @@ The following file extensions are used:
 Architecture-specific and platform-specific code should be located in special
 subdirectories known as arch directories and platform directories,
 respectively. An arch directory contains code that is specific for a certain
-architecture or ISA. The `loader/src/i386` and `loader/include/i386` are arch
+architecture or ISA. The `loader/i386` and `include/loader/i386` are arch
 directories. A platform directory contains code that is specific for a certain
-architecture and platform combination. The `loader/src/i386-pc` and
-`loader/include/i386-pc` are platform directories. A source or header file is
+architecture and platform combination. The `loader/i386-pc` and
+`include/loader/i386-pc` are platform directories. A source or header file is
 considered platform dependendent if it resides in an arch directory or a
 platform directory.
 
@@ -169,7 +156,3 @@ The following table displays the function types and their properties:
 |    1 |   foo | independent |    independent | foo, _foo        |
 |    2 |  _foo | independent |      dependent | foo, _foo, __foo |
 |    3 | __foo |   dependent |      dependent | foo, _foo, __foo |
-
-## Contributing
-
-TBD

@@ -1,5 +1,5 @@
 /*
-** File: test/src/loader/stubs/abort.c
+** File: loader/test/stubs/abort.c
 **
 ** Author: bringey
 **

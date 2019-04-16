@@ -1,5 +1,5 @@
 /*
-** File: loader/test/src/test_disk_mbr.c
+** File: loader/test/test_disk_mbr.c
 **
 ** Author: bringey
 **

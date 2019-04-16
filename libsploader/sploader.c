@@ -1,5 +1,5 @@
 /*
-** File: libsploader/src/sploader.c
+** File: libsploader/sploader.c
 **
 ** Author: bringey
 **

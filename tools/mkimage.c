@@ -1,5 +1,5 @@
 /*
-** File: tools/src/mkimage.c
+** File: tools/mkimage.c
 **
 ** mkimage <image files> -o <output_file>
 **

@@ -1,5 +1,5 @@
 /*
-** File: src/i386-pc/startup.S
+** File: loader/i386-pc/startup.S
 **
 ** Author: bringey
 **

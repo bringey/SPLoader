@@ -1,5 +1,5 @@
 /*
-** File: src/i386-pc/idt/isr.c
+** File: loader/i386-pc/idt/isr.c
 **
 ** Author: bringey
 **

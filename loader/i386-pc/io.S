@@ -1,5 +1,5 @@
 /*
-** File: src/i386/io.S
+** File: loader/i386/io.S
 **
 ** Author: Brennan Ringey
 **
