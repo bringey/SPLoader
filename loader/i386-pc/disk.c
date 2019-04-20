@@ -96,17 +96,17 @@ int _ldr_disk_read(Disk *disk, uint32_t start, uint32_t blocks) {
 }
 
 
-int spl_dev_drv_init(void *aux, uint32_t forceBs, SplDevInfo *info) {
-    (void)aux; (void)forceBs; (void)info;
+int spl_dev_drv_init(SplDev *dev, uint32_t forceBs) {
+    (void)dev; (void)forceBs;
     return SPL_E_FAILURE;
 }
 
-int spl_dev_drv_read(void *aux, SplBuf inBuf, uint64_t lba, uint32_t blocks) {
-    (void)aux; (void)inBuf; (void)lba; (void)blocks;
+int spl_dev_drv_read(SplDev *dev, SplBuf inBuf, uint64_t lba, uint32_t blocks) {
+    (void)dev; (void)inBuf; (void)lba; (void)blocks;
     return SPL_E_FAILURE;
 }
 
-int spl_dev_drv_write(void *aux, SplBuf outBuf, uint64_t lba, uint32_t blocks) {
-    (void)aux; (void)outBuf; (void)lba; (void)blocks;
+int spl_dev_drv_write(SplDev *dev, SplBuf outBuf, uint64_t lba, uint32_t blocks) {
+    (void)dev; (void)outBuf; (void)lba; (void)blocks;
     return SPL_E_FAILURE;
 }

@@ -15,38 +15,27 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 #endif
 
 #include <stdio.h>
 #endif
 
 
-
-
-
-
-struct SplDev {
-    SplDevInfo info;
-    void *aux;
-};
-
 int spl_dev_init(SplDev *dev, uint32_t forceBs, void *param) {
-    SplDevInfo info;
-    int err = spl_dev_drv_init(param, forceBs, &info);
+    dev->source = param;
+    int err = spl_dev_drv_init(dev, forceBs);
     if (err != SPL_E_SUCCESS) {
         return err;
     }
 
-    dev->info = info;
-    dev->aux = param;
-
     return SPL_E_SUCCESS;
 }
 
-int spl_dev_info(SplDev *dev, SplDevInfo *info) {
-    *info = dev->info;
-    return SPL_E_SUCCESS;
-}
+// int spl_dev_info(SplDev *dev, SplDevInfo *info) {
+//     *info = dev->info;
+//     return SPL_E_SUCCESS;
+// }
 
 int spl_dev_pread(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks) {
     (void)dev; (void)buf; (void)lba; (void)blocks;
@@ -81,13 +70,15 @@ int spl_dev_write(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t bs, uint32_t b
 //
 
 #ifndef SPLOADERK
-// default dev driver for the tooling (underlying device is a FILE*)
 
-int spl_dev_drv_init(void *aux, uint32_t forceBs, SplDevInfo *info) {
 
 #ifdef __linux__
 
-    FILE *fp = (FILE*)aux;
+// default dev driver for the tooling (underlying device is a FILE*)
+
+int spl_dev_drv_init(SplDev *dev, uint32_t forceBs) {
+
+    FILE *fp = (FILE*)dev->source;
     uint32_t blocksize = 512; // default to 512
     int fd = fileno(fp);
     if (fd < 0) {
@@ -116,36 +107,58 @@ int spl_dev_drv_init(void *aux, uint32_t forceBs, SplDevInfo *info) {
         if (sizeInBytes % blocksize != 0) {
             return SPL_E_DEV_BSALIGN; // blocksize is not aligned
         }
-        info->totalBlocks = blocks;
+        dev->totalBlocks = blocks;
     }
 
     if (forceBs) {
         blocksize = forceBs;
     }
 
-    info->blocksize = blocksize;
-    info->flags = 0;
-    info->maxBlocksPerRead = 0;
-    info->maxBlocksPerWrite = 0;
+    dev->blocksize = blocksize;
+    dev->flags = 0;
 
     return SPL_E_SUCCESS;
+}
+
+int spl_dev_drv_read(SplDev *dev, SplBuf inBuf, uint64_t lba, uint32_t blocks) {
+    //FILE *fp = (FILE*)dev->aux;
+    int fd = fileno((FILE*)dev->source);
+    if (blocks) {
+        size_t bytes = blocks * dev->blocksize;
+        off_t offset = lba * dev->blocksize;
+        ssize_t nread = pread(fd, inBuf.loc, bytes, offset);
+        if (nread < 0 || (size_t)nread != bytes) {
+            // an error occurred during the read, or the read was incomplete
+            return SPL_E_DEV_READ;
+        }
+    }
+    return SPL_E_SUCCESS;
+}
+
+int spl_dev_drv_write(SplDev *dev, SplBuf outBuf, uint64_t lba, uint32_t blocks) {
+    (void)dev; (void)outBuf; (void)lba; (void)blocks;
+    return SPL_E_FAILURE;
+}
 
 #else
 
-    (void)aux; (void)forceBs; (void)info;
+int spl_dev_drv_init(SplDev *dev, uint32_t forceBs) {
+    (void)dev; (void)forceBs;
     return SPL_E_FAILURE;
+}
+
+int spl_dev_drv_read(SplDev *dev, SplBuf inBuf, uint64_t lba, uint32_t blocks) {
+    (void)dev; (void)inBuf; (void)lba; (void)blocks;
+    return SPL_E_FAILURE;
+}
+
+
+int spl_dev_drv_write(SplDev *dev, SplBuf outBuf, uint64_t lba, uint32_t blocks) {
+    (void)dev; (void)outBuf; (void)lba; (void)blocks;
+    return SPL_E_FAILURE;
+}
 
 #endif
-}
 
-int spl_dev_drv_read(void *aux, SplBuf inBuf, uint64_t lba, uint32_t blocks) {
-    (void)aux; (void)inBuf; (void)lba; (void)blocks;
-    return SPL_E_FAILURE;
-}
-
-int spl_dev_drv_write(void *aux, SplBuf outBuf, uint64_t lba, uint32_t blocks) {
-    (void)aux; (void)outBuf; (void)lba; (void)blocks;
-    return SPL_E_FAILURE;
-}
 
 #endif

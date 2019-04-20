@@ -118,12 +118,6 @@
 #include <assert.h>
 #endif
 
-//
-// Abstraction for a block-addressable device. This provides an interface that
-// is used by both the loader and the tooling. Devices can be physical hard
-// disks, raw disk images, etc, as long as it is block-addressable.
-//
-typedef struct SplDev SplDev;
 
 //
 // Structure containing the partition table of a disk label
@@ -163,13 +157,18 @@ typedef enum SplLabelKind {
 
 } SplLabelKind;
 
-typedef struct SplDevInfo {
+//
+// Abstraction for a block-addressable device. This provides an interface that
+// is used by both the loader and the tooling. Devices can be physical hard
+// disks, raw disk images, etc, as long as it is block-addressable.
+//
+typedef struct SplDev {
     uint64_t totalBlocks;
     uint32_t blocksize;
-    uint32_t maxBlocksPerRead;
-    uint32_t maxBlocksPerWrite;
     uint32_t flags;
-} SplDevInfo;
+    void *source;
+    void *aux;
+} SplDev;
 
 typedef struct SplLabel {
     SplDev *dev;
@@ -270,8 +269,6 @@ uint32_t spl_reverse32(uint32_t num);
 
 int spl_dev_init(SplDev *dev, uint32_t forceBs, void *param);
 
-int spl_dev_info(SplDev *dev, SplDevInfo *info);
-
 int spl_dev_pread(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks);
 
 int spl_dev_pwrite(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks);
@@ -312,11 +309,11 @@ extern void spl_abort(void);
 // Device "driver" functions
 //
 
-int spl_dev_drv_read(void *aux, SplBuf inBuf, uint64_t lba, uint32_t blocks);
+int spl_dev_drv_read(SplDev *dev, SplBuf inBuf, uint64_t lba, uint32_t blocks);
 
-int spl_dev_drv_write(void *aux, SplBuf outBuf, uint64_t lba, uint32_t blocks);
+int spl_dev_drv_write(SplDev *dev, SplBuf outBuf, uint64_t lba, uint32_t blocks);
 
-int spl_dev_drv_init(void *aux, uint32_t forceBs, SplDevInfo *info);
+int spl_dev_drv_init(SplDev *dev, uint32_t forceBs);
 
 #endif // __ASM__
 
