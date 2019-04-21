@@ -235,6 +235,7 @@ if (ENABLE_TESTS)
     enable_testing()
     # add test projects here
     add_subdirectory(loader/test)
+    add_subdirectory(libsploader/test)
 endif (ENABLE_TESTS)
 
 # projects
