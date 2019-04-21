@@ -91,6 +91,18 @@ endfunction(prepend)
 
 macro(project_template)
 
+    set(testlist_src "${CONFIG_DIR}/${PROJECT_NAME}/testlist")
+    if (EXISTS ${testlist_src})
+        # this will fail for test projects (test_template handles it)
+        sources(TESTLIST ${testlist_src})
+        foreach (test ${TESTLIST})
+            set(test_target "test_${PROJECT_NAME}_${test}")
+            add_test(
+                NAME ${test_target}
+                COMMAND ${test_target}
+            )
+        endforeach ()
+    endif()
     string(TOUPPER ${PROJECT_NAME} PREFIX)
     option(${PREFIX}_WERROR "WERROR override for ${PROJECT_NAME} project" ${ENABLE_WERROR})
     set(${PREFIX}_WARNFLAGS ${${PREFIX}_WARNFLAGS} ${WARNFLAGS} CACHE STRING "Warning flags for ${PROJECT_NAME}")
@@ -114,41 +126,62 @@ function(sources var filename)
 
 endfunction(sources)
 
-function(add_test_exe testname)
-    sources(test_src ${CONFIG_DIR}/${testname}.sources)
-    add_executable(
-        ${test_target}
-        ${test_src}
-    )
-    target_link_libraries(
-        ${test_target}
-        ${CMOCKA_LIB}
-    )
-    add_test(
-        NAME "${test_target}"
-        COMMAND ${test_target}
-    )
-    
-endfunction(add_test_exe)
-
 include_directories(
     SYSTEM "${CMAKE_SOURCE_DIR}/include"
     SYSTEM "${CMAKE_BINARY_DIR}/include"
 )
-
-add_subdirectory(libsploader)
-add_subdirectory(libsploaderk)
-add_subdirectory(loader)
-add_subdirectory(tools)
 
 if (ENABLE_TESTS)
     find_library(CMOCKA_LIB cmocka)
     if (CMOCKA_LIB STREQUAL "CMOCKA_LIB-NOTFOUND")
         message(FATAL_ERROR "libcmocka was not found")
     endif ()
+
+    function(add_test_exe project testname)
+        set(test_target "test_${project}_${testname}")
+        set(test_srcfile "${CONFIG_DIR}/${project}/test/test_${testname}.sources")
+        if (EXISTS ${test_srcfile})
+            sources(test_src ${test_srcfile})
+        else ()
+            # no source file for this test exists, so it's a simple test
+            # simple tests consist of a single source file
+            set(test_src "test_${testname}.c")
+        endif ()
+        add_executable(
+            ${test_target}
+            ${test_src}
+        )
+        string(TOUPPER ${test_target} targetvar)
+        set(${targetvar} ${test_target} CACHE INTERNAL "" FORCE PARENT_SCOPE)
+    endfunction(add_test_exe)
+
+    macro(test_template project)
+        include_directories(
+            "${CMAKE_SOURCE_DIR}/${project}"
+        )
+        link_libraries(
+            ${CMOCKA_LIB}
+        )
+        set(testlist_src "${CONFIG_DIR}/${project}/testlist")
+        if (EXISTS ${testlist_src})
+            sources(TESTLIST ${testlist_src})
+            set(p ${project})
+            foreach (test ${TESTLIST})
+                add_test_exe("${project}" "${test}")
+            endforeach ()
+            unset(p)
+        endif ()
+    endmacro(test_template)
+
+
     enable_testing()
-    #add_subdirectory(loader/test)
+    add_subdirectory(loader/test)
 endif (ENABLE_TESTS)
+
+add_subdirectory(libsploader)
+add_subdirectory(libsploaderk)
+add_subdirectory(loader)
+add_subdirectory(tools)
 
 custom_targets()
 
