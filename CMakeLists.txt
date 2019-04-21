@@ -1,14 +1,21 @@
 cmake_minimum_required(VERSION 3.10.0)
 
+# prevent in-source building
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(FATAL ERROR "in-source builds are not allowed")
 endif()
 
+#
+# Supplemental configuration files used by CMakeLists.txt
+# mostly contains source file lists for targets
+#
 set(CONFIG_DIR "${CMAKE_SOURCE_DIR}/config")
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 project(sploader)
 
+# default to the i386-pc target if not specified
+# other targets can be built using argument -DTARGET=<arch>-<platform>
 if(NOT DEFINED TARGET)
     set(TARGET "i386-pc")
 endif(NOT DEFINED TARGET)
@@ -26,35 +33,41 @@ find_program(GCC_OBJCOPY    ${TARGET_PREFIX}-objcopy)
 find_program(GCC_OBJDUMP    ${TARGET_PREFIX}-objdump)
 find_program(GCC_RANLIB     ${TARGET_PREFIX}-ranlib)
 
-function(target_toolchain)
+# if any of these were not found, stop and report error to the user
 
-    if (GCC_AR STREQUAL "GCC_AR-NOTFOUND")
-        message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-ar")
-    endif ()
-    if (GCC_AS STREQUAL "GCC_AS-NOTFOUND")
-        message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-as")
-    endif ()
-    if (GCC_CC STREQUAL "GCC_CC-NOTFOUND")
-        message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-gcc")
-    endif ()
-    if (GCC_CPP STREQUAL "GCC_CPP-NOTFOUND")
-        message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-cpp")
-    endif ()
-    if (GCC_NM STREQUAL "GCC_NM-NOTFOUND")
-        message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-nm")
-    endif ()
-    if (GCC_LD STREQUAL "GCC_LD-NOTFOUND")
-        message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-ld")
-    endif ()
-    if (GCC_OBJCOPY STREQUAL "GCC_OBJCOPY-NOTFOUND")
-        message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-objcopy")
-    endif ()
-    if (GCC_OBJDUMP STREQUAL "GCC_OBJDUMP-NOTFOUND")
-        message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-objdump")
-    endif ()
-    if (GCC_RANLIB STREQUAL "GCC_RANLIB-NOTFOUND")
-        message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-ranlib")
-    endif ()
+if (GCC_AR STREQUAL "GCC_AR-NOTFOUND")
+    message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-ar")
+endif ()
+if (GCC_AS STREQUAL "GCC_AS-NOTFOUND")
+    message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-as")
+endif ()
+if (GCC_CC STREQUAL "GCC_CC-NOTFOUND")
+    message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-gcc")
+endif ()
+if (GCC_CPP STREQUAL "GCC_CPP-NOTFOUND")
+    message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-cpp")
+endif ()
+if (GCC_NM STREQUAL "GCC_NM-NOTFOUND")
+    message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-nm")
+endif ()
+if (GCC_LD STREQUAL "GCC_LD-NOTFOUND")
+    message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-ld")
+endif ()
+if (GCC_OBJCOPY STREQUAL "GCC_OBJCOPY-NOTFOUND")
+    message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-objcopy")
+endif ()
+if (GCC_OBJDUMP STREQUAL "GCC_OBJDUMP-NOTFOUND")
+    message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-objdump")
+endif ()
+if (GCC_RANLIB STREQUAL "GCC_RANLIB-NOTFOUND")
+    message(FATAL_ERROR "could not locate ${TARGET_PREFIX}-ranlib")
+endif ()
+
+
+#
+# Sets the project to use the target toolchain
+#
+function(target_toolchain)
 
     set(CMAKE_AR ${GCC_AR} PARENT_SCOPE)
     set(CMAKE_RANLIB ${GCC_RANLIB} PARENT_SCOPE)
@@ -76,11 +89,19 @@ option(ENABLE_TESTS "Enable unit testing" ON)
 option(ENABLE_WERROR "Treat compiler warnings as errors" ON)
 set(WARNFLAGS -Wall -Wextra -pedantic CACHE STRING "Default GCC Warning enable flags")
 
+#
+# The VERSION file contains the version number to use when building
+# file should contain a version in the form <major>.<minor>.<patch>
+#
 set(VERSION_FILE "VERSION")
 file(READ ${VERSION_FILE} VERSION)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${VERSION_FILE})
 set(PROJECT_VERSION ${VERSION})
 
+#
+# Prepends a prefix string to all arguments passed to this function (or a list)
+# The prepended items are stored in a variable with the given name
+#
 function(prepend outputVar prefix)
     set(list "")
     foreach(i ${ARGN})
@@ -89,6 +110,21 @@ function(prepend outputVar prefix)
     set(${outputVar} "${list}" PARENT_SCOPE)
 endfunction(prepend)
 
+#
+# Sets up a project CMakeLists.txt
+#
+# If ${CONFIG_DIR}/${PROJECT_NAME}/testlist exists, then all the tests in that
+# file are added to this project
+#
+# The following cache variables are set. where <P> is the project name in uppercase:
+#   <P>_WERROR
+#   <P>_WARNFLAGS
+#   <P>_CFLAGS
+#   <P>_WERROR
+#
+# The values of these variables are initialized to the defaults set in the root
+# (this) CMakeLists.txt
+#
 macro(project_template)
 
     set(testlist_src "${CONFIG_DIR}/${PROJECT_NAME}/testlist")
@@ -118,6 +154,15 @@ macro(project_template)
 
 endmacro(project_template)
 
+#
+# Read a sources file and store the contents into the given variable.
+# A sources list is file containing a list of source filenames, one per line,
+# for a certain target. CMake will reconfigure if this file is modified before
+# building.
+#
+# Sources files are located in the ${CONFIG_DIR}, often named as "sources" or
+# "<target>.sources"
+#
 function(sources var filename)
 
     file(STRINGS ${filename} SRC)
@@ -132,11 +177,23 @@ include_directories(
 )
 
 if (ENABLE_TESTS)
+    # libcmocka is used for unit-testing
+    # report error if not installed
     find_library(CMOCKA_LIB cmocka)
     if (CMOCKA_LIB STREQUAL "CMOCKA_LIB-NOTFOUND")
         message(FATAL_ERROR "libcmocka was not found")
     endif ()
 
+    #
+    # Adds a target for a test executable
+    #
+    # If a sources file exists at ${CONFIG_DIR}/${project}/test_${testname}.sources
+    # then the test target will use those sources, otherwise it will use a single
+    # source file, test_${testname}.c
+    #
+    # A cache variable is created for this target, so that the project it
+    # is for can link to it when adding tests.
+    #
     function(add_test_exe project testname)
         set(test_target "test_${project}_${testname}")
         set(test_srcfile "${CONFIG_DIR}/${project}/test/test_${testname}.sources")
@@ -155,6 +212,10 @@ if (ENABLE_TESTS)
         set(${targetvar} ${test_target} CACHE INTERNAL "" FORCE PARENT_SCOPE)
     endfunction(add_test_exe)
 
+    #
+    # template macro for test projects. Adds all test exe targets specified in
+    # the project's testlist
+    #
     macro(test_template project)
         include_directories(
             "${CMAKE_SOURCE_DIR}/${project}"
@@ -165,19 +226,18 @@ if (ENABLE_TESTS)
         set(testlist_src "${CONFIG_DIR}/${project}/testlist")
         if (EXISTS ${testlist_src})
             sources(TESTLIST ${testlist_src})
-            set(p ${project})
             foreach (test ${TESTLIST})
                 add_test_exe("${project}" "${test}")
             endforeach ()
-            unset(p)
         endif ()
     endmacro(test_template)
 
-
     enable_testing()
+    # add test projects here
     add_subdirectory(loader/test)
 endif (ENABLE_TESTS)
 
+# projects
 add_subdirectory(libsploader)
 add_subdirectory(libsploaderk)
 add_subdirectory(loader)
@@ -185,5 +245,8 @@ add_subdirectory(tools)
 
 custom_targets()
 
+# qemu launch script (for quick test runs)
 configure_file(qemu ${CMAKE_BINARY_DIR}/qemu COPYONLY)
+
+# configure the version header (contains a macro for the VERSION)
 configure_file(include/version.h.in ${CMAKE_BINARY_DIR}/include/version.h)
