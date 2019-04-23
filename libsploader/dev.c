@@ -22,29 +22,14 @@
 #endif
 
 
-int spl_dev_init(SplDev *dev, uint32_t forceBs, void *param) {
+int spl_dev_init(SplDev *dev, void *param) {
     dev->source = param;
-    int err = spl_dev_drv_init(dev, forceBs);
+    int err = spl_dev_drv_init(dev);
     if (err != SPL_E_SUCCESS) {
         return err;
     }
 
     return SPL_E_SUCCESS;
-}
-
-// int spl_dev_info(SplDev *dev, SplDevInfo *info) {
-//     *info = dev->info;
-//     return SPL_E_SUCCESS;
-// }
-
-int spl_dev_pread(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks) {
-    (void)dev; (void)buf; (void)lba; (void)blocks;
-    return SPL_E_FAILURE;
-}
-
-int spl_dev_pwrite(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks) {
-    (void)dev; (void)buf; (void)lba; (void)blocks;
-    return SPL_E_FAILURE;
 }
 
 int spl_dev_read(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t bs, uint32_t blocks) {
@@ -69,14 +54,14 @@ int spl_dev_write(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t bs, uint32_t b
 // Device Driver for tooling (only works for linux atm)
 //
 
-#ifndef SPLOADERK
+#ifndef NO_DRIVER_IMPL
 
 
 #ifdef __linux__
 
 // default dev driver for the tooling (underlying device is a FILE*)
 
-int spl_dev_drv_init(SplDev *dev, uint32_t forceBs) {
+int spl_dev_drv_init(SplDev *dev) {
 
     FILE *fp = (FILE*)dev->source;
     uint32_t blocksize = 512; // default to 512
@@ -98,20 +83,15 @@ int spl_dev_drv_init(SplDev *dev, uint32_t forceBs) {
         if (ioctl(fd, BLKGETSIZE64, &sizeInBytes) < 0) {
             return SPL_E_DEV_BADFILE;
         }
-        if (forceBs == SPL_DEVICE_BS) {
-            if (ioctl(fd, BLKPBSZGET, &blocksize) < 0) {
-                return SPL_E_DEV_BADFILE;
-            }
+        if (ioctl(fd, BLKPBSZGET, &blocksize) < 0) {
+            return SPL_E_DEV_BADFILE;
         }
+
         uint64_t blocks = sizeInBytes / blocksize;
         if (sizeInBytes % blocksize != 0) {
             return SPL_E_DEV_BSALIGN; // blocksize is not aligned
         }
         dev->totalBlocks = blocks;
-    }
-
-    if (forceBs) {
-        blocksize = forceBs;
     }
 
     dev->blocksize = blocksize;

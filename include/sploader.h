@@ -267,11 +267,7 @@ uint32_t spl_reverse32(uint32_t num);
 // Device functions
 // ============================================================================
 
-int spl_dev_init(SplDev *dev, uint32_t forceBs, void *param);
-
-int spl_dev_pread(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks);
-
-int spl_dev_pwrite(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks);
+int spl_dev_init(SplDev *dev, void *param);
 
 int spl_dev_read(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t bs, uint32_t blocks);
 
@@ -313,7 +309,7 @@ int spl_dev_drv_read(SplDev *dev, SplBuf inBuf, uint64_t lba, uint32_t blocks);
 
 int spl_dev_drv_write(SplDev *dev, SplBuf outBuf, uint64_t lba, uint32_t blocks);
 
-int spl_dev_drv_init(SplDev *dev, uint32_t forceBs);
+int spl_dev_drv_init(SplDev *dev);
 
 #endif // __ASM__
 

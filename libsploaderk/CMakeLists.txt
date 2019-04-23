@@ -12,6 +12,7 @@ set(LIBSPLOADERK "sploaderk" CACHE INTERNAL "" FORCE)
 
 add_definitions(
     -DSPLOADERK
+    -DNO_DRIVER_IMPL
 )
 
 add_library(

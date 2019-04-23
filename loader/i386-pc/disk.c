@@ -96,8 +96,8 @@ int _ldr_disk_read(Disk *disk, uint32_t start, uint32_t blocks) {
 }
 
 
-int spl_dev_drv_init(SplDev *dev, uint32_t forceBs) {
-    (void)dev; (void)forceBs;
+int spl_dev_drv_init(SplDev *dev) {
+    (void)dev;
     return SPL_E_FAILURE;
 }
 
