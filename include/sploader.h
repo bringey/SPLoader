@@ -93,9 +93,9 @@
 #define SPL_E_DEV_READ 1        // read-error
 #define SPL_E_DEV_WRITE 2       // write-error
 #define SPL_E_DEV_RANGE 3       // starting lba is outside the range of the device
-#define SPL_E_DEV_ZEROBS 4      // blocksize is zero
+#define SPL_E_DEV_READONLY 4    // cannot write, device is readonly
 #define SPL_E_DEV_BSALIGN 5     // blocksize does not align with size of device
-#define SPL_E_DEV_NOFORCEBS 6   // device driver cannot force blocksize
+#define SPL_E_DEV_BUFSIZE 6     // read/write buffer too small
 #define SPL_E_DEV_BADFILE 100   // failed to access the file param
 
 #define SPL_CRC32_INIT       0xFFFFFFFF
@@ -166,6 +166,7 @@ typedef struct SplDev {
     uint64_t totalBlocks;
     uint32_t blocksize;
     uint32_t flags;
+    int error;              // last driver specific error code
     void *source;
     void *aux;
 } SplDev;
@@ -269,9 +270,9 @@ uint32_t spl_reverse32(uint32_t num);
 
 int spl_dev_init(SplDev *dev, void *param);
 
-int spl_dev_read(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t bs, uint32_t blocks);
+int spl_dev_read(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks);
 
-int spl_dev_write(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t bs, uint32_t blocks);
+int spl_dev_write(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks);
 
 // ============================================================================
 // Label functions

@@ -11,7 +11,6 @@
 #include <cmocka.h>
 
 #include "util.c"
-#include <stdio.h>
 
 #define TEST_BUF_SIZE 32
 
@@ -54,8 +53,6 @@ int main(void) {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_spl_crc32)
     };
-
-    printf("%08X\n", spl_reverse32(1));
 
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

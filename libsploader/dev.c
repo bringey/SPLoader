@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
 #endif
 
 #include <stdio.h>
@@ -32,21 +33,53 @@ int spl_dev_init(SplDev *dev, void *param) {
     return SPL_E_SUCCESS;
 }
 
-int spl_dev_read(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t bs, uint32_t blocks) {
-    (void)dev; (void)buf; (void)lba; (void)blocks;
-    if (bs == 0) {
-        return SPL_E_DEV_ZEROBS;
+int spl_dev_read(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks) {
+
+    if (blocks) {
+        // check the range of lba + blocks
+        if (lba > UINT64_MAX - blocks || lba + blocks > dev->totalBlocks) {
+            return SPL_E_DEV_RANGE;
+        }
+        // make sure the buffer is big enough
+        if (buf.size < blocks * dev->blocksize) {
+            return SPL_E_DEV_BUFSIZE;
+        }
+
+        int err = spl_dev_drv_read(dev, buf, lba, blocks);
+        if (err) {
+            dev->error = err;
+            return SPL_E_DEV_READ;
+        }
     }
 
-    return SPL_E_FAILURE;
+    return SPL_E_SUCCESS;
 }
 
-int spl_dev_write(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t bs, uint32_t blocks) {
-    (void)dev; (void)buf; (void)lba; (void)blocks;
-    if (bs == 0) {
-        return SPL_E_DEV_ZEROBS;
+int spl_dev_write(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks) {
+
+    if (dev->flags & SPL_DEVICE_FLAG_RO) {
+        // device source does not support writes (readonly)
+        return SPL_E_DEV_READONLY;
     }
-    return SPL_E_FAILURE;
+
+    if (blocks) {
+        // check the range of lba + blocks
+        if (lba > UINT64_MAX - blocks || lba + blocks > dev->totalBlocks) {
+            return SPL_E_DEV_RANGE;
+        }
+        // make sure the buffer is big enough
+        if (buf.size < blocks * dev->blocksize) {
+            return SPL_E_DEV_BUFSIZE;
+        }
+
+        int err = spl_dev_drv_write(dev, buf, lba, blocks);
+        if (err) {
+            dev->error = err;
+            return SPL_E_DEV_WRITE;
+        }
+    }
+
+    return SPL_E_SUCCESS;
 }
 
 
@@ -107,8 +140,12 @@ int spl_dev_drv_read(SplDev *dev, SplBuf inBuf, uint64_t lba, uint32_t blocks) {
         size_t bytes = blocks * dev->blocksize;
         off_t offset = lba * dev->blocksize;
         ssize_t nread = pread(fd, inBuf.loc, bytes, offset);
-        if (nread < 0 || (size_t)nread != bytes) {
-            // an error occurred during the read, or the read was incomplete
+        if (nread < 0) {
+            dev->error = errno;
+            return SPL_E_DEV_READ;
+        }
+        if ((size_t)nread != bytes) {
+            // read was incomplete
             return SPL_E_DEV_READ;
         }
     }
