@@ -236,6 +236,13 @@ void test_spl_dev_write(void **state) {
     drv->error = 55;
     write_test(&dev, drv, 1, 1, SPL_E_DEV_WRITE);
     assert_int_equal(dev.error, drv->error);
+
+    // (should fail) write 1 block, but device is readonly
+    SplDev rodev;
+    drv->forceReadonly = true;
+    spl_dev_init(&rodev, drv);
+    drv->forceReadonly = false;
+    write_test(&rodev, drv, 1, 1, SPL_E_DEV_READONLY);
 }
 
 

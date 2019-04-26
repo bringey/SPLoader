@@ -136,20 +136,18 @@ int spl_dev_drv_init(SplDev *dev) {
 int spl_dev_drv_read(SplDev *dev, SplBuf inBuf, uint64_t lba, uint32_t blocks) {
     int fd = fileno((FILE*)dev->source);
     if (fd < 0) {
-        dev->error = errno;
-        return SPL_E_DEV_READ;
+        return errno;
     }
     if (blocks) {
         size_t bytes = blocks * dev->blocksize;
         off_t offset = lba * dev->blocksize;
         ssize_t nread = pread(fd, inBuf.loc, bytes, offset);
         if (nread < 0) {
-            dev->error = errno;
-            return SPL_E_DEV_READ;
+            return errno;
         }
         if ((size_t)nread != bytes) {
             // read was incomplete
-            return SPL_E_DEV_READ;
+            return SPL_E_FAILURE;
         }
     }
     return SPL_E_SUCCESS;
@@ -158,20 +156,18 @@ int spl_dev_drv_read(SplDev *dev, SplBuf inBuf, uint64_t lba, uint32_t blocks) {
 int spl_dev_drv_write(SplDev *dev, SplBuf outBuf, uint64_t lba, uint32_t blocks) {
     int fd = fileno((FILE*)dev->source);
     if (fd < 0) {
-        dev->error = errno;
-        return SPL_E_DEV_WRITE;
+        return errno;
     }
     if (blocks) {
         size_t bytes = blocks * dev->blocksize;
         off_t offset = lba * dev->blocksize;
         ssize_t nwritten = pwrite(fd, outBuf.loc, bytes, offset);
         if (nwritten < 0) {
-            dev->error = errno;
-            return SPL_E_DEV_WRITE;
+            return errno;
         }
         if ((size_t)nwritten != bytes) {
             // write was incomplete
-            return SPL_E_DEV_WRITE;
+            return SPL_E_FAILURE;
         }
     }
     
@@ -180,8 +176,8 @@ int spl_dev_drv_write(SplDev *dev, SplBuf outBuf, uint64_t lba, uint32_t blocks)
 
 #else
 
-int spl_dev_drv_init(SplDev *dev, uint32_t forceBs) {
-    (void)dev; (void)forceBs;
+int spl_dev_drv_init(SplDev *dev) {
+    (void)dev;
     return SPL_E_FAILURE;
 }
 
