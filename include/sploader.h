@@ -98,6 +98,10 @@
 #define SPL_E_DEV_BUFSIZE 6     // read/write buffer too small
 #define SPL_E_DEV_BADFILE 100   // failed to access the file param
 
+#define SPL_E_LABEL_UNKNOWN 2   // unrecognized disk label
+#define SPL_E_LABEL_OVERLAP 3   // invalid label: partitions overlap
+#define SPL_E_LABEL_BOUNDS  4   // partition start/end lba exists outside of the device's bounds
+
 #define SPL_CRC32_INIT       0xFFFFFFFF
 #define SPL_CRC32_POLYNOMIAL 0x04C11DB7
 
@@ -148,6 +152,8 @@ typedef struct SplBuf {
 // enum for disk labels recognized by sploader
 // each value for an enum must be a power of 2
 
+// TODO: Refactor these to SPL_LABEL_*
+// TODO: Change the values back to 0,1,2,3,...
 typedef enum SplLabelKind {
 
     SPL_DISK_LABEL_UNKNOWN = 0x0,
@@ -278,11 +284,32 @@ int spl_dev_write(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks);
 // Label functions
 // ============================================================================
 
-int spl_label_init(SplDev *dev, SplLabel *label, SplLabelKind kind);
-
+//
+// Search the partition table of the label for an active partition. The first
+// active partition found is set in the part variable and SPL_E_SUCCESS is
+// returned. If no active partition is found then the part variable is unchanged
+// and SPL_E_FAILURE is returned.
+//
 int spl_label_getActive(SplLabel *label, SplPart *part);
 
 int spl_label_getPart(SplLabel *label, uint32_t partnum, SplPart *part);
+
+int spl_label_read(SplLabel *label);
+
+//
+// Test if the label is valid. A valid label has no overlapping partitions,
+// with each partition start and end lba less than the total number of blocks
+// on the label's device.
+//
+int spl_label_valid(SplLabel *label);
+
+#ifdef SPL_OPT_GPT
+int spl_label_gpt_read(SplLabel *label);
+#endif
+
+#ifdef SPL_OPT_MBR
+int spl_label_mbr_read(SplLabel *label);
+#endif
 
 
 // dependencies
