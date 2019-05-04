@@ -162,3 +162,16 @@ void* __allocate(FreeBlock *block, size_t bytes) {
     }
     return result;
 }
+
+// libsploaderk dependencies
+
+// TODO: [v0.2.0] Replace ldr_malloc with spl_malloc
+void* spl_malloc(size_t bytes) {
+    return ldr_malloc(bytes);
+}
+
+// TODO: [v0.2.0] Replace ldr_free with spl_free
+void spl_free(void *ptr) {
+    ldr_free(ptr);
+}
+

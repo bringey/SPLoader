@@ -29,7 +29,18 @@ int spl_dev_init(SplDev *dev, void *param) {
     if (err != SPL_E_SUCCESS) {
         return err;
     }
+    void* buf = spl_malloc(dev->blocksize);
+    if (buf == NULL) {
+        return SPL_E_FAILURE;
+    }
+    dev->bbuf.size = dev->blocksize;
+    dev->bbuf.loc = buf;
 
+    return SPL_E_SUCCESS;
+}
+
+int spl_dev_deinit(SplDev *dev) {
+    spl_free(dev->bbuf.loc);
     return SPL_E_SUCCESS;
 }
 

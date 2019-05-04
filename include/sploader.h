@@ -152,8 +152,8 @@ typedef struct SplBuf {
 // enum for disk labels recognized by sploader
 // each value for an enum must be a power of 2
 
-// TODO: Refactor these to SPL_LABEL_*
-// TODO: Change the values back to 0,1,2,3,...
+// TODO: [v0.2.0] Refactor these to SPL_LABEL_*
+// TODO: [v0.2.0] Change the values back to 0,1,2,3,...
 typedef enum SplLabelKind {
 
     SPL_DISK_LABEL_UNKNOWN = 0x0,
@@ -173,6 +173,7 @@ typedef struct SplDev {
     uint32_t blocksize;
     uint32_t flags;
     int error;              // last driver specific error code
+    SplBuf bbuf;            // utility buffer for a single block
     void *source;
     void *aux;
 } SplDev;
@@ -180,6 +181,7 @@ typedef struct SplDev {
 typedef struct SplLabel {
     SplDev *dev;
     SplLabelKind kind;
+    size_t nparts;
     size_t tablesize;
     SplPart *table;
 } SplLabel;
@@ -276,6 +278,8 @@ uint32_t spl_reverse32(uint32_t num);
 
 int spl_dev_init(SplDev *dev, void *param);
 
+int spl_dev_deinit(SplDev *dev);
+
 int spl_dev_read(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks);
 
 int spl_dev_write(SplDev *dev, SplBuf buf, uint64_t lba, uint32_t blocks);
@@ -321,11 +325,19 @@ int spl_label_mbr_read(SplLabel *label);
 //
 extern void spl_abort(void);
 
+extern void* spl_malloc(size_t bytes);
+
+extern void spl_free(void *ptr);
+
 #define spl_assert(cond) if (!(cond)) spl_abort()
 
 #else
 // just use the libc assert
 #define spl_assert(cond) assert(cond)
+
+#define spl_malloc(bytes) malloc(bytes)
+
+#define spl_free(ptr) free(ptr)
 
 #endif
 
@@ -333,11 +345,13 @@ extern void spl_abort(void);
 // Device "driver" functions
 //
 
+int spl_dev_drv_init(SplDev *dev);
+
+int spl_dev_drv_deinit(SplDev *dev);
+
 int spl_dev_drv_read(SplDev *dev, SplBuf inBuf, uint64_t lba, uint32_t blocks);
 
 int spl_dev_drv_write(SplDev *dev, SplBuf outBuf, uint64_t lba, uint32_t blocks);
-
-int spl_dev_drv_init(SplDev *dev);
 
 #endif // __ASM__
 
