@@ -25,4 +25,11 @@ macro(custom_targets)
         DEPENDS ${USB_IMG}
     )
 
+    # Include MBR/GPT parsing in the lib
+    target_compile_definitions(
+        ${LIBSPLOADERK} PUBLIC
+        -DSPL_OPT_MBR
+        -DSPL_OPT_GPT
+    )
+
 endmacro(custom_targets)

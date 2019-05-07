@@ -5,6 +5,11 @@ project_template()
 
 sources(LIBSPLOADER_SRC ${CONFIG_DIR}/libsploader/sources)
 
+add_definitions(
+    -DSPL_OPT_MBR
+    -DSPL_OPT_GPT
+)
+
 set(LIBSPLOADER "sploader" CACHE INTERNAL "" FORCE)
 
 add_library(

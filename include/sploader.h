@@ -102,6 +102,8 @@
 #define SPL_E_LABEL_OVERLAP 3   // invalid label: partitions overlap
 #define SPL_E_LABEL_BOUNDS  4   // partition start/end lba exists outside of the device's bounds
 
+#define SPL_E_MBR_SIGNATURE 100
+
 #define SPL_CRC32_INIT       0xFFFFFFFF
 #define SPL_CRC32_POLYNOMIAL 0x04C11DB7
 
