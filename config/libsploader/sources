@@ -3,3 +3,4 @@ label.c
 util.c
 dev.c
 label/mbr.c
+label/gpt.c
